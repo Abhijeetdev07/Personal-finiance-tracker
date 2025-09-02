@@ -134,7 +134,27 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
+// PUT update transaction by ID
+router.put("/:id", auth, async (req, res) => {
+  try {
+    const { amount, type, category, date, note } = req.body;
+    const tx = await Transaction.findById(req.params.id);
+    
+    if (!tx) return res.status(404).json({ error: "Transaction not found" });
+    if (tx.user.toString() !== req.user.id)
+      return res.status(403).json({ error: "Not authorized" });
 
+    const updatedTx = await Transaction.findByIdAndUpdate(
+      req.params.id,
+      { amount, type, category, date, note },
+      { new: true }
+    );
+    
+    res.json(updatedTx);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // DELETE transaction by ID
 // router.delete("/:id", auth, async (req, res) => {
