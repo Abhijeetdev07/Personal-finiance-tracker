@@ -1,52 +1,41 @@
-// import { useState } from 'react'
-// import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useState, createContext } from "react";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 
-// export default function App() {
-
-//   const [message, setMessage] = useState("");
-  
-//   useEffect(() => {
-//     fetch("http://localhost:5000/api/test")
-//       .then(res => res.json())
-//       .then(data => setMessage(data.message));
-//   }, []);
-
-//   return (
-//     <div className="min-h-screen bg-smoky flex items-center justify-center">
-//       <h1 className="text-4xl font-bold text-primary">
-//         Personal Finance Tracker
-//       </h1>
-//       <p className="text-gray-700">{message}</p>
-//     </div>
-//   );
-// }
-
-
-import { useEffect, useState } from "react";
+// Create auth context to share token across app
+export const AuthContext = createContext();
 
 export default function App() {
-  const [message, setMessage] = useState("");
-  const [err, setErr] = useState("");
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/test");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        setMessage(data.message);
-      } catch (e) {
-        setErr(e.message);
-        console.error("Fetch error:", e);
-      }
-    })();
-  }, []);
+  const login = (newToken) => {
+    setToken(newToken);
+    localStorage.setItem("token", newToken);
+  };
+
+  const logout = () => {
+    setToken("");
+    localStorage.removeItem("token");
+  };
 
   return (
-    <div className="min-h-screen bg-smoky flex flex-col items-center justify-center gap-3">
-      <h1 className="text-4xl font-bold text-primary">Personal Finance Tracker</h1>
-      {message && <p className="text-gray-700">{message}</p>}
-      {err && <p className="text-red-600">Error: {err}</p>}
-    </div>
+    <AuthContext.Provider value={{ token, login, logout }}>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={token ? <Dashboard /> : <Navigate to="/login" />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthContext.Provider>
   );
 }

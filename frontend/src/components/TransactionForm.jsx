@@ -80,7 +80,7 @@ export default function TransactionForm({ onAdd }) {
         onChange={handleChange}
         className="w-full p-2 mb-2 border rounded"
       />
-      <button type="submit" className="w-full bg-primary text-white p-2 rounded mt-2 hover:opacity-90">
+      <button type="submit" className="w-full bg-green-500 hover:bg-green-600 text-white text-white p-2 rounded mt-2 hover:opacity-90">
         Add Transaction
       </button>
     </form>

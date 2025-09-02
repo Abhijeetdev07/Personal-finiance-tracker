@@ -1,14 +1,14 @@
-import { useState, useEffect, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useEffect, useState, useContext } from "react";
+import { AuthContext } from "../App";
 import TransactionForm from "../components/TransactionForm";
 import TransactionList from "../components/TransactionList";
 
 export default function Dashboard() {
-  const { token, logoutUser } = useContext(AuthContext);
+  const { token, logout } = useContext(AuthContext);
   const [transactions, setTransactions] = useState([]);
   const [error, setError] = useState("");
 
-  // Fetch transactions
+  // Fetch all transactions
   const fetchTransactions = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/transactions", {
@@ -22,38 +22,101 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+  // Add new transaction
+  const addTransaction = async (transaction) => {
+    try {
+      const res = await fetch("http://localhost:5000/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(transaction),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to add transaction");
+      setTransactions((prev) => [...prev, data]);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-  // Add transaction
-  const handleAdd = tx => setTransactions([tx, ...transactions]);
-
-  // Delete transaction
-  const handleDelete = async id => {
+  // Delete a transaction
+  const deleteTransaction = async (id) => {
     try {
       const res = await fetch(`http://localhost:5000/api/transactions/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) throw new Error("Failed to delete");
-      setTransactions(transactions.filter(tx => tx._id !== id));
+      if (!res.ok) throw new Error("Failed to delete transaction");
+      setTransactions((prev) => prev.filter((t) => t._id !== id));
     } catch (err) {
-      alert(err.message);
+      setError(err.message);
     }
   };
 
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-smoky p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-primary">Dashboard</h1>
-        <button onClick={logoutUser} className="bg-primary text-white px-4 py-2 rounded hover:opacity-90">
-          Logout
-        </button>
-      </div>
-      {error && <p className="text-red-600 mb-4">{error}</p>}
-      <TransactionForm onAdd={handleAdd} />
-      <TransactionList transactions={transactions} onDelete={handleDelete} />
+    // <div className="min-h-screen bg-smoky">
+    //   <div className=" shadow-md w-full p-3 mb-5">
+    //       <div className="flex justify-between items-center px-4">
+    //           <h1 className="text-3xl font-bold text-primary mb-2">Dashboard</h1>
+    //            <button
+    //             onClick={logout}
+    //             className="bg-red-500 text-white px-4 py-2 rounded-lg mb-2"
+    //            >
+    //          Logout
+    //         </button>
+    //     </div>
+    //   </div>
+
+    //   {error && <p className="text-red-600 mb-3">{error}</p>}
+
+    //   <TransactionForm onAdd={addTransaction} />
+    //   <TransactionList transactions={transactions} onDelete={deleteTransaction} />
+    // </div>
+
+    <div className="min-h-screen bg-smoky">
+  {/* Sticky Navbar */}
+  <div className="shadow-md w-full p-3 fixed top-0 bg-white z-50">
+    <div className="flex justify-between items-center px-4 flex-wrap">
+      <h1 className="text-3xl font-bold text-primary mb-2 sm:mb-0">
+        Dashboard
+      </h1>
+      <button
+        onClick={logout}
+        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg mb-2 sm:mb-0 transition-colors"
+      >
+        Logout
+      </button>
     </div>
+  </div>
+
+  {/* Error Message */}
+  {error && <p className="text-red-600 mb-3 px-4 pt-24">{error}</p>}
+
+  {/* Content */}
+  <div className="flex flex-col xl:flex-row justify-center gap-6 px-4 sm:px-6 md:px-10 pt-24">
+    <TransactionForm onAdd={addTransaction} />
+
+    <TransactionList
+      transactions={transactions}
+      onDelete={deleteTransaction}
+    />
+  </div>
+</div>
+
+
+
+
   );
 }
+
+
+
+
+
+
