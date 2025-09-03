@@ -1,79 +1,101 @@
-# Personal Finance Tracker (MERN)
+# Personal Finiancial Tracker
 
-A full‑stack Personal Finance Tracker built with MongoDB, Express, React, and Node.js for recording transactions, managing budgets, and visualizing spending trends.  
-It supports authentication, categories, budgets, recurring entries, CSV import/export, and charts.
+A simple personal finance tracker with authentication, transactions management, and visual insights (pie and bar charts). Built with a Node/Express backend, MongoDB database, and a React + Vite frontend.
 
 ## Features
-
-- User authentication (sign up, login, JWT session)  
-- Add, edit, delete transactions (income/expense), with categories and notes  
-- Monthly budgets and alerts when nearing limits  
-- Dashboards with charts for spending by category and over time  
-- CSV import/export for transactions  
-- Dark/light theme and responsive UI  
-- Secure configuration via environment variables
+- Authentication: register, login, JWT-based session, route protection
+- Centralized API helper: auto-attaches token; 401 handling with logout + redirect
+- Transactions: create, list, edit, delete with confirmation on delete
+- Filters and views: desktop table and mobile cards, category filter
+- Charts: spending by category (Pie), monthly income vs expense (Bar)
+- UX details: floating labels, error states on invalid credentials, consistent input styling
 
 ## Tech Stack
+- Frontend: React, Vite, Tailwind CSS, react-router, react-chartjs-2, chart.js
+- Backend: Node.js, Express, JWT (jsonwebtoken), bcryptjs
+- Database: MongoDB with Mongoose
 
-- Frontend: React + State Management (Context/Redux), React Router, Fetch/Axios  
-- Backend: Node.js, Express.js, JWT, bcrypt  
-- Database: MongoDB (Mongoose)  
-- Tooling: ESLint, Prettier, Jest/Supertest (API), Vite or CRA (choose one)  
-- Deployment: Any Node host for API (e.g., Render/Railway) and static host for client (e.g., Vercel/Netlify)
+## Project Structure
+```
+fin-tracker/
+  backend/
+    middleware/
+      auth.js
+    models/
+      Transaction.js
+      User.js
+    routes/
+      auth.js
+      transactions.js
+    server.js
+  frontend/
+    src/
+      App.jsx
+      main.jsx
+      index.css
+      utils/
+        api.js
+      pages/
+        Login.jsx
+        Register.jsx
+        Dashboard.jsx
+      components/
+        FloatingInput.jsx
+        TransactionForm.jsx
+        TransactionTable.jsx
+        EditTransactionModal.jsx
+        CategoryPieChart.jsx
+        MonthlyBarChart.jsx
+    index.html
+    vite.config.js
+```
 
-
-## Getting Started
+## Setup Instructions
 
 ### Prerequisites
-- Node.js (LTS) and a package manager (npm, pnpm, or yarn)  
-- MongoDB URI (local or hosted)  
-- Git (optional but recommended)
+- Node.js 
+- MongoDB running locally or a connection string (MongoDB Atlas)
 
+### 1 Backend
+1. Open a terminal in `backend/`.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in `backend/` with:
+   ```env
+   MONGODB_URI= ......
+   JWT_SECRET= .....
+   PORT=5000
+   ```
+4. Start the server:
+   ```bash
+   npm start
+   ```
 
-## Testing
+### 2 Frontend
+1. Open another terminal in `frontend/`.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Optionally set API base URL in `frontend/.env` (defaults to `http://localhost:5000/api`):
+   ```env
+   VITE_API_BASE_URL=http://localhost:5000/api
+   ```
+4. Run the dev server:
+   ```bash
+   npm run dev
+   ```
 
-- API tests with Jest + Supertest for controllers and routes  
-- Unit tests for utilities (formatting amounts, date helpers)  
-- Optional E2E test flow: register → login → create transaction → verify totals
+### 3 Usage
+1. Visit the app in the browser (Vite prints the URL, typically `http://localhost:5173`).
+2. Register a new account. Password must be 8–12 chars with upper, lower, number, and special char.
+3. Log in and start adding transactions.
+4. Explore charts on the Dashboard.
 
-## Security & Hardening
-
-- Do not commit .env; use .env.example for safe placeholders  
-- Enable CORS only for trusted origins  
-- Add rate limiting, Helmet, validation (Joi/Zod)  
-- Hash passwords (bcrypt) and sign short‑lived JWTs
-
-## Deployment
-
-- API: Deploy Node/Express; set env vars (MONGODB_URI, JWT_SECRET, ALLOWED_ORIGINS)  
-- Client: Build static site and deploy; set API base URL env for production  
-- Ensure correct CORS and HTTPS; rotate secrets periodically
-
-## Roadmap
-
-- Recurring transactions scheduler  
-- Multi‑currency and FX conversion  
-- Shared budgets and households  
-- Bank integrations (OFX/PLAID‑like)  
-- Advanced analytics and export formats
-
-## Contributing
-
-1) Fork → create feature branch → commit with conventional messages → PR  
-2) Add or update tests and docs for new features  
-3) Ensure lint passes and CI is green
-
-## License
-
-MIT — see LICENSE for details.
-
-## Acknowledgements
-
-- MERN architecture patterns and common project layouts  
-- Community articles and docs on Node, Express, React, and MongoDB
-
-
-
-
+## Notes
+- Deleting a user in the DB will log them out on the next request due to middleware checks.
+- All API requests from the frontend go through a centralized helper with automatic JWT and 401 handling.
 
 
