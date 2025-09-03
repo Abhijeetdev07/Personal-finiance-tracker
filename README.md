@@ -39,8 +39,8 @@ fin-tracker/
 ## Screenshots
 
 <p float="left">
-  <img src="./frontend/src/assets/login-page.png" width="45%" />
-  <img src="./frontend/src/assets/register-page.png" width="45%" />
+  <img src="./frontend/src/assets/login-page.png" width="50%" />
+  <img src="./frontend/src/assets/register-page.png" width="50%" />
 </p>
 
 
