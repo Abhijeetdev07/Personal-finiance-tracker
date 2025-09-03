@@ -41,8 +41,8 @@ fin-tracker/
 <!-- ![Register Page](./frontend/src/assets/register-page.png)
 ![Login Page](./frontend/src/assets/login-page.png) -->
 <p float="left">
-  <img src="./frontend/src/assets/register-page.png" width="300" />
-  <img src="./frontend/src/assets/login-page.png" width="300" />
+  <img src="./frontend/src/assets/register-page.png" width="400" />
+  <img src="./frontend/src/assets/login-page.png" width="400" />
 </p>
 
 ![Dashboard](./frontend/src/assets/dashbard.png)
