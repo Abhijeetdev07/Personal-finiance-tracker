@@ -38,9 +38,6 @@ fin-tracker/
 
 ## Screenshots
 
-
-
-
 ![Login Page](./frontend/src/assets/login-page.png)
 ![Register Page](./frontend/src/assets/register-page.png)
 ![Dashboard](./frontend/src/assets/dashbard.png)
