@@ -18,36 +18,22 @@ A simple personal finance tracker with authentication, transactions management, 
 ## Project Structure
 ```
 fin-tracker/
-  backend/
-    middleware/
-      auth.js
-    models/
-      Transaction.js
-      User.js
-    routes/
-      auth.js
-      transactions.js
-    server.js
-  frontend/
-    src/
-      App.jsx
-      main.jsx
-      index.css
-      utils/
-        api.js
-      pages/
-        Login.jsx
-        Register.jsx
-        Dashboard.jsx
-      components/
-        FloatingInput.jsx
-        TransactionForm.jsx
-        TransactionTable.jsx
-        EditTransactionModal.jsx
-        CategoryPieChart.jsx
-        MonthlyBarChart.jsx
-    index.html
-    vite.config.js
+├─ backend/
+│  ├─ src/ (optional)
+│  ├─ middleware/      # auth middleware
+│  ├─ models/          # Mongoose models
+│  ├─ routes/          # auth, transactions
+│  └─ server.js        # Express entry
+│
+└─ frontend/
+   ├─ src/
+   │  ├─ components/   # UI components + charts
+   │  ├─ pages/        # Login, Register, Dashboard
+   │  ├─ utils/        # api.js
+   │  ├─ App.jsx
+   │  └─ main.jsx
+   ├─ index.html
+   └─ vite.config.js
 ```
 
 ## Setup Instructions
