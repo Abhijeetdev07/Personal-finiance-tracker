@@ -49,8 +49,8 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-300 ease-in-out ${isAnimating ? 'opacity-100' : 'opacity-0'}`}>
-      <div className={`bg-white p-6 rounded-lg shadow-lg w-full max-w-md transform transition-all duration-300 ease-in-out ${isAnimating ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
+    <div className={`fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50 transition-all duration-300 ease-in-out ${isAnimating ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`bg-white bg-opacity-95 backdrop-blur-sm p-6 rounded-lg shadow-lg w-full max-w-md transform transition-all duration-300 ease-in-out ${isAnimating ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
         <h2 className="text-xl font-bold mb-4">Edit Transaction</h2>
         
         <form onSubmit={handleSubmit}>

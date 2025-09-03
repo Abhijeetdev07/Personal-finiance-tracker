@@ -3,7 +3,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../App";
 import { Link, useNavigate } from "react-router-dom";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // import react icons
+import FloatingInput from "../components/FloatingInput";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -53,46 +53,41 @@ export default function Login() {
           Login
         </h2>
 
-        <input
+        <FloatingInput
           type="email"
           name="email"
-          placeholder="Email"
+          label="Email"
           value={form.email}
           onChange={handleChange}
-          className="w-full mb-3 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-500"
+          className="mb-4"
           required
+          hasError={!!error}
         />
 
-        <div className="relative mb-4">
-          <input
-            type={showPassword ? "text" : "password"} // toggle password type
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg pr-12 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 placeholder-gray-500"
-            required
-          />
-          <div
-            className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 hover:text-gray-700"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? (
-              <AiFillEyeInvisible size={20} />
-            ) : (
-              <AiFillEye size={20} />
-            )}
-          </div>
-        </div>
+        <FloatingInput
+          type={showPassword ? "text" : "password"}
+          name="password"
+          label="Password"
+          value={form.password}
+          onChange={handleChange}
+          className="mb-4"
+          required
+          showPasswordToggle={true}
+          onTogglePassword={() => setShowPassword(!showPassword)}
+          showPassword={showPassword}
+          hasError={!!error}
+        />
+
+         {error && <p className="text-red-600 mb-2 mt-2 text-sm">{error}</p>}
 
         <button
           type="submit"
-          className="w-full bg-[#007dff] hover:bg-[#0066cc] text-white py-3 rounded-lg font-semibold transition-colors duration-200"
+          className="w-full bg-[#007dff] hover:bg-[#0066cc] text-white py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer"
         >
           Login
         </button>
 
-        {error && <p className="text-red-600 mb-2 mt-2 text-sm">{error}</p>}
+       
 
         <p className="text-sm mt-3 text-center text-gray-600">
           Don't have an account?{" "}

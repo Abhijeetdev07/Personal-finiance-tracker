@@ -10,6 +10,18 @@ router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Strong password validation: min 8, upper, lower, number, special
+    if (typeof password !== "string") {
+      return res.status(400).json({ error: "Password must be a string" });
+    }
+    const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,12}$/;
+    if (!strongPassword.test(password)) {
+      return res.status(400).json({
+        error:
+          "Password must be 8-12 chars and include upper, lower, number, and special character",
+      });
+    }
+
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already exists" });
 

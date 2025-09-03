@@ -1,12 +1,17 @@
 
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../App";
+import { apiFetch } from "../utils/api";
 import TransactionForm from "../components/TransactionForm";
 import TransactionTable from "../components/TransactionTable";
 import EditTransactionModal from "../components/EditTransactionModal";
+import CategoryPieChart from "../components/CategoryPieChart";
+import MonthlyBarChart from "../components/MonthlyBarChart";
 
 export default function Dashboard() {
   const { token, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({
     income: 0,
@@ -16,16 +21,22 @@ export default function Dashboard() {
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Fetch transactions
+  // Check if user still exists and fetch transactions
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/transactions", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await apiFetch("/transactions");
         const data = await res.json();
 
-        if (!res.ok) throw new Error(data.error || "Failed to fetch");
+        if (!res.ok) {
+          // If user is deleted (401 or 404), logout and redirect to register
+          if (res.status === 401 || res.status === 404) {
+            logout();
+            navigate("/register");
+            return;
+          }
+          throw new Error(data.error || "Failed to fetch");
+        }
 
         setTransactions(data);
 
@@ -37,19 +48,23 @@ export default function Dashboard() {
         setSummary({ income, expense, balance: income - expense });
       } catch (err) {
         console.error("Fetch error:", err);
+        // If it's an unauthorized error, logout and redirect
+        if (err.message === "Unauthorized") {
+          logout();
+          navigate("/register");
+        }
       }
     };
 
     fetchTransactions();
-  }, [token]);
+  }, [token, logout, navigate]);
 
   // Delete transaction
   const deleteTransaction = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete this transaction?");
+    if (!confirmed) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/transactions/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiFetch(`/transactions/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete transaction");
       setTransactions((prev) => prev.filter((t) => t._id !== id));
     } catch (err) {
@@ -66,12 +81,8 @@ export default function Dashboard() {
   // Update transaction
   const updateTransaction = async (id, updatedData) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+      const res = await apiFetch(`/transactions/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(updatedData),
       });
 
@@ -133,6 +144,47 @@ export default function Dashboard() {
             <p className="text-xl text-blue-700">₹{summary.balance}</p>
           </div>
         </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Category pie (sum by category for expenses) */}
+        <div className="bg-white p-4 rounded-lg shadow border">
+          <h3 className="font-semibold mb-3">Spending by Category</h3>
+          {
+            (() => {
+              const byCategory = transactions
+                .filter((t) => t.type === "expense")
+                .reduce((acc, t) => {
+                  const key = t.category || "Other";
+                  acc[key] = (acc[key] || 0) + t.amount;
+                  return acc;
+                }, {});
+              return <CategoryPieChart dataByCategory={byCategory} />;
+            })()
+          }
+        </div>
+
+        {/* Monthly bars (income vs expense per month) */}
+        <div className="bg-white p-4 rounded-lg shadow border">
+          <h3 className="font-semibold mb-3">Monthly Trend</h3>
+          {
+            (() => {
+              const toMonth = (iso) => {
+                const d = new Date(iso);
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+              };
+              const income = {};
+              const expense = {};
+              transactions.forEach((t) => {
+                const m = toMonth(t.date);
+                if (t.type === "income") income[m] = (income[m] || 0) + t.amount;
+                else expense[m] = (expense[m] || 0) + t.amount;
+              });
+              return <MonthlyBarChart monthlyIncome={income} monthlyExpense={expense} />;
+            })()
+          }
+        </div>
+      </div>
 
       {/* Add Transaction Form */}
       <TransactionForm token={token} onAdd={setTransactions} />

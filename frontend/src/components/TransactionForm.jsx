@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { apiFetch } from "../utils/api";
 
 export default function TransactionForm({ token, onAdd }) {
   const [amount, setAmount] = useState("");
@@ -11,12 +12,8 @@ export default function TransactionForm({ token, onAdd }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/transactions", {
+      const res = await apiFetch("/transactions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           amount: Number(amount),
           type,
@@ -46,19 +43,19 @@ export default function TransactionForm({ token, onAdd }) {
   return (
     <form onSubmit={handleSubmit} className="mb-6 bg-gray-100 p-4 rounded-lg shadow">
       <h2 className="text-lg font-semibold mb-3">Add Transaction</h2>
-      <div className="flex gap-4">
+      <div className="flex flex-col gap-4 max-[800px]:flex-col lg:flex-row">
         <input
           type="number"
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="border p-2 rounded w-1/3"
+          className="border p-2 rounded lg:w-1/3 w-full"
           required
         />
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="border p-2 rounded w-1/3"
+          className="border p-2 rounded lg:w-1/3 w-full cursor-pointer"
         >
           <option value="income">Income</option>
           <option value="expense">Expense</option>
@@ -68,7 +65,7 @@ export default function TransactionForm({ token, onAdd }) {
           placeholder="Category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="border p-2 rounded w-1/3"
+          className="border p-2 rounded lg:w-1/3 w-full "
           required
         />
         <input
@@ -76,7 +73,7 @@ export default function TransactionForm({ token, onAdd }) {
           placeholder="Date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="border p-2 rounded w-1/3"
+          className="border p-2 rounded lg:w-1/3 w-full cursor-pointer"
           required
         />
         <input
@@ -84,11 +81,11 @@ export default function TransactionForm({ token, onAdd }) {
           placeholder="Note"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          className="border p-2 rounded w-1/3"
+          className="border p-2 rounded lg:w-1/3 w-full"
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 lg:w-auto w-full cursor-pointer"
         >
           Add
         </button>
