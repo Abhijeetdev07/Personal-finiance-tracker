@@ -37,6 +37,14 @@ fin-tracker/
 ```
 
 ## Screenshots
+
+<p float="left">
+  <img src="./frontend/src/assets/login-page.png" width="45%" />
+  <img src="./frontend/src/assets/register-page.png" width="45%" />
+</p>
+
+
+
 ![Login Page](./frontend/src/assets/login-page.png)
 ![Register Page](./frontend/src/assets/register-page.png)
 ![Dashboard](./frontend/src/assets/dashbard.png)
