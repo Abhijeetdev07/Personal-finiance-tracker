@@ -36,6 +36,12 @@ fin-tracker/
    └─ vite.config.js
 ```
 
+## Screenshots
+![Login Page](./frontend/src/assets/login-page.png)
+![Register Page](./frontend/src/assets/register-page.png)
+![Dashboard](./frontend/src/assets/dashbard.png)
+![Dashboard 2](./frontend/src/assets/dashboard-2.png)
+
 ## Setup Instructions
 
 ### Prerequisites
