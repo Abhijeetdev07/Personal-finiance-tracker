@@ -1,0 +1,104 @@
+Plan: Add “Forgot Password” with OTP verification
+Flow overview
+1) User submits email/username to request reset.
+2) Backend generates an OTP, stores a hashed copy with expiry, sends OTP via email.
+3) User submits OTP to verify.
+4) After OTP verified, user sets a new password.
+5) Invalidate OTP and all existing sessions.
+Backend steps
+1) Add reset fields to User schema
+Add:
+resetPasswordOtpHash: String
+resetPasswordOtpExpiresAt: Date
+resetPasswordOtpRetryCount: Number (optional, e.g., max 5)
+resetPasswordState: String (optional, e.g., 'requested' | 'verified')
+Keep OTP hashed (e.g., bcrypt.hash(otp)), never store plain OTP.
+2) Create email sender
+Use nodemailer with an SMTP provider.
+Env vars: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM.
+Create a helper: sendPasswordResetOtp({ to, otp }).
+3) Endpoint: POST /api/auth/forgot-password
+Body: { identifier: string } where identifier is email or username.
+Find user by email/username.
+Rate-limit by IP and per user (e.g., 5/hour).
+Generate a 6-digit OTP (e.g., 000000–999999) and a 10-minute expiry.
+Hash OTP and save to user: resetPasswordOtpHash, resetPasswordOtpExpiresAt, resetPasswordState='requested', reset retry count to 0.
+Send OTP via email.
+Response: 200 with generic message.
+4) Endpoint: POST /api/auth/verify-reset-otp
+Body: { identifier, otp }.
+Validate user exists; ensure resetPasswordOtpExpiresAt in future.
+Compare provided otp with resetPasswordOtpHash using bcrypt.compare.
+Increment and enforce resetPasswordOtpRetryCount limit.
+If valid: set resetPasswordState='verified' and optionally issue a short-lived reset token (JWT) with claim { type: 'password_reset', userId }, exp 10–15 min. Return success and the reset token.
+If invalid/expired: return 400 with generic error.
+5) Endpoint: POST /api/auth/reset-password
+Body: either
+With token: { token, newPassword } where token is the short-lived reset token from step 4, or
+Without token: { identifier, otp, newPassword } (verify OTP again server-side).
+Validate password strength (reuse your existing strong password regex).
+Hash new password and save to user.password.
+Clear reset fields: resetPasswordOtpHash=null, resetPasswordOtpExpiresAt=null, resetPasswordState=null, resetPasswordOtpRetryCount=0.
+Invalidate old sessions (optional but recommended): rotate a tokenVersion on the user if you use it, or otherwise advise clients to re-login.
+Response: 200 with generic success.
+6) Security and abuse controls
+Hash OTPs; never store or log them.
+Use generic responses (“If an account exists, you’ll receive an email”) to avoid leaking account existence.
+Rate-limit all three endpoints; add IP + identifier throttling.
+Expire OTPs (10 minutes) and enforce a max retry count.
+Lock out or delay responses after too many attempts.
+Do not reuse OTP for other actions.
+Log resets for audit (userId, timestamp, IP, user-agent).
+
+
+
+
+Frontend steps
+1) UI pages/screens
+
+ForgotPassword:
+Input: “Email/username”.
+Submit to /api/auth/forgot-password.
+Show “If an account exists, we sent an OTP.”
+
+
+VerifyResetOtp:
+Inputs: “Email/username” (or prefill), “OTP”.
+Submit to /api/auth/verify-reset-otp.
+On success, store reset token in memory (not localStorage) and navigate to reset form.
+
+
+ResetPassword:
+Inputs: “New password”, “Confirm password”.
+Submit to /api/auth/reset-password with reset token (preferred) or with identifier + OTP.
+Show success and link to Login.
+
+
+2) Form validation
+Client-side strong password checks (reuse your existing rules).
+Basic OTP format validation (6-digit numeric).
+
+3) API integration
+Reuse your fetch/apiFetch helper.
+Don’t include auth token; these routes are public.
+Handle error states and loading indicators gracefully.
+
+4) UX details
+Mask OTP input as numeric; allow paste.
+Resend OTP button with cooldown (e.g., 60 seconds) that calls forgot-password again.
+Accessibility: labels, focus states, ARIA where relevant.
+
+
+Testing checklist
+Request reset for existing/non-existing user: always get the same generic response.
+OTP email is sent and contains a 6-digit code (verify in test SMTP inbox).
+OTP accepted only before expiry; rejected after expiry or max attempts.
+Reset password updates hash and allows login with new password; old password fails.
+OTP gets cleared after successful reset; cannot be reused.
+Rate limiting works (simulate bursts).
+Frontend happy-path and error-handling flows.
+Deployment/config
+Add env vars for SMTP in backend .env.
+Ensure production email domain/setup (SPF/DKIM) to avoid spam folder.
+Set JWT_SECRET for reset token; optionally use a different secret and very short expiry.
+If you want, I can implement the backend endpoints and minimal frontend screens next.
