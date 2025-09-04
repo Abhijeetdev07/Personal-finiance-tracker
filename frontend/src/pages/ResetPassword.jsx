@@ -14,7 +14,6 @@ export default function ResetPassword() {
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [status, setStatus] = useState({ loading: false, message: "", error: "" });
 
@@ -75,6 +74,19 @@ export default function ResetPassword() {
 
         {/* Always show password fields; identifier/OTP appear only when no token is present */}
 
+        {tokenFromMemory && (
+          <div className="mb-4">
+            <input
+              type="text"
+              value={identifierFromMemory}
+              readOnly
+              disabled
+              aria-readonly
+              className="w-full p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100"
+            />
+          </div>
+        )}
+
         {!useTokenFlow && (
           <>
             <FloatingInput
@@ -106,7 +118,7 @@ export default function ResetPassword() {
         )}
 
         <FloatingInput
-          type={showPassword ? "text" : "password"}
+          type="password"
           name="password"
           label="New Password"
           value={password}
@@ -114,9 +126,6 @@ export default function ResetPassword() {
           className="mb-4"
           required
           hasError={!!status.error}
-          showPasswordToggle={true}
-          onTogglePassword={() => setShowPassword((v) => !v)}
-          showPassword={showPassword}
         />
 
         <FloatingInput
