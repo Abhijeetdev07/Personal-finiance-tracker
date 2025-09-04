@@ -143,16 +143,17 @@ export default function VerifyResetOtp() {
           <h2 className="text-2xl font-bold text-gray-800 text-center">Verify OTP</h2>
         </div>
 
-        <FloatingInput
-          type="text"
-          name="identifier"
-          label="Email or Username"
-          value={identifier}
-          onChange={(e) => setIdentifier(e.target.value)}
-          className="mb-4"
-          required
-          hasError={!!status.error}
-        />
+        <div className="mb-4">
+          <input
+            type="text"
+            value={identifier}
+            placeholder="Email or Username"
+            readOnly
+            disabled
+            aria-readonly
+            className="w-full p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100"
+          />
+        </div>
 
         <div className="mb-3">
           <label className="block text-sm font-medium mb-2">OTP</label>
