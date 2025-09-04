@@ -24,7 +24,8 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus({ loading: true, message: "", error: "" });
+    // Show guidance message immediately on click
+    setStatus({ loading: true, message: "you will get otp on your registred email address", error: "" });
     try {
       const res = await apiFetch("/auth/forgot-password", {
         method: "POST",
@@ -33,9 +34,9 @@ export default function ForgotPassword() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Request failed");
-      setStatus({ loading: false, message: data.message || "If an account exists, we sent an OTP.", error: "" });
-      // Move to OTP verification step with identifier prefilled
-      navigate("/verify-otp", { state: { identifier } });
+      setStatus({ loading: false, message: "you will get otp on your registred email address", error: "" });
+      // Give the user a moment to read the message, then move to OTP verification
+      setTimeout(() => navigate("/verify-otp", { state: { identifier } }), 600);
     } catch (err) {
       setStatus({ loading: false, message: "", error: err.message });
     }
@@ -59,8 +60,12 @@ export default function ForgotPassword() {
           hasError={!!status.error}
         />
 
-        {status.error && <p className="text-red-600 text-xs mb-2 -mt-2">{status.error}</p>}
-        {status.message && <p className="text-green-600 text-xs mb-2 -mt-2">{status.message}</p>}
+        {status.error && <p className="text-red-600 text-xs mb-2 -mt-2" role="alert">{status.error}</p>}
+        {status.message && (
+          <p className="text-green-600 text-xs mb-2 -mt-2" role="status" aria-live="polite">
+            {status.message}
+          </p>
+        )}
 
         <div className="flex items-center justify-between">
           <button

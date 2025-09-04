@@ -97,7 +97,7 @@ export default function VerifyResetOtp() {
           hasError={!!status.error}
         />
 
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block text-sm font-medium mb-2">OTP</label>
           <div className="flex gap-2" role="group" aria-labelledby="otp-label">
             {otpDigits.map((d, idx) => (
@@ -146,6 +146,17 @@ export default function VerifyResetOtp() {
           <p id="otp-help" className="text-[11px] text-gray-500 mt-1">Enter the 6-digit code sent to your email.</p>
         </div>
 
+        {status.error && (
+          <p className="text-red-600 text-xs mb-2" role="alert">
+            {status.error}
+          </p>
+        )}
+        {status.message && (
+          <p className="text-green-600 text-xs mb-2" role="status" aria-live="polite">
+            {status.message}
+          </p>
+        )}
+
         <div className="flex items-center justify-between mb-4">
           <button
             type="button"
@@ -158,9 +169,6 @@ export default function VerifyResetOtp() {
             {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
           </button>
         </div>
-
-        {status.error && <p className="text-red-600 text-xs mb-2 -mt-2" role="alert">{status.error}</p>}
-        {status.message && <p className="text-green-600 text-xs mb-2 -mt-2" role="status" aria-live="polite">{status.message}</p>}
 
         <button
           type="submit"
