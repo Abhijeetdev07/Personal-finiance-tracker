@@ -1,21 +1,25 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import FloatingInput from "../components/FloatingInput";
 import { getResetToken, getResetIdentifier, clearResetContext } from "../utils/resetTokenStore";
 import { apiFetch } from "../utils/api";
+import { BiArrowBack } from "react-icons/bi";
 
 export default function ResetPassword() {
+  const navigate = useNavigate();
   const tokenFromMemory = getResetToken();
   const identifierFromMemory = getResetIdentifier();
   const prefersToken = useMemo(() => !!tokenFromMemory, [tokenFromMemory]);
 
   const [useTokenFlow, setUseTokenFlow] = useState(prefersToken);
   const [identifier, setIdentifier] = useState(identifierFromMemory || "");
+  const [verifiedIdentifier] = useState(identifierFromMemory || "");
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [status, setStatus] = useState({ loading: false, message: "", error: "" });
+  const [resetCompleted, setResetCompleted] = useState(false);
 
   const validatePasswords = () => {
     if (!password || !confirmPassword) return "Please fill both password fields";
@@ -28,16 +32,18 @@ export default function ResetPassword() {
     return "";
   };
 
+  // Do not auto-redirect; allow OTP fallback on this page if token is missing
+  useEffect(() => {
+    // no-op
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // If using identifier+OTP flow, validate OTP is 6 digits
-    if (!useTokenFlow) {
-      const isSixDigit = /^\d{6}$/.test(otp);
-      if (!isSixDigit) {
-        setStatus({ loading: false, message: "", error: "Enter a valid 6-digit OTP" });
-        return;
-      }
+    if (resetCompleted) {
+      // Do nothing after successful reset to avoid any redirects
+      return;
     }
+    const usingToken = !!tokenFromMemory;
     const pwdErr = validatePasswords();
     if (pwdErr) {
       setStatus({ loading: false, message: "", error: pwdErr });
@@ -45,9 +51,14 @@ export default function ResetPassword() {
     }
     setStatus({ loading: true, message: "", error: "" });
 
-    const payload = useTokenFlow && tokenFromMemory
-      ? { token: tokenFromMemory, newPassword: password }
-      : { identifier, otp, newPassword: password };
+    // If no token, keep layout stable and send user to verify step
+    if (!usingToken) {
+      navigate("/verify-otp", { replace: true, state: { identifier } });
+      setStatus({ loading: false, message: "", error: "" });
+      return;
+    }
+
+    const payload = { token: tokenFromMemory, newPassword: password };
 
     try {
       const res = await apiFetch("/auth/reset-password", {
@@ -58,6 +69,7 @@ export default function ResetPassword() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Reset failed");
 
+      setResetCompleted(true);
       clearResetContext();
       setStatus({ loading: false, message: data.message || "Password reset successful.", error: "" });
     } catch (err) {
@@ -70,52 +82,32 @@ export default function ResetPassword() {
       background: "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
     }}>
       <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Reset Password</h2>
+        <div className="relative mb-4">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 p-0 bg-transparent text-[#007dff] hover:text-[#0066cc]"
+            aria-label="Go back"
+          >
+            <BiArrowBack size={20} />
+          </button>
+          <h2 className="text-2xl font-bold text-gray-800 text-center">Reset Password</h2>
+        </div>
 
         {/* Always show password fields; identifier/OTP appear only when no token is present */}
 
-        {tokenFromMemory && (
-          <div className="mb-4">
-            <input
-              type="text"
-              value={identifierFromMemory}
-              readOnly
-              disabled
-              aria-readonly
-              className="w-full p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100"
-            />
-          </div>
-        )}
+        <div className="mb-4">
+          <input
+            type="text"
+            value={verifiedIdentifier || identifier || ""}
+            placeholder="Email or Username"
+            readOnly
+            disabled
+            aria-readonly
+            className="w-full p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100"
+          />
+        </div>
 
-        {!useTokenFlow && (
-          <>
-            <FloatingInput
-              type="text"
-              name="identifier"
-              label="Email or Username"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              className="mb-4"
-              required
-              hasError={!!status.error}
-            />
-
-            <FloatingInput
-              type="text"
-              name="otp"
-              label="OTP"
-              value={otp}
-              onChange={(e) => {
-                const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 6);
-                setOtp(digitsOnly);
-              }}
-              className="mb-4"
-              required
-              hasError={!!status.error}
-            />
-            <p className="text-[11px] text-gray-500 -mt-3 mb-3">Enter the 6-digit code sent to your email.</p>
-          </>
-        )}
 
         <FloatingInput
           type="password"
@@ -152,7 +144,7 @@ export default function ResetPassword() {
 
         <button
           type="submit"
-          disabled={status.loading}
+          disabled={status.loading || resetCompleted}
           className="w-full bg-[#007dff] hover:bg-[#0066cc] disabled:opacity-60 text-white py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer"
         >
           {status.loading ? "Resetting..." : "Reset Password"}

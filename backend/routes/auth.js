@@ -246,6 +246,14 @@ router.post("/reset-password", async (req, res) => {
       }
     }
 
+    // Enforce: new password must differ from current password
+    const isSameAsCurrent = await bcrypt.compare(newPassword, user.password);
+    if (isSameAsCurrent) {
+      return res.status(400).json({
+        error: "New password must be different from your current one."
+      });
+    }
+
     // Update password
     const hashed = await bcrypt.hash(newPassword, 10);
     user.password = hashed;

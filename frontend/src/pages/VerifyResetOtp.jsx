@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FloatingInput from "../components/FloatingInput";
 import { apiFetch } from "../utils/api";
 import { setResetContext } from "../utils/resetTokenStore";
+import { BiArrowBack } from "react-icons/bi";
 
 export default function VerifyResetOtp() {
   const location = useLocation();
@@ -15,13 +16,56 @@ export default function VerifyResetOtp() {
   const [isOtpInvalid, setIsOtpInvalid] = useState(false);
   const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""]);
   const inputsRef = useRef([]);
+  const [resendLoading, setResendLoading] = useState(false);
+  const timerRef = useRef(null);
+
+  // Load countdown from sessionStorage on component mount
+  useEffect(() => {
+    const savedCooldown = sessionStorage.getItem('verifyOtpCooldown');
+    const savedCooldownTime = sessionStorage.getItem('verifyOtpCooldownTime');
+    
+    if (savedCooldown && savedCooldownTime) {
+      const elapsed = Math.floor((Date.now() - parseInt(savedCooldownTime)) / 1000);
+      const remaining = Math.max(0, parseInt(savedCooldown) - elapsed);
+      
+      if (remaining > 0) {
+        setCooldown(remaining);
+        startCooldown(remaining);
+      } else {
+        // Clear expired countdown
+        sessionStorage.removeItem('verifyOtpCooldown');
+        sessionStorage.removeItem('verifyOtpCooldownTime');
+      }
+    }
+
+    // Cleanup timer on component unmount
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const startCooldown = (secs = 60) => {
+    // Clear any existing timer first
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+
     setCooldown(secs);
-    const intervalId = setInterval(() => {
+    
+    // Save countdown to sessionStorage
+    sessionStorage.setItem('verifyOtpCooldown', secs.toString());
+    sessionStorage.setItem('verifyOtpCooldownTime', Date.now().toString());
+    
+    timerRef.current = setInterval(() => {
       setCooldown((prev) => {
         if (prev <= 1) {
-          clearInterval(intervalId);
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+          // Clear sessionStorage when countdown ends
+          sessionStorage.removeItem('verifyOtpCooldown');
+          sessionStorage.removeItem('verifyOtpCooldownTime');
           return 0;
         }
         return prev - 1;
@@ -64,7 +108,8 @@ export default function VerifyResetOtp() {
 
   const handleResend = async () => {
     if (cooldown > 0) return;
-    setStatus({ loading: true, message: "", error: "" });
+    setResendLoading(true);
+    setStatus({ loading: false, message: "", error: "" });
     try {
       const res = await apiFetch("/auth/forgot-password", {
         method: "POST",
@@ -76,6 +121,8 @@ export default function VerifyResetOtp() {
       startCooldown(60);
     } catch (err) {
       setStatus({ loading: false, message: "", error: err.message });
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -84,7 +131,17 @@ export default function VerifyResetOtp() {
       background: "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
     }}>
       <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Verify OTP</h2>
+        <div className="relative mb-10">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 p-0 bg-transparent text-[#007dff] hover:text-[#0066cc]"
+            aria-label="Go back"
+          >
+            <BiArrowBack size={20} />
+          </button>
+          <h2 className="text-2xl font-bold text-gray-800 text-center">Verify OTP</h2>
+        </div>
 
         <FloatingInput
           type="text"
@@ -161,12 +218,12 @@ export default function VerifyResetOtp() {
           <button
             type="button"
             onClick={handleResend}
-            disabled={cooldown > 0 || status.loading || !identifier}
+            disabled={cooldown > 0 || resendLoading || !identifier}
             className={`text-sm ${cooldown > 0 ? "text-gray-400" : "text-blue-600 hover:underline"}`}
             aria-disabled={cooldown > 0}
             aria-live="polite"
           >
-            {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend OTP"}
+            {cooldown > 0 ? `Resend in ${cooldown}s` : resendLoading ? "Resending OTP..." : "Resend OTP"}
           </button>
         </div>
 

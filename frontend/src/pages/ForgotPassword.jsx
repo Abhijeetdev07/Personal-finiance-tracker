@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BiArrowBack } from "react-icons/bi";
 import FloatingInput from "../components/FloatingInput";
 import { apiFetch } from "../utils/api";
 
@@ -47,7 +48,17 @@ export default function ForgotPassword() {
       background: "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
     }}>
       <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Forgot Password</h2>
+        <div className="relative mb-6">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 p-0 bg-transparent text-[#007dff] hover:text-[#0066cc]"
+            aria-label="Go back"
+          >
+            <BiArrowBack size={20} />
+          </button>
+          <h2 className="text-2xl font-bold text-gray-800 text-center">Forgot Password</h2>
+        </div>
 
         <FloatingInput
           type="text"
