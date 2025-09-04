@@ -54,9 +54,9 @@ export default function Login() {
         </h2>
 
         <FloatingInput
-          type="email"
+          type="text"
           name="email"
-          label="Email"
+          label="Email/username"
           value={form.email}
           onChange={handleChange}
           className="mb-4"

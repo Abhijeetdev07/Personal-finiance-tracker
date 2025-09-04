@@ -52,8 +52,8 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // ✅ Test route
 app.get("/api/test", (req, res) => {
-  // res.json({ message: "Backend is working!" });
-  console.log("Backend is working!");
+  res.json({ message: "Backend is working!" });
+ // console.log("Backend is working!");
 });
 
 // Auth routes
