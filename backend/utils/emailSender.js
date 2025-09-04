@@ -38,7 +38,7 @@ async function sendPasswordResetOtp({ to, otp }) {
           <p><strong>This OTP will expire in 10 minutes.</strong></p>
           <p>If you didn't request this password reset, please ignore this email.</p>
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-          <p style="color: #666; font-size: 12px;">This is an automated message from Fin Tracker.</p>
+          <p style="color: #666; font-size: 12px;">This is an automated message from Finiancial Tracker, do not reply to this email.</p>
         </div>
       `,
     };
