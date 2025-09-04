@@ -142,7 +142,7 @@ fin-tracker/
    ```
 3. Optionally set API base URL in `frontend/.env`:
    ```env
-   VITE_API_BASE_URL=http://localhost:5000/api
+   VITE_API_BASE_URL=http://localhost:5000/
    ```
 4. Start the development server:
    ```bash
