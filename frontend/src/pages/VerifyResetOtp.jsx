@@ -201,7 +201,7 @@ export default function VerifyResetOtp() {
               />
             ))}
           </div>
-          <p id="otp-help" className="text-[11px] text-gray-500 mt-1">Enter the 6-digit code sent to your email.</p>
+          <p id="otp-help" className="text-[12px] text-gray-500 mt-2">Enter the 6-digit code sent to your email.</p>
         </div>
 
         {status.error && (
