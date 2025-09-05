@@ -6,6 +6,7 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 const transactionRoutes = require("./routes/transactions");
+const profileRoutes = require("./routes/profile");
 
 const app = express(); // <-- initialize app first
 
@@ -24,6 +25,9 @@ app.use("/api/auth", authRoutes);
 
 // Transaction routes
 app.use("/api/transactions", transactionRoutes);
+
+// Profile routes
+app.use("/api/profile", profileRoutes);
 
 // Protected example route
 app.get("/api/protected", require("./middleware/auth"), (req, res) => {

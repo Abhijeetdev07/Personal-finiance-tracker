@@ -41,3 +41,17 @@ export async function apiFetch(path, options = {}) {
 }
 
 
+// Profile API helpers
+export async function getProfile() {
+  const res = await apiFetch("/profile", { method: "GET" });
+  return res.json();
+}
+
+export async function updateUserProfile(profileUpdates) {
+  const res = await apiFetch("/profile", {
+    method: "PUT",
+    body: JSON.stringify(profileUpdates),
+  });
+  return res.json();
+}
+
