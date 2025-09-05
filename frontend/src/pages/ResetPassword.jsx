@@ -72,6 +72,10 @@ export default function ResetPassword() {
       setResetCompleted(true);
       clearResetContext();
       setStatus({ loading: false, message: data.message || "Password reset successful.", error: "" });
+      // Auto-redirect to login after brief delay so user can see the success message
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 3000);
     } catch (err) {
       setStatus({ loading: false, message: "", error: err.message });
     }
@@ -138,7 +142,7 @@ export default function ResetPassword() {
         {status.message && (
           <div className="mb-2 -mt-2 text-xs">
             <p className="text-green-600">{status.message}</p>
-            <p className="mt-1 text-gray-600">Proceed to <Link to="/login" className="text-blue-600 hover:underline">Login</Link>.</p>
+            <p className="mt-1 text-gray-600 text-sm">Proceed to <Link to="/login" className="text-blue-600 hover:underline">Login</Link>. Redirecting automatically...</p>
           </div>
         )}
 

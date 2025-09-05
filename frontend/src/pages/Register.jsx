@@ -66,13 +66,29 @@ export default function Register() {
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-2xl p-6 w-96"
+        autoComplete="on"
+        method="post"
+        action="/api/auth/register"
+        noValidate
+        data-form-type="signup"
+        role="form"
+        aria-label="Registration form"
       >
         <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
           Register
         </h2>
 
-        
+        {/* Hidden username field for password manager compatibility */}
+        <input
+          type="text"
+          name="username"
+          id="username"
+          autoComplete="username"
+          style={{ display: 'none' }}
+          tabIndex={-1}
+        />
 
+        {/* Floating inputs with proper autocomplete for password managers */}
         <FloatingInput
           type="text"
           name="username"
@@ -82,6 +98,7 @@ export default function Register() {
           className="mb-4"
           required
           hasError={!!error}
+          autoComplete="username"
         />
         
         <FloatingInput
@@ -93,6 +110,7 @@ export default function Register() {
           className="mb-4"
           required
           hasError={!!error}
+          autoComplete="email"
         />
 
         <FloatingInput
@@ -107,6 +125,7 @@ export default function Register() {
           onTogglePassword={() => setShowPassword(!showPassword)}
           showPassword={showPassword}
           hasError={!!error}
+          autoComplete="new-password"
         />
 
         {error && (

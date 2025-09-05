@@ -108,7 +108,7 @@ fin-tracker/
 ### Prerequisites
 - **Node.js** (v14 or higher)
 - **MongoDB** (local installation or MongoDB Atlas)
-- **Email Service** (Gmail, Outlook, or SMTP provider)
+- **Brevo Account** (free SMTP service for email delivery)
 
 ### 1. Backend Setup
 1. Navigate to the `backend/` directory
@@ -122,12 +122,12 @@ fin-tracker/
    JWT_SECRET=your-super-secret-jwt-key
    PORT=5000
    
-   # Email Configuration
-   EMAIL_HOST=smtp.gmail.com
-   EMAIL_PORT=587
-   EMAIL_USER=your-email@gmail.com
-   EMAIL_PASS=your-app-password
-   EMAIL_FROM=your-email@gmail.com
+   # Brevo SMTP Configuration
+   SMTP_HOST=smtp-relay.brevo.com
+   SMTP_PORT=587
+   SMTP_USER=your-registered-email@domain.com
+   SMTP_PASS=your-brevo-smtp-key
+   EMAIL_FROM=your-registered-email@domain.com
    ```
 4. Start the backend server:
    ```bash
@@ -187,7 +187,7 @@ fin-tracker/
 - **OTP Expiry**: Password reset OTPs expire after 10 minutes
 - **Token Security**: Reset tokens are short-lived and single-use
 - **Timezone**: Database timestamps are configured for local timezone
-- **Email Delivery**: Ensure proper SMTP configuration for email functionality
+- **Email Delivery**: Brevo SMTP service provides reliable email delivery with 300 emails/day free tier
 - **User Deletion**: Deleting a user in the database will automatically log them out
 
 ## 🤝 Contributing

@@ -48,13 +48,31 @@ export default function Login() {
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-2xl p-6 w-96"
+        autoComplete="on"
+        method="post"
+        action="/api/auth/login"
+        noValidate
+        data-form-type="login"
+        role="form"
+        aria-label="Login form"
       >
         <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
           Login
         </h2>
 
-        <FloatingInput
+        {/* Hidden username field for password manager compatibility */}
+        <input
           type="text"
+          name="username"
+          id="username"
+          autoComplete="username"
+          style={{ display: 'none' }}
+          tabIndex={-1}
+        />
+
+        {/* Floating inputs with proper autocomplete for password managers */}
+        <FloatingInput
+          type="email"
           name="email"
           label="Email/username"
           value={form.email}
@@ -62,6 +80,7 @@ export default function Login() {
           className="mb-4"
           required
           hasError={!!error}
+          autoComplete="email"
         />
 
         <FloatingInput
@@ -76,6 +95,7 @@ export default function Login() {
           onTogglePassword={() => setShowPassword(!showPassword)}
           showPassword={showPassword}
           hasError={!!error}
+          autoComplete="current-password"
         />
 
          {error && <p className="text-red-600 mb-2 mt-2 text-sm">{error}</p>}

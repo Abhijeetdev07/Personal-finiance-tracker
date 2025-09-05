@@ -33,7 +33,8 @@ app.get("/api/protected", require("./middleware/auth"), (req, res) => {
 // Connect to MongoDB and start server
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("✅ MongoDB connected");
-    app.listen(5000, () => console.log("✅ Server running on port 5000"));
+    console.log("MongoDB connected");
+    const PORT = 5000;
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
   .catch(err => console.error("MongoDB error:", err));

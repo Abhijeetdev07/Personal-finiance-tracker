@@ -12,6 +12,7 @@ export default function FloatingInput({
   onTogglePassword,
   showPassword = false,
   hasError = false,
+  autoComplete,
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const isFloating = isFocused || value !== "";
@@ -31,8 +32,15 @@ export default function FloatingInput({
             : "border-gray-300 focus:border-[#007dff]"
         } ${showPasswordToggle ? "pr-12" : ""}`}
         required={required}
+        autoComplete={autoComplete}
+        id={name}
+        data-testid={name}
+        autoCapitalize="off"
+        autoCorrect="off"
+        spellCheck="false"
       />
       <label
+        htmlFor={name}
         className={`absolute left-3 transition-all duration-200 pointer-events-none ${
           isFloating
             ? `top-0 -translate-y-1/2 bg-white px-2 text-sm ${hasError ? "text-red-500" : "text-[#007dff]"}`
