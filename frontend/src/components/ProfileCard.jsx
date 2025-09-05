@@ -20,14 +20,6 @@ export default function ProfileCard() {
           <h3 className="font-semibold mb-1">Profile</h3>
           <p className="text-sm text-gray-600">No profile loaded</p>
         </div>
-        {onEdit && (
-          <button
-            onClick={onEdit}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-          >
-            Edit
-          </button>
-        )}
       </div>
     );
   }
@@ -35,21 +27,28 @@ export default function ProfileCard() {
   return (
     <div className="bg-white p-4 rounded-lg shadow border">
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center text-gray-500 text-xl flex-shrink-0">
+        <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center text-gray-500 text-xl flex-shrink-0">
           {(profile.firstName?.[0] || profile.username?.[0] || "U").toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-lg">
-            {profile.firstName || profile.lastName
+          <h3 className="font-semibold text-lg truncate" title={profile.firstName || profile.lastName
               ? `${profile.firstName || ""} ${profile.lastName || ""}`.trim()
-              : profile.username}
+              : profile.username}>
+            {profile.firstName || profile.lastName
+              ? (() => {
+                  const fullName = `${profile.firstName || ""} ${profile.lastName || ""}`.trim();
+                  return fullName.length > 20 ? fullName.substring(0, 20) + "..." : fullName;
+                })()
+              : (profile.username?.length > 20 ? profile.username.substring(0, 20) + "..." : profile.username)}
           </h3>
           <p className="text-sm text-gray-600 truncate">{profile.email}</p>
           {profile.phone ? (
             <p className="text-sm text-gray-600">{profile.phone}</p>
           ) : null}
           {profile.bio ? (
-            <p className="text-sm text-gray-700 mt-2 whitespace-pre-wrap break-words">{profile.bio}</p>
+            <p className="text-sm text-gray-700 mt-2 break-words line-clamp-2" title={profile.bio}>
+              {profile.bio.length > 50 ? profile.bio.substring(0, 50) + "..." : profile.bio}
+            </p>
           ) : null}
         </div>
       </div>

@@ -149,18 +149,20 @@ export default function Dashboard() {
 
       <div className="p-6">
         {/* Summary */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-green-100 p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold text-green-800">Income</h2>
-            <p className="text-xl text-green-700">₹{summary.income}</p>
-          </div>
-          <div className="bg-red-100 p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold text-red-800">Expenses</h2>
-            <p className="text-xl text-red-700">₹{summary.expense}</p>
-          </div>
-          <div className="bg-blue-100 p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold text-blue-800">Balance</h2>
-            <p className="text-xl text-blue-700">₹{summary.balance}</p>
+        <div className="flex justify-center mb-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 w-8/10">
+            <div className="bg-green-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow text">
+              <h2 className="text-xs sm:text-lg font-semibold text-green-800">Income</h2>
+              <p className="text-sm sm:text-xl text-green-700">₹{summary.income}</p>
+            </div>
+            <div className="bg-red-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
+              <h2 className="text-xs sm:text-lg font-semibold text-red-800">Expenses</h2>
+              <p className="text-sm sm:text-xl text-red-700">₹{summary.expense}</p>
+            </div>
+            <div className="bg-blue-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
+              <h2 className="text-xs sm:text-lg font-semibold text-blue-800">Balance</h2>
+              <p className="text-sm sm:text-xl text-blue-700">₹{summary.balance}</p>
+            </div>
           </div>
         </div>
 

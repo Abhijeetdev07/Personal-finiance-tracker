@@ -27,8 +27,8 @@ export default function ProfileForm({ initialValues, onCancel, onSubmit, submitt
 
   const validateName = (name, fieldName) => {
     if (!name) return ""; // Empty is allowed
-    if (!/^[a-zA-Z\s]+$/.test(name)) {
-      return `${fieldName} can only contain letters and spaces`;
+    if (!/^[a-zA-Z]+$/.test(name)) {
+      return `${fieldName} can only contain letters (no spaces, numbers, or symbols)`;
     }
     return "";
   };
@@ -44,10 +44,18 @@ export default function ProfileForm({ initialValues, onCancel, onSubmit, submitt
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validate all fields
-    const firstNameError = validateName(values.firstName, "First name");
-    const lastNameError = validateName(values.lastName, "Last name");
-    const phoneError = validatePhone(values.phone);
+    // Remove spaces from first name, last name, and phone
+    const cleanedValues = {
+      ...values,
+      firstName: values.firstName?.replace(/\s/g, '') || '',
+      lastName: values.lastName?.replace(/\s/g, '') || '',
+      phone: values.phone?.replace(/\s/g, '') || ''
+    };
+    
+    // Validate all fields with cleaned values
+    const firstNameError = validateName(cleanedValues.firstName, "First name");
+    const lastNameError = validateName(cleanedValues.lastName, "Last name");
+    const phoneError = validatePhone(cleanedValues.phone);
     
     const newErrors = {};
     if (firstNameError) newErrors.firstName = firstNameError;
@@ -59,7 +67,10 @@ export default function ProfileForm({ initialValues, onCancel, onSubmit, submitt
       return;
     }
     
-    onSubmit?.(values);
+    // Update the form values to show cleaned versions
+    setValues(cleanedValues);
+    
+    onSubmit?.(cleanedValues);
   };
 
   return (
@@ -77,8 +88,8 @@ export default function ProfileForm({ initialValues, onCancel, onSubmit, submitt
               errors.firstName ? "border-red-500" : ""
             }`}
             placeholder="John"
-            pattern="[a-zA-Z\s]+"
-            title="First name can only contain letters and spaces"
+            pattern="[a-zA-Z]+"
+            title="First name can only contain letters (no spaces)"
           />
           {errors.firstName && (
             <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
@@ -96,8 +107,8 @@ export default function ProfileForm({ initialValues, onCancel, onSubmit, submitt
               errors.lastName ? "border-red-500" : ""
             }`}
             placeholder="Doe"
-            pattern="[a-zA-Z\s]+"
-            title="Last name can only contain letters and spaces"
+            pattern="[a-zA-Z]+"
+            title="Last name can only contain letters (no spaces)"
           />
           {errors.lastName && (
             <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>

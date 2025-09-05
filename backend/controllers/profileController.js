@@ -35,7 +35,12 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { firstName, lastName, phone, bio } = req.body;
+    let { firstName, lastName, phone, bio } = req.body;
+
+    // Remove spaces from first name, last name, and phone
+    if (firstName) firstName = firstName.replace(/\s/g, '');
+    if (lastName) lastName = lastName.replace(/\s/g, '');
+    if (phone) phone = phone.replace(/\s/g, '');
 
     // Validate input
     const updateData = {};
@@ -44,14 +49,14 @@ const updateProfile = async (req, res) => {
     if (phone !== undefined) updateData.phone = phone;
     if (bio !== undefined) updateData.bio = bio;
 
-    // Validate first name (only letters and spaces)
-    if (firstName && firstName !== "" && !/^[a-zA-Z\s]+$/.test(firstName)) {
-      return res.status(400).json({ error: "First name can only contain letters and spaces" });
+    // Validate first name (only letters, no spaces)
+    if (firstName && firstName !== "" && !/^[a-zA-Z]+$/.test(firstName)) {
+      return res.status(400).json({ error: "First name can only contain letters (no spaces, numbers, or symbols)" });
     }
 
-    // Validate last name (only letters and spaces)
-    if (lastName && lastName !== "" && !/^[a-zA-Z\s]+$/.test(lastName)) {
-      return res.status(400).json({ error: "Last name can only contain letters and spaces" });
+    // Validate last name (only letters, no spaces)
+    if (lastName && lastName !== "" && !/^[a-zA-Z]+$/.test(lastName)) {
+      return res.status(400).json({ error: "Last name can only contain letters (no spaces, numbers, or symbols)" });
     }
 
     // Validate phone number format if provided (exactly 10 digits)
