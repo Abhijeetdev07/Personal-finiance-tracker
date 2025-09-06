@@ -91,7 +91,7 @@ export default function Register() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen"
+      className="flex items-center justify-center min-h-screen px-4 py-6"
       style={{
         background:
           "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
@@ -99,7 +99,7 @@ export default function Register() {
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-2xl p-6 w-96"
+        className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm"
         autoComplete="on"
         method="post"
         action="/api/auth/register"
@@ -108,7 +108,7 @@ export default function Register() {
         role="form"
         aria-label="Registration form"
       >
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-center text-gray-800">
           Register
         </h2>
 
@@ -129,7 +129,7 @@ export default function Register() {
           label="Username"
           value={form.username}
           onChange={handleChange}
-          className="mb-4"
+          className="mb-3 sm:mb-4"
           required
           hasError={!!error}
           autoComplete="username"
@@ -141,7 +141,7 @@ export default function Register() {
           label="Email"
           value={form.email}
           onChange={handleChange}
-          className="mb-4"
+          className="mb-3 sm:mb-4"
           required
           hasError={!!error}
           autoComplete="email"
@@ -153,7 +153,7 @@ export default function Register() {
           label="Password"
           value={form.password}
           onChange={handleChange}
-          className="mb-4"
+          className="mb-3 sm:mb-4"
           required
           showPasswordToggle={true}
           onTogglePassword={() => setShowPassword(!showPassword)}
@@ -170,12 +170,12 @@ export default function Register() {
 
         <button
           type="submit"
-          className="w-full bg-[#007dff] hover:bg-[#0066cc] text-white py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer"
+          className="w-full bg-[#007dff] hover:bg-[#0066cc] text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer text-sm sm:text-base"
         >
           Register
         </button>
 
-        <p className="text-sm mt-3 text-center text-gray-600">
+        <p className="text-xs sm:text-sm mt-3 text-center text-gray-600">
           Already have an account?{" "}
           <Link
             to="/login"

@@ -127,23 +127,23 @@ export default function VerifyResetOtp() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen" style={{
+    <div className="flex items-center justify-center min-h-screen px-4 py-6" style={{
       background: "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
     }}>
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-96">
-        <div className="relative mb-10">
+      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
+        <div className="relative mb-6 sm:mb-10">
           <button
             type="button"
             onClick={() => navigate(-1)}
             className="absolute left-0 top-1/2 -translate-y-1/2 p-0 bg-transparent text-[#007dff] hover:text-[#0066cc]"
             aria-label="Go back"
           >
-            <BiArrowBack size={20} />
+            <BiArrowBack size={18} className="sm:w-5 sm:h-5" />
           </button>
-          <h2 className="text-2xl font-bold text-gray-800 text-center">Verify OTP</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">Verify OTP</h2>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-3 sm:mb-4">
           <input
             type="text"
             value={identifier}
@@ -151,20 +151,20 @@ export default function VerifyResetOtp() {
             readOnly
             disabled
             aria-readonly
-            className="w-full p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100"
+            className="w-full p-2 sm:p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100 text-sm sm:text-base"
           />
         </div>
 
         <div className="mb-3">
-          <label className="block text-sm font-medium mb-2">OTP</label>
-          <div className="flex gap-2" role="group" aria-labelledby="otp-label">
+          <label className="block text-xs sm:text-sm font-medium mb-2">OTP</label>
+          <div className="flex gap-1.5 sm:gap-2 justify-center" role="group" aria-labelledby="otp-label">
             {otpDigits.map((d, idx) => (
               <input
                 key={idx}
                 ref={(el) => (inputsRef.current[idx] = el)}
                 inputMode="numeric"
                 aria-label={`Digit ${idx + 1}`}
-                className={`w-10 h-12 text-center text-lg rounded-md border outline-none transition-colors ${isOtpInvalid ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-[#007dff]"}`}
+                className={`w-7 h-8 sm:w-10 sm:h-12 text-center text-sm sm:text-lg rounded-md border outline-none transition-colors ${isOtpInvalid ? "border-red-500 focus:border-red-500" : "border-gray-300 focus:border-[#007dff]"}`}
                 type="text"
                 value={d}
                 onChange={(e) => {
@@ -201,7 +201,7 @@ export default function VerifyResetOtp() {
               />
             ))}
           </div>
-          <p id="otp-help" className="text-[12px] text-gray-500 mt-2">Enter the 6-digit code sent to your email.</p>
+          <p id="otp-help" className="text-[10px] sm:text-[12px] text-gray-500 mt-2 text-center">Enter the 6-digit code sent to your email.</p>
         </div>
 
         {status.error && (
@@ -215,12 +215,12 @@ export default function VerifyResetOtp() {
           </p>
         )}
 
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <button
             type="button"
             onClick={handleResend}
             disabled={cooldown > 0 || resendLoading || !identifier}
-            className={`text-sm ${cooldown > 0 ? "text-gray-400" : "text-blue-600 hover:underline"}`}
+            className={`text-xs sm:text-sm ${cooldown > 0 ? "text-gray-400" : "text-blue-600 hover:underline"}`}
             aria-disabled={cooldown > 0}
             aria-live="polite"
           >
@@ -231,7 +231,7 @@ export default function VerifyResetOtp() {
         <button
           type="submit"
           disabled={status.loading}
-          className="w-full bg-[#007dff] hover:bg-[#0066cc] disabled:opacity-60 text-white py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer"
+          className="w-full bg-[#007dff] hover:bg-[#0066cc] disabled:opacity-60 text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer text-sm sm:text-base"
         >
           {status.loading ? "Verifying..." : "Verify"}
         </button>

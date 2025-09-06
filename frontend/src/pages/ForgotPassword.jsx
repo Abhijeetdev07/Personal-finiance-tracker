@@ -44,20 +44,20 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen" style={{
+    <div className="flex items-center justify-center min-h-screen px-4 py-6" style={{
       background: "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
     }}>
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-96">
-        <div className="relative mb-6">
+      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
+        <div className="relative mb-4 sm:mb-6">
           <button
             type="button"
             onClick={() => navigate(-1)}
             className="absolute left-0 top-1/2 -translate-y-1/2 p-0 bg-transparent text-[#007dff] hover:text-[#0066cc]"
             aria-label="Go back"
           >
-            <BiArrowBack size={20} />
+            <BiArrowBack size={18} className="sm:w-5 sm:h-5" />
           </button>
-          <h2 className="text-2xl font-bold text-gray-800 text-center">Forgot Password</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">Forgot Password</h2>
         </div>
 
         <FloatingInput
@@ -66,7 +66,7 @@ export default function ForgotPassword() {
           label="Email or Username"
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
-          className="mb-4"
+          className="mb-3 sm:mb-4"
           required
           hasError={!!status.error}
         />
@@ -82,7 +82,7 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={status.loading || cooldown > 0}
-            className="w-full bg-[#007dff] hover:bg-[#0066cc] disabled:opacity-60 text-white py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer"
+            className="w-full bg-[#007dff] hover:bg-[#0066cc] disabled:opacity-60 text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer text-sm sm:text-base"
             aria-disabled={cooldown > 0}
             aria-live="polite"
           >

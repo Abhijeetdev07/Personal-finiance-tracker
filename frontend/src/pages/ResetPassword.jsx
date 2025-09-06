@@ -82,25 +82,25 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen" style={{
+    <div className="flex items-center justify-center min-h-screen px-4 py-6" style={{
       background: "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
     }}>
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 w-96">
-        <div className="relative mb-4">
+      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
+        <div className="relative mb-3 sm:mb-4">
           <button
             type="button"
             onClick={() => navigate(-1)}
             className="absolute left-0 top-1/2 -translate-y-1/2 p-0 bg-transparent text-[#007dff] hover:text-[#0066cc]"
             aria-label="Go back"
           >
-            <BiArrowBack size={20} />
+            <BiArrowBack size={18} className="sm:w-5 sm:h-5" />
           </button>
-          <h2 className="text-2xl font-bold text-gray-800 text-center">Reset Password</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 text-center">Reset Password</h2>
         </div>
 
         {/* Always show password fields; identifier/OTP appear only when no token is present */}
 
-        <div className="mb-4">
+        <div className="mb-3 sm:mb-4">
           <input
             type="text"
             value={verifiedIdentifier || identifier || ""}
@@ -108,7 +108,7 @@ export default function ResetPassword() {
             readOnly
             disabled
             aria-readonly
-            className="w-full p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100"
+            className="w-full p-2 sm:p-3 rounded border bg-blue-50 text-gray-700 opacity-80 cursor-not-allowed border-blue-100 text-sm sm:text-base"
           />
         </div>
 
@@ -119,7 +119,7 @@ export default function ResetPassword() {
           label="New Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mb-4"
+          className="mb-3 sm:mb-4"
           required
           hasError={!!status.error}
         />
@@ -130,7 +130,7 @@ export default function ResetPassword() {
           label="Confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mb-4"
+          className="mb-3 sm:mb-4"
           required
           hasError={!!status.error}
           showPasswordToggle={true}
@@ -142,14 +142,14 @@ export default function ResetPassword() {
         {status.message && (
           <div className="mb-2 -mt-2 text-xs">
             <p className="text-green-600">{status.message}</p>
-            <p className="mt-1 text-gray-600 text-sm">Proceed to <Link to="/login" className="text-blue-600 hover:underline">Login</Link>. Redirecting automatically...</p>
+            <p className="mt-1 text-gray-600 text-xs sm:text-sm">Proceed to <Link to="/login" className="text-blue-600 hover:underline">Login</Link>. Redirecting automatically...</p>
           </div>
         )}
 
         <button
           type="submit"
           disabled={status.loading || resetCompleted}
-          className="w-full bg-[#007dff] hover:bg-[#0066cc] disabled:opacity-60 text-white py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer"
+          className="w-full bg-[#007dff] hover:bg-[#0066cc] disabled:opacity-60 text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer text-sm sm:text-base"
         >
           {status.loading ? "Resetting..." : "Reset Password"}
         </button>

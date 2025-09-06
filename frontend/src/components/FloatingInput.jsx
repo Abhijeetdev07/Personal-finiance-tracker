@@ -26,11 +26,11 @@ export default function FloatingInput({
         onChange={onChange}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className={`w-full p-3 border rounded-lg focus:outline-none text-gray-700 transition-all duration-200 ${
+        className={`w-full p-2 sm:p-3 border rounded-lg focus:outline-none text-gray-700 transition-all duration-200 ${
           hasError 
             ? "border-red-500 focus:border-red-500" 
             : "border-gray-300 focus:border-[#007dff]"
-        } ${showPasswordToggle ? "pr-12" : ""}`}
+        } ${showPasswordToggle ? "pr-10 sm:pr-12" : ""}`}
         required={required}
         autoComplete={autoComplete}
         id={name}
@@ -41,9 +41,9 @@ export default function FloatingInput({
       />
       <label
         htmlFor={name}
-        className={`absolute left-3 transition-all duration-200 pointer-events-none ${
+        className={`absolute left-2 sm:left-3 transition-all duration-200 pointer-events-none ${
           isFloating
-            ? `top-0 -translate-y-1/2 bg-white px-2 text-sm ${hasError ? "text-red-500" : "text-[#007dff]"}`
+            ? `top-0 -translate-y-1/2 bg-white px-2 text-sm ${hasError ? "text-red-500" : "text-[#007dff]"}` 
             : "top-1/2 -translate-y-1/2 text-gray-500"
         }`}
       >
@@ -51,7 +51,7 @@ export default function FloatingInput({
       </label>
       {showPasswordToggle && (
         <div
-          className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 hover:text-gray-700"
+          className="absolute inset-y-0 right-2 sm:right-3 flex items-center cursor-pointer text-gray-500 hover:text-gray-700"
           onClick={onTogglePassword}
         >
           {showPassword ? (
