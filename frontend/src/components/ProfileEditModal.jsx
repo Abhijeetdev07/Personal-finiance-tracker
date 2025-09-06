@@ -27,15 +27,15 @@ export default function ProfileEditModal({ isOpen, onClose, profile: profileProp
         const res = await onSave(values);
         if (res?.success) {
           setMessage("Profile updated successfully");
-          // Auto-close modal after 3 seconds
-          setTimeout(() => onClose?.(), 3000);
+          // Auto-close modal after 2 seconds
+          setTimeout(() => onClose?.(), 2000);
         } else if (res?.error) setError(res.error);
       } else if (saveProfile) {
         const res = await saveProfile(values);
         if (res?.success) {
           setMessage("Profile updated successfully");
-          // Auto-close modal after 3 seconds
-          setTimeout(() => onClose?.(), 3000);
+          // Auto-close modal after 2 seconds
+          setTimeout(() => onClose?.(), 2000);
         } else if (res?.error) setError(res.error);
       }
     } finally {
@@ -52,8 +52,22 @@ export default function ProfileEditModal({ isOpen, onClose, profile: profileProp
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">✕</button>
         </div>
         {message && (
-          <div className="mb-3 text-sm text-green-700 bg-green-100 border border-green-200 rounded px-3 py-2">
-            {message}
+          <div className="mb-3 text-sm text-green-700 bg-green-100 border border-green-200 rounded px-3 py-2 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                {message}
+              </div>
+              <button 
+                onClick={() => setMessage(null)}
+                className="text-green-600 hover:text-green-800 ml-2"
+                aria-label="Close success message"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )}
         {error && (

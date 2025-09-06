@@ -259,18 +259,18 @@ function HeaderProfile({ onOpenProfile, onLogout, isMenuOpen, setIsMenuOpen, men
         </button>
       </div>
       {isMenuOpen && (
-        <div className="absolute right-0 mt-3 w-80 bg-white border rounded-lg shadow-lg p-3 z-20">
+        <div className="absolute right-0 mt-3 w-64 sm:w-80 bg-white border rounded-lg shadow-lg p-3 z-20">
           <ProfileCard />
           <div className="flex flex-wrap justify-end gap-2 mt-3">
             <button
               onClick={() => { setIsMenuOpen(false); onOpenProfile(); }}
-              className="px-3 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm"
+              className="px-2 py-1 sm:px-3 sm:py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm"
             >
               Edit Profile
             </button>
             <button
               onClick={() => { setIsMenuOpen(false); onLogout(); }}
-              className="px-3 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm"
+              className="px-2 py-1 sm:px-3 sm:py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm"
             >
               Logout
             </button>
