@@ -55,3 +55,27 @@ export async function updateUserProfile(profileUpdates) {
   return res.json();
 }
 
+// Date formatting utilities for Kolkata timezone (IST)
+export function formatDateToIST(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+}
+
+export function formatDateTimeToIST(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+

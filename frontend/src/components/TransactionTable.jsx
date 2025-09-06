@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { formatDateToIST } from "../utils/api";
 
 export default function TransactionTable({ transactions, onEdit, onDelete }) {
   const [filter, setFilter] = useState("all");
@@ -42,7 +43,9 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
             {filteredTransactions.length > 0 ? (
               filteredTransactions.map((tx) => (
                 <tr key={tx._id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2">{tx.category}</td>
+                  <td className="border border-gray-300 p-2 max-w-32 truncate" title={tx.category}>
+                    {tx.category}
+                  </td>
                   <td
                     className={`border border-gray-300 p-2 ${
                       tx.type === "income" ? "text-green-600" : "text-red-600"
@@ -53,8 +56,8 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
                   <td className="border border-gray-300 p-2 capitalize">
                     {tx.type}
                   </td>
-                  <td className="border border-gray-300 p-2">{new Date(tx.date).toLocaleDateString()}</td>
-                  <td className="border border-gray-300 p-2 max-w-xs truncate" title={tx.note || ""}>
+                  <td className="border border-gray-300 p-2">{formatDateToIST(tx.date)}</td>
+                  <td className="border border-gray-300 p-2 max-w-32 truncate" title={tx.note || ""}>
                     {tx.note || "-"}
                   </td>
                   <td className="border border-gray-300 p-2">
@@ -95,7 +98,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
           filteredTransactions.map((tx) => (
             <div key={tx._id} className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="font-semibold text-gray-900">{tx.category}</h3>
+                <h3 className="font-semibold text-gray-900 truncate max-w-48" title={tx.category}>{tx.category}</h3>
                 <span
                   className={`font-bold text-lg ${
                     tx.type === "income" ? "text-green-600" : "text-red-600"
@@ -114,12 +117,12 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
                   {tx.type}
                 </span>
                 <span className="text-sm text-gray-600">
-                  {new Date(tx.date).toLocaleDateString()}
+                  {formatDateToIST(tx.date)}
                 </span>
               </div>
               
               {tx.note && (
-                <p className="text-sm text-gray-600 mb-3">{tx.note}</p>
+                <p className="text-sm text-gray-600 mb-3 truncate" title={tx.note}>{tx.note}</p>
               )}
               
               <div className="flex gap-2">

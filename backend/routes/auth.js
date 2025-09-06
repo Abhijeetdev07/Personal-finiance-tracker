@@ -11,6 +11,37 @@ router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Check for empty fields
+    const isUsernameEmpty = !username || !username.trim();
+    const isEmailEmpty = !email || !email.trim();
+    const isPasswordEmpty = !password || !password.trim();
+    
+    if (isUsernameEmpty && isEmailEmpty && isPasswordEmpty) {
+      return res.status(400).json({ error: "Username, email and password are required" });
+    }
+    
+    if (isUsernameEmpty) {
+      return res.status(400).json({ error: "Username is required" });
+    }
+    if (isEmailEmpty) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+    if (isPasswordEmpty) {
+      return res.status(400).json({ error: "Password is required" });
+    }
+
+    // Username validation: min 5 chars, only letters and numbers
+    if (typeof username !== "string") {
+      return res.status(400).json({ error: "Username must be a string" });
+    }
+    if (username.length < 5) {
+      return res.status(400).json({ error: "Username must be at least 5 characters long" });
+    }
+    const usernamePattern = /^[a-zA-Z0-9]+$/;
+    if (!usernamePattern.test(username)) {
+      return res.status(400).json({ error: "Username can only contain letters and numbers" });
+    }
+
     // Strong password validation: min 8, upper, lower, number, special
     if (typeof password !== "string") {
       return res.status(400).json({ error: "Password must be a string" });
@@ -23,8 +54,12 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ error: "Email already exists" });
+    // Check if email or username already exists
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) return res.status(400).json({ error: "Email already exists" });
+    
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) return res.status(400).json({ error: "Username already exists" });
 
     const hashed = await bcrypt.hash(password, 10);
 

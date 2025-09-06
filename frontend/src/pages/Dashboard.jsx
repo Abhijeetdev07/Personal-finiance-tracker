@@ -149,62 +149,27 @@ export default function Dashboard() {
 
       <div className="p-6">
         {/* Summary */}
-        <div className="flex justify-center mb-6">
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 w-8/10">
-            <div className="bg-green-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow text">
+        <div className="mb-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-4xl mx-auto">
+            <div className="bg-green-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
               <h2 className="text-xs sm:text-lg font-semibold text-green-800">Income</h2>
-              <p className="text-sm sm:text-xl text-green-700">₹{summary.income}</p>
+              <p className="text-xs sm:text-xl text-green-700 truncate">₹{summary.income}</p>
             </div>
             <div className="bg-red-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
               <h2 className="text-xs sm:text-lg font-semibold text-red-800">Expenses</h2>
-              <p className="text-sm sm:text-xl text-red-700">₹{summary.expense}</p>
+              <p className="text-xs sm:text-xl text-red-700 truncate">₹{summary.expense}</p>
             </div>
             <div className="bg-blue-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
               <h2 className="text-xs sm:text-lg font-semibold text-blue-800">Balance</h2>
-              <p className="text-sm sm:text-xl text-blue-700">₹{summary.balance}</p>
+              <p className="text-xs sm:text-xl text-blue-700 truncate">₹{summary.balance}</p>
             </div>
           </div>
         </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Category pie (sum by category for expenses) */}
-        <div className="bg-white p-4 rounded-lg shadow border">
-          <h3 className="font-semibold mb-3">Spending by Category</h3>
-          {
-            (() => {
-              const byCategory = transactions
-                .filter((t) => t.type === "expense")
-                .reduce((acc, t) => {
-                  const key = t.category || "Other";
-                  acc[key] = (acc[key] || 0) + t.amount;
-                  return acc;
-                }, {});
-              return <CategoryPieChart dataByCategory={byCategory} />;
-            })()
-          }
-        </div>
-
-        {/* Monthly bars (income vs expense per month) */}
-        <div className="bg-white p-4 rounded-lg shadow border">
-          <h3 className="font-semibold mb-3">Monthly Trend</h3>
-          {
-            (() => {
-              const toMonth = (iso) => {
-                const d = new Date(iso);
-                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-              };
-              const income = {};
-              const expense = {};
-              transactions.forEach((t) => {
-                const m = toMonth(t.date);
-                if (t.type === "income") income[m] = (income[m] || 0) + t.amount;
-                else expense[m] = (expense[m] || 0) + t.amount;
-              });
-              return <MonthlyBarChart monthlyIncome={income} monthlyExpense={expense} />;
-            })()
-          }
-        </div>
+        <CategoryPieChart transactions={transactions} />
+        <MonthlyBarChart transactions={transactions} />
       </div>
 
       {/* Add Transaction Form */}

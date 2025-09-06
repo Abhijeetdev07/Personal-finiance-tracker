@@ -120,12 +120,21 @@ router.get("/", auth, async (req, res) => {
 router.post("/", auth, async (req, res) => {
   try {
     const { amount, type, category, date, note } = req.body;
+    
+    // Convert date to IST if provided
+    let istDate = date;
+    if (date) {
+      const inputDate = new Date(date);
+      const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+      istDate = new Date(inputDate.getTime() + istOffset);
+    }
+    
     const newTx = await Transaction.create({
       user: req.user.id,
       amount,
       type,
       category,
-      date,
+      date: istDate,
       note,
     });
     res.status(201).json(newTx);
@@ -144,9 +153,17 @@ router.put("/:id", auth, async (req, res) => {
     if (tx.user.toString() !== req.user.id)
       return res.status(403).json({ error: "Not authorized" });
 
+    // Convert date to IST if provided
+    let istDate = date;
+    if (date) {
+      const inputDate = new Date(date);
+      const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+      istDate = new Date(inputDate.getTime() + istOffset);
+    }
+
     const updatedTx = await Transaction.findByIdAndUpdate(
       req.params.id,
-      { amount, type, category, date, note },
+      { amount, type, category, date: istDate, note },
       { new: true }
     );
     

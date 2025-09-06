@@ -31,6 +31,40 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
+    // Check for empty fields
+    const isUsernameEmpty = !form.username.trim();
+    const isEmailEmpty = !form.email.trim();
+    const isPasswordEmpty = !form.password.trim();
+    
+    if (isUsernameEmpty && isEmailEmpty && isPasswordEmpty) {
+      setError("Username, email and password are required");
+      return;
+    }
+    
+    if (isUsernameEmpty) {
+      setError("Username is required");
+      return;
+    }
+    if (isEmailEmpty) {
+      setError("Email is required");
+      return;
+    }
+    if (isPasswordEmpty) {
+      setError("Password is required");
+      return;
+    }
+
+    // Username validation: min 5 chars, only letters and numbers
+    if (form.username.length < 5) {
+      setError("Username must be at least 5 characters long");
+      return;
+    }
+    const usernamePattern = /^[a-zA-Z0-9]+$/;
+    if (!usernamePattern.test(form.username)) {
+      setError("Username can only contain letters and numbers");
+      return;
+    }
+
     // Client-side strong password check (mirrors backend)
     const strong = passwordHint.len && passwordHint.upper && passwordHint.lower && passwordHint.num && passwordHint.special;
     if (!strong) {
