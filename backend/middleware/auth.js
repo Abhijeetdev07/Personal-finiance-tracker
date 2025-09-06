@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
+
 async function auth(req, res, next) {
   const token = req.header("Authorization")?.split(" ")[1]; // Bearer token
   if (!token) return res.status(401).json({ error: "Access denied" });
