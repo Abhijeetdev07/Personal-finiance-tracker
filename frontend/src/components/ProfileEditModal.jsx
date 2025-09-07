@@ -80,6 +80,7 @@ export default function ProfileEditModal({ isOpen, onClose, profile: profileProp
             firstName: (profileProp?.firstName ?? profileFromContext?.firstName) || "",
             lastName: (profileProp?.lastName ?? profileFromContext?.lastName) || "",
             phone: (profileProp?.phone ?? profileFromContext?.phone) || "",
+            countryCode: (profileProp?.countryCode ?? profileFromContext?.countryCode) || "+91",
             bio: (profileProp?.bio ?? profileFromContext?.bio) || "",
           }}
           onCancel={onClose}

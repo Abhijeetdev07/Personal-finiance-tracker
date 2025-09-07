@@ -20,6 +20,7 @@ const getProfile = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,
+        countryCode: user.countryCode,
         bio: user.bio,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
@@ -35,7 +36,7 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
-    let { firstName, lastName, phone, bio } = req.body;
+    let { firstName, lastName, phone, countryCode, bio } = req.body;
 
     // Remove spaces from first name, last name, and phone
     if (firstName) firstName = firstName.replace(/\s/g, '');
@@ -47,6 +48,7 @@ const updateProfile = async (req, res) => {
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
     if (phone !== undefined) updateData.phone = phone;
+    if (countryCode !== undefined) updateData.countryCode = countryCode;
     if (bio !== undefined) updateData.bio = bio;
 
     // Validate first name (only letters, no spaces)
@@ -59,7 +61,12 @@ const updateProfile = async (req, res) => {
       return res.status(400).json({ error: "Last name can only contain letters (no spaces, numbers, or symbols)" });
     }
 
-    // Validate phone number format if provided (exactly 10 digits)
+    // Validate country code format if provided (starts with + followed by 1-4 digits)
+    if (countryCode && countryCode !== "" && !/^\+\d{1,4}$/.test(countryCode)) {
+      return res.status(400).json({ error: "Country code must start with + followed by 1-4 digits (e.g., +91, +1, +44)" });
+    }
+
+    // Validate phone number format if provided (exactly 10 digits for Indian numbers)
     if (phone && phone !== "" && !/^[6-9]\d{9}$/.test(phone)) {
       return res.status(400).json({ error: "Phone number must be exactly 10 digits starting with 6, 7, 8, or 9" });
     }
@@ -84,6 +91,7 @@ const updateProfile = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,
+        countryCode: user.countryCode,
         bio: user.bio,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt

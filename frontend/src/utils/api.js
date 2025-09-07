@@ -55,6 +55,70 @@ export async function updateUserProfile(profileUpdates) {
   return res.json();
 }
 
+// Phone number formatting utilities
+export function formatPhoneNumber(phone, countryCode) {
+  if (!phone) return '';
+  
+  // If country code is provided, format as "countryCode phone"
+  if (countryCode) {
+    return `${countryCode} ${phone}`;
+  }
+  
+  // Fallback to just phone number for backward compatibility
+  return phone;
+}
+
+export function parsePhoneNumber(formattedPhone) {
+  if (!formattedPhone) return { countryCode: '', phone: '' };
+  
+  // Check if phone number already has country code format
+  const countryCodeMatch = formattedPhone.match(/^(\+\d{1,4})\s+(.+)$/);
+  if (countryCodeMatch) {
+    return {
+      countryCode: countryCodeMatch[1],
+      phone: countryCodeMatch[2]
+    };
+  }
+  
+  // Default to India country code for existing phone numbers
+  return {
+    countryCode: '+91',
+    phone: formattedPhone
+  };
+}
+
+export function validatePhoneFormat(phone, countryCode) {
+  if (!phone) return { isValid: true, error: '' };
+  
+  const cleanPhone = phone.replace(/\D/g, '');
+  
+  // Basic validation based on country code
+  switch (countryCode) {
+    case '+91': // India
+      if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+        return { isValid: false, error: 'Indian mobile number must be 10 digits starting with 6, 7, 8, or 9' };
+      }
+      break;
+    case '+1': // US/Canada
+      if (!/^\d{10}$/.test(cleanPhone)) {
+        return { isValid: false, error: 'US/Canada number must be 10 digits' };
+      }
+      break;
+    case '+44': // UK
+      if (!/^\d{10,11}$/.test(cleanPhone)) {
+        return { isValid: false, error: 'UK number must be 10-11 digits' };
+      }
+      break;
+    default:
+      // Generic validation for other countries
+      if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+        return { isValid: false, error: 'Phone number must be 7-15 digits' };
+      }
+  }
+  
+  return { isValid: true, error: '' };
+}
+
 // Date formatting utilities for Kolkata timezone (IST)
 export function formatDateToIST(dateString) {
   const date = new Date(dateString);

@@ -43,7 +43,9 @@ export default function ProfileCard() {
           </h3>
           <p className="text-xs sm:text-sm text-gray-600 truncate">{profile.email}</p>
           {profile.phone ? (
-            <p className="text-xs sm:text-sm text-gray-600">{profile.phone}</p>
+            <p className="text-xs sm:text-sm text-gray-600">
+              {profile.countryCode ? `${profile.countryCode} ${profile.phone}` : profile.phone}
+            </p>
           ) : null}
           {profile.bio ? (
             <p className="text-xs sm:text-sm text-gray-700 mt-1 sm:mt-2 break-words line-clamp-2 hidden sm:block" title={profile.bio}>

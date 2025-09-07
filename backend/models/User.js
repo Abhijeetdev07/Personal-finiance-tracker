@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   firstName: { type: String, default: "" },
   lastName: { type: String, default: "" },
   phone: { type: String, default: "" },
+  countryCode: { type: String, default: "+91" },
   bio: { type: String, default: "" },
   resetPasswordOtpHash: { type: String },
   resetPasswordOtpExpiresAt: { type: Date },
