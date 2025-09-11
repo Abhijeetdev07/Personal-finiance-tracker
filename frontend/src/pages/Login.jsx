@@ -64,7 +64,7 @@ export default function Login() {
         <input
           type="text"
           name="username"
-          id="username"
+          id="hidden-username-login"
           autoComplete="username"
           style={{ display: 'none' }}
           tabIndex={-1}

@@ -7,5 +7,11 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss()
-    ],
+  ],
+  server: {
+    hmr: true,
+    watch: {
+      usePolling: true
+    }
+  }
 })

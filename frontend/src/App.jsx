@@ -29,28 +29,23 @@ export default function App() {
     logout();
   });
 
+
   return (
     <AuthContext.Provider value={{ token, login, logout }}>
       <BrowserRouter>
         <Routes>
-          {/* Default route → redirect based on auth */}
-          <Route
-            path="/"
-            element={token ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
-          />
+          {/* Default route → show login; if authenticated, redirect to dashboard */}
+          <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Login />} />
 
           {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login />} />
+          <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyResetOtp />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Protected route */}
-          <Route
-            path="/dashboard"
-            element={token ? <Dashboard /> : <Navigate to="/login" />}
-          />
+          <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>

@@ -116,7 +116,7 @@ export default function Register() {
         <input
           type="text"
           name="username"
-          id="username"
+          id="hidden-username"
           autoComplete="username"
           style={{ display: 'none' }}
           tabIndex={-1}
