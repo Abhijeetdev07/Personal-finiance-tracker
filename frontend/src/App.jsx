@@ -23,6 +23,10 @@ export default function App() {
   const logout = () => {
     setToken("");
     localStorage.removeItem("token");
+    try {
+      // Redirect to Home after logout
+      window.location.assign("/");
+    } catch (_) {}
   };
 
   // Ensure API helper logs out on 401

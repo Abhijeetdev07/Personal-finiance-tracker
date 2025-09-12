@@ -10,6 +10,7 @@ export default function TransactionForm({ token, onAdd }) {
   const [date, setDate] = useState("");
   const [note, setNote] = useState("");
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const cats = loadCategories();
@@ -27,6 +28,7 @@ export default function TransactionForm({ token, onAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const res = await apiFetch("/transactions", {
         method: "POST",
@@ -53,6 +55,8 @@ export default function TransactionForm({ token, onAdd }) {
       setNote("");
     } catch (err) {
       console.error("Add error:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -104,9 +108,14 @@ export default function TransactionForm({ token, onAdd }) {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 lg:w-auto w-full cursor-pointer"
+          disabled={isLoading}
+          className={`px-4 py-2 rounded lg:w-auto w-full cursor-pointer ${
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+          }`}
         >
-          Add
+          {isLoading ? "Adding..." : "Add"}
         </button>
       </div>
     </form>
