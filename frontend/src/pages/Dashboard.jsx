@@ -10,6 +10,7 @@ import CategoryPieChart from "../components/CategoryPieChart";
 import MonthlyBarChart from "../components/MonthlyBarChart";
 import ProfileCard from "../components/ProfileCard";
 import ProfileEditModal from "../components/ProfileEditModal";
+import ConfirmModal from "../components/ConfirmModal";
 import { AuthProvider as ProfileAuthProvider, AuthContext as ProfileContext } from "../context/AuthContext";
 
 export default function Dashboard() {
@@ -25,6 +26,8 @@ export default function Dashboard() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
   const menuRef = useRef(null);
 
   // Close profile menu on outside click
@@ -76,17 +79,36 @@ export default function Dashboard() {
     fetchTransactions();
   }, [token, logout, navigate]);
 
+  // Show delete confirmation modal
+  const showDeleteConfirmation = (id) => {
+    setTransactionToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
   // Delete transaction
-  const deleteTransaction = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this transaction?");
-    if (!confirmed) return;
+  const deleteTransaction = async () => {
+    if (!transactionToDelete) return;
     try {
-      const res = await apiFetch(`/transactions/${id}`, { method: "DELETE" });
+      const res = await apiFetch(`/transactions/${transactionToDelete}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete transaction");
-      setTransactions((prev) => prev.filter((t) => t._id !== id));
+      setTransactions((prev) => prev.filter((t) => t._id !== transactionToDelete));
+      
+      // Recalculate summary after deletion
+      const updatedTransactions = transactions.filter((t) => t._id !== transactionToDelete);
+      let income = 0, expense = 0;
+      updatedTransactions.forEach((tx) =>
+        tx.type === "income" ? (income += tx.amount) : (expense += tx.amount)
+      );
+      setSummary({ income, expense, balance: income - expense });
     } catch (err) {
       console.error("Delete error:", err);
     }
+  };
+
+  // Close delete modal
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setTransactionToDelete(null);
   };
 
   // Edit transaction
@@ -179,7 +201,7 @@ export default function Dashboard() {
       <TransactionTable 
         transactions={transactions} 
         onEdit={editTransaction}
-        onDelete={deleteTransaction}
+        onDelete={showDeleteConfirmation}
       />
 
       {/* Edit Modal */}
@@ -194,6 +216,18 @@ export default function Dashboard() {
       <ProfileEditModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={deleteTransaction}
+        title="Delete Transaction"
+        message="Are you sure you want to delete this transaction?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmButtonClass="bg-red-500 hover:bg-red-600"
       />
       </div>
     </div>
