@@ -204,13 +204,17 @@ export default function Register() {
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base ${
+          className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base flex items-center justify-center ${
             isLoading
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#007dff] hover:bg-[#0066cc] text-white cursor-pointer"
           }`}
         >
-          {isLoading ? "Creating account..." : "Register"}
+          {isLoading ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            "Register"
+          )}
         </button>
 
         <p className="text-xs sm:text-sm mt-3 text-center text-gray-600">

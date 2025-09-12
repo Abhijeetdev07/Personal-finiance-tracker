@@ -105,13 +105,17 @@ export default function Login() {
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base ${
+          className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base flex items-center justify-center ${
             isLoading
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#007dff] hover:bg-[#0066cc] text-white cursor-pointer"
           }`}
         >
-          {isLoading ? "Logging in..." : "Login"}
+          {isLoading ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            "Login"
+          )}
         </button>
 
        <div className="mt-2 text-right">
