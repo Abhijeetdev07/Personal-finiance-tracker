@@ -11,6 +11,7 @@ export default function Register() {
   const [error, setError] = useState("");
   const [passwordHint, setPasswordHint] = useState({ len: false, upper: false, lower: false, num: false, special: false });
   const [showPassword, setShowPassword] = useState(false); // password visibility
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -78,6 +79,7 @@ export default function Register() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const res = await apiFetch("/auth/register", {
         method: "POST",
@@ -91,6 +93,8 @@ export default function Register() {
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -199,9 +203,14 @@ export default function Register() {
 
         <button
           type="submit"
-          className="w-full bg-[#007dff] hover:bg-[#0066cc] text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer text-sm sm:text-base"
+          disabled={isLoading}
+          className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base ${
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#007dff] hover:bg-[#0066cc] text-white cursor-pointer"
+          }`}
         >
-          Register
+          {isLoading ? "Creating account..." : "Register"}
         </button>
 
         <p className="text-xs sm:text-sm mt-3 text-center text-gray-600">

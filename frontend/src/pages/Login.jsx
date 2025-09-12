@@ -10,6 +10,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false); // state for password visibility
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -20,6 +21,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
       const res = await apiFetch("/auth/login", {
@@ -32,6 +34,8 @@ export default function Login() {
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -100,9 +104,14 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full bg-[#007dff] hover:bg-[#0066cc] text-white py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 cursor-pointer text-sm sm:text-base"
+          disabled={isLoading}
+          className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base ${
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#007dff] hover:bg-[#0066cc] text-white cursor-pointer"
+          }`}
         >
-          Login
+          {isLoading ? "Logging in..." : "Login"}
         </button>
 
        <div className="mt-2 text-right">
