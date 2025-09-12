@@ -11,7 +11,10 @@ const app = express(); // <-- initialize app first
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+const allowedOrigin = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((s) => s.trim()).filter(Boolean)
+  : ["http://localhost:5173"];
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 // ✅ Test route
 app.get("/api/test", (req, res) => {

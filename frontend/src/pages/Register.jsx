@@ -3,6 +3,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../App";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import FloatingInput from "../components/FloatingInput";
 
 export default function Register() {
@@ -78,16 +79,12 @@ export default function Register() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await apiFetch("/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, firstName, lastName }),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Register failed");
-
-      // Expect token in response
       if (data.token) {
         login(data.token);
       }

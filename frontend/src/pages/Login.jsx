@@ -3,6 +3,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../App";
 import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from "../utils/api";
 import FloatingInput from "../components/FloatingInput";
 
 export default function Login() {
@@ -21,16 +22,13 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await apiFetch("/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
-
-      login(data.token); // save token to context + localStorage
+      login(data.token);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);

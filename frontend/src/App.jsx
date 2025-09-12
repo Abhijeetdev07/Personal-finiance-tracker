@@ -7,6 +7,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyResetOtp from "./pages/VerifyResetOtp";
 import ResetPassword from "./pages/ResetPassword";
 import { setUnauthorizedHandler } from "./utils/api";
+import Home from "./pages/Home";
 
 // Create auth context to share token across app
 export const AuthContext = createContext();
@@ -34,17 +35,17 @@ export default function App() {
     <AuthContext.Provider value={{ token, login, logout }}>
       <BrowserRouter>
         <Routes>
-          {/* Default route → show login; if authenticated, redirect to dashboard */}
-          <Route path="/" element={token ? <Navigate to="/dashboard" /> : <Login />} />
+          {/* Public Home */}
+          <Route path="/" element={<Home />} />
 
-          {/* Public routes */}
+          {/* Public auth routes with auth-aware redirects */}
           <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login />} />
           <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/verify-otp" element={<VerifyResetOtp />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Protected route */}
+          {/* Protected Dashboard */}
           <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>
