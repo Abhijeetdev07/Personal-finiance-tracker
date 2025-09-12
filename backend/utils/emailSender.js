@@ -27,7 +27,7 @@ async function sendPasswordResetOtp({ to, otp }) {
       from: process.env.EMAIL_FROM || smtpUser,
       to: to,
       subject: "Password Reset OTP - Fin Tracker",
-      text: `Your password reset OTP is: ${otp}\n\nThis OTP will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.`,
+      text: `Your password reset OTP is: ${otp}\n\nThis OTP will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.\n\nThis is an automated email, please do not reply.`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #007dff;">Password Reset Request</h2>
@@ -38,9 +38,10 @@ async function sendPasswordResetOtp({ to, otp }) {
           <p><strong>This OTP will expire in 10 minutes.</strong></p>
           <p>If you didn't request this password reset, please ignore this email.</p>
           <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
-          <p style="color: #666; font-size: 12px;">This is an automated message from Finiancial Tracker, do not reply to this email.</p>
+          <p style="color: #666; font-size: 12px;">This is an automated email, please do not reply.</p>
         </div>
       `,
+      replyTo: process.env.EMAIL_NOREPLY || process.env.EMAIL_FROM || smtpUser,
     };
 
     const result = await transporter.sendMail(mailOptions);
@@ -55,6 +56,31 @@ async function sendPasswordResetOtp({ to, otp }) {
   }
 }
 
+// Helper to send welcome email after registration
+async function sendWelcomeEmail({ to, username, firstName }) {
+  const mailOptions = {
+    from: process.env.EMAIL_FROM || smtpUser,
+    to,
+    subject: "Welcome to Fin Tracker 🎉",
+    text: `Hi ${firstName || username || "there"},\n\nWelcome to Fin Tracker! Start tracking your income and expenses today.\n\nNeed help? Visit your dashboard or our help section.\n\nThis is an automated email, please do not reply.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #007dff;">Welcome to Fin Tracker 🎉</h2>
+        <p>Hi <strong>${firstName || username || "there"}</strong>,</p>
+        <p>Thanks for signing up! You're all set to track your income and expenses.</p>
+        <p>Need help? Visit your dashboard or our help section.</p>
+        <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;">
+        <p style="color: #666; font-size: 12px;">This is an automated email, please do not reply.</p>
+      </div>
+    `,
+    replyTo: process.env.EMAIL_NOREPLY || process.env.EMAIL_FROM || smtpUser,
+  };
+  const result = await transporter.sendMail(mailOptions);
+  console.log("Welcome email sent:", result.messageId);
+  return { success: true, messageId: result.messageId };
+}
+
 module.exports = {
   sendPasswordResetOtp,
+  sendWelcomeEmail,
 };

@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { apiFetch } from "../utils/api";
+import { loadCategories } from "../utils/categories";
 
 export default function TransactionForm({ token, onAdd }) {
   const [amount, setAmount] = useState("");
@@ -8,6 +9,21 @@ export default function TransactionForm({ token, onAdd }) {
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
   const [note, setNote] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const cats = loadCategories();
+    setCategories(cats);
+    if (!category && cats.length > 0) {
+      setCategory(cats[0]);
+    }
+  }, []);
+
+  const displayCategories = useMemo(() => {
+    const withoutOther = categories.filter((c) => c.toLowerCase() !== "other");
+    const hasOther = categories.some((c) => c.toLowerCase() === "other");
+    return hasOther ? [...withoutOther, "Other"] : withoutOther;
+  }, [categories]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +48,7 @@ export default function TransactionForm({ token, onAdd }) {
       // Reset form
       setAmount("");
       setType("income");
-      setCategory("");
+      setCategory(categories[0] || "");
       setDate("");
       setNote("");
     } catch (err) {
@@ -60,14 +76,17 @@ export default function TransactionForm({ token, onAdd }) {
           <option value="income">Income</option>
           <option value="expense">Expense</option>
         </select>
-        <input
-          type="text"
-          placeholder="Category"
+        <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="border p-2 rounded lg:w-1/3 w-full "
+          className="border p-2 rounded lg:w-1/3 w-full cursor-pointer"
           required
-        />
+        >
+          {displayCategories.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+          {displayCategories.length === 0 && <option value="" disabled>No categories</option>}
+        </select>
         <input
           type="date"
           placeholder="Date"

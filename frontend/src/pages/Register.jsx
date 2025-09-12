@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import FloatingInput from "../components/FloatingInput";
 
 export default function Register() {
-  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const [form, setForm] = useState({ username: "", email: "", password: "", firstName: "", lastName: "" });
   const [error, setError] = useState("");
   const [passwordHint, setPasswordHint] = useState({ len: false, upper: false, lower: false, num: false, special: false });
   const [showPassword, setShowPassword] = useState(false); // password visibility
@@ -31,37 +31,42 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
-    // Check for empty fields
-    const isUsernameEmpty = !form.username.trim();
-    const isEmailEmpty = !form.email.trim();
-    const isPasswordEmpty = !form.password.trim();
-    
-    if (isUsernameEmpty && isEmailEmpty && isPasswordEmpty) {
-      setError("Username, email and password are required");
-      return;
-    }
-    
-    if (isUsernameEmpty) {
-      setError("Username is required");
-      return;
-    }
-    if (isEmailEmpty) {
-      setError("Email is required");
-      return;
-    }
-    if (isPasswordEmpty) {
-      setError("Password is required");
+    // Trim inputs
+    const username = form.username.trim();
+    const email = form.email.trim();
+    const password = form.password.trim();
+    const firstName = form.firstName.replace(/\s/g, "");
+    const lastName = form.lastName.replace(/\s/g, "");
+
+    // Required checks
+    if (!username || !email || !password || !firstName) {
+      setError("Username, email, password and first name are required");
       return;
     }
 
-    // Username validation: min 5 chars, only letters and numbers
-    if (form.username.length < 5) {
+    // Username validation
+    if (username.length < 5) {
       setError("Username must be at least 5 characters long");
       return;
     }
     const usernamePattern = /^[a-zA-Z0-9]+$/;
-    if (!usernamePattern.test(form.username)) {
+    if (!usernamePattern.test(username)) {
       setError("Username can only contain letters and numbers");
+      return;
+    }
+
+    // Names validation: letters only
+    const namePattern = /^[a-zA-Z]+$/;
+    if (!namePattern.test(firstName)) {
+      setError("First name can only contain letters (no spaces or symbols)");
+      return;
+    }
+    if (firstName.length < 3) {
+      setError("First name must be at least 3 characters long");
+      return;
+    }
+    if (lastName && !namePattern.test(lastName)) {
+      setError("Last name can only contain letters (no spaces or symbols)");
       return;
     }
 
@@ -76,13 +81,16 @@ export default function Register() {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ username, email, password, firstName, lastName }),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Register failed");
 
-      login(data.token); // save token immediately after signup
+      // Expect token in response
+      if (data.token) {
+        login(data.token);
+      }
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
@@ -123,6 +131,32 @@ export default function Register() {
         />
 
         {/* Floating inputs with proper autocomplete for password managers */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <FloatingInput
+            type="text"
+            name="firstName"
+            label="First Name"
+            value={form.firstName}
+            onChange={handleChange}
+            className="mb-0"
+            required
+            hasError={!!error}
+            autoComplete="given-name"
+          />
+
+          <FloatingInput
+            type="text"
+            name="lastName"
+            label="Last Name"
+            value={form.lastName}
+            onChange={handleChange}
+            className="mb-0"
+            required
+            hasError={!!error}
+            autoComplete="family-name"
+          />
+        </div>
+
         <FloatingInput
           type="text"
           name="username"
@@ -165,8 +199,6 @@ export default function Register() {
         {error && (
           <p className="text-red-600 text-xs mb-2 -mt-2">{error}</p>
         )}
-
-        
 
         <button
           type="submit"

@@ -9,6 +9,10 @@ export default function ForgotPassword() {
   const [status, setStatus] = useState({ loading: false, message: "", error: "" });
   const [cooldown, setCooldown] = useState(0);
   const navigate = useNavigate();
+  const MAX_ATTEMPTS = 3;
+  const WINDOW_MS = 10 * 60 * 1000; // 10 minutes window
+
+  const getAttemptsKey = (id) => `forgotOtpAttempts:${(id || "").trim().toLowerCase()}`;
 
   const startCooldown = (secs = 60) => {
     setCooldown(secs);
@@ -25,6 +29,26 @@ export default function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Rate limit: block after 3 back-to-back sends within WINDOW_MS
+    try {
+      const key = getAttemptsKey(identifier);
+      const raw = sessionStorage.getItem(key);
+      const now = Date.now();
+      let attemptsData = { count: 0, windowStart: now };
+      if (raw) {
+        attemptsData = JSON.parse(raw);
+        // Reset window if expired
+        if (!attemptsData.windowStart || now - attemptsData.windowStart > WINDOW_MS) {
+          attemptsData = { count: 0, windowStart: now };
+        }
+      }
+      if (attemptsData.count >= MAX_ATTEMPTS) {
+        setStatus({ loading: false, message: "", error: "Too many OTP requests. Please try after some time." });
+        return;
+      }
+    } catch (_) {
+      // ignore storage errors
+    }
     // Show guidance message immediately on click
     setStatus({ loading: true, message: "you will get otp on your registred email address", error: "" });
     try {
@@ -36,6 +60,29 @@ export default function ForgotPassword() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Request failed");
       setStatus({ loading: false, message: "you will get otp on your registred email address", error: "" });
+      // Start 60s cooldown on each successful request
+      startCooldown(60);
+      // Increment attempts counter inside the window
+      try {
+        const key = getAttemptsKey(identifier);
+        const raw = sessionStorage.getItem(key);
+        const now = Date.now();
+        let attemptsData = { count: 0, windowStart: now };
+        if (raw) {
+          attemptsData = JSON.parse(raw);
+          if (!attemptsData.windowStart || now - attemptsData.windowStart > WINDOW_MS) {
+            attemptsData = { count: 0, windowStart: now };
+          }
+        }
+        attemptsData.count += 1;
+        sessionStorage.setItem(key, JSON.stringify(attemptsData));
+        // If user just hit the limit, surface a non-blocking inline message
+        if (attemptsData.count >= MAX_ATTEMPTS) {
+          setStatus({ loading: false, message: "", error: "Too many OTP requests. Please try after some time." });
+        }
+      } catch (_) {
+        // ignore storage errors
+      }
       // Give the user a moment to read the message, then move to OTP verification
       setTimeout(() => navigate("/verify-otp", { state: { identifier } }), 600);
     } catch (err) {

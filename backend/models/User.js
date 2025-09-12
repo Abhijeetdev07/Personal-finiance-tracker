@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
   resetPasswordOtpExpiresAt: { type: Date },
   resetPasswordOtpRetryCount: { type: Number, default: 0 },
   resetPasswordState: { type: String, enum: ['requested', 'verified'], default: null },
+  // Rate limiting for forgot-password OTP requests
+  resetOtpRequestCount: { type: Number, default: 0 },
+  resetOtpRequestWindowStart: { type: Date },
 }, { 
   timestamps: {
     createdAt: true,

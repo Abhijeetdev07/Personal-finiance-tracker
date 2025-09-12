@@ -2,24 +2,36 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { sendPasswordResetOtp } = require("../utils/emailSender");
+const { sendPasswordResetOtp, sendWelcomeEmail } = require("../utils/emailSender");
 
 const router = express.Router();
 
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    let { username, email, password, firstName, lastName } = req.body;
 
-    // Check for empty fields
-    const isUsernameEmpty = !username || !username.trim();
-    const isEmailEmpty = !email || !email.trim();
-    const isPasswordEmpty = !password || !password.trim();
+    // Normalize inputs
+    username = typeof username === "string" ? username.trim() : username;
+    email = typeof email === "string" ? email.trim() : email;
+    password = typeof password === "string" ? password.trim() : password;
+    firstName = typeof firstName === "string" ? firstName.replace(/\s/g, '') : firstName;
+    lastName = typeof lastName === "string" ? lastName.replace(/\s/g, '') : lastName;
+
+    // Check for empty fields (last name is optional)
+    const isUsernameEmpty = !username;
+    const isEmailEmpty = !email;
+    const isPasswordEmpty = !password;
+    const isFirstNameEmpty = !firstName;
+    const isLastNameEmpty = !lastName; // kept for conditional validation below
     
-    if (isUsernameEmpty && isEmailEmpty && isPasswordEmpty) {
-      return res.status(400).json({ error: "Username, email and password are required" });
+    if (isUsernameEmpty && isEmailEmpty && isPasswordEmpty && isFirstNameEmpty) {
+      return res.status(400).json({ error: "Username, email, password and first name are required" });
     }
-    
+    if (isFirstNameEmpty) {
+      return res.status(400).json({ error: "First name is required" });
+    }
+    // Last name is optional
     if (isUsernameEmpty) {
       return res.status(400).json({ error: "Username is required" });
     }
@@ -40,6 +52,18 @@ router.post("/register", async (req, res) => {
     const usernamePattern = /^[a-zA-Z0-9]+$/;
     if (!usernamePattern.test(username)) {
       return res.status(400).json({ error: "Username can only contain letters and numbers" });
+    }
+
+    // First name validation: min 3 chars, letters only (no spaces, numbers, symbols)
+    const namePattern = /^[a-zA-Z]+$/;
+    if (!namePattern.test(firstName)) {
+      return res.status(400).json({ error: "First name can only contain letters (no spaces, numbers, or symbols)" });
+    }
+    if (firstName.length < 3) {
+      return res.status(400).json({ error: "First name must be at least 3 characters long" });
+    }
+    if (!isLastNameEmpty && !namePattern.test(lastName)) {
+      return res.status(400).json({ error: "Last name can only contain letters (no spaces, numbers, or symbols)" });
     }
 
     // Strong password validation: min 8, upper, lower, number, special
@@ -63,9 +87,25 @@ router.post("/register", async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
 
-    const user = await User.create({ username, email, password: hashed });
+    const user = await User.create({ username, email, password: hashed, firstName, lastName });
 
-    res.status(201).json({ message: "User registered", user: { id: user._id, email: user.email } });
+    // Fire-and-forget welcome email (non-blocking)
+    (async () => {
+      try {
+        await sendWelcomeEmail({ to: user.email, username: user.username, firstName: user.firstName });
+      } catch (e) {
+        console.error("Welcome email failed:", e?.message || e);
+      }
+    })();
+
+    // Issue token on registration
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+    res.status(201).json({ 
+      message: "User registered",
+      token,
+      user: { id: user._id, email: user.email, username: user.username, firstName: user.firstName, lastName: user.lastName }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -125,6 +165,18 @@ router.post("/forgot-password", async (req, res) => {
       return res.json(genericResponse);
     }
 
+    // Server-side rate limit: 3 requests per 10 minutes per user
+    const WINDOW_MS = 10 * 60 * 1000;
+    const now = new Date();
+    if (!user.resetOtpRequestWindowStart || (now - user.resetOtpRequestWindowStart) > WINDOW_MS) {
+      user.resetOtpRequestWindowStart = now;
+      user.resetOtpRequestCount = 0;
+    }
+    if (user.resetOtpRequestCount >= 3) {
+      // Respond with generic response to avoid enumeration, but do not send OTP
+      return res.json(genericResponse);
+    }
+
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     
@@ -137,6 +189,7 @@ router.post("/forgot-password", async (req, res) => {
     user.resetPasswordOtpExpiresAt = otpExpiresAt;
     user.resetPasswordState = 'requested';
     user.resetPasswordOtpRetryCount = 0;
+    user.resetOtpRequestCount += 1;
     await user.save();
 
     // Send OTP via email
