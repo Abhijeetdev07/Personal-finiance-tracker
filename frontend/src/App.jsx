@@ -8,6 +8,7 @@ import VerifyResetOtp from "./pages/VerifyResetOtp";
 import ResetPassword from "./pages/ResetPassword";
 import { setUnauthorizedHandler } from "./utils/api";
 import Home from "./pages/Home";
+import About from "./pages/About";
 
 // Create auth context to share token across app
 export const AuthContext = createContext();
@@ -41,6 +42,7 @@ export default function App() {
         <Routes>
           {/* Public Home */}
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
 
           {/* Public auth routes with auth-aware redirects */}
           <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <Login />} />

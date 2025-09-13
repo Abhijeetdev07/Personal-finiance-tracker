@@ -1,75 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext as AppAuthContext } from "../App";
 import { motion } from "framer-motion";
-import logo from "../assets/web_logo.png";
+import { AuthContext as AppAuthContext } from "../App";
 import heroImg from "../assets/herosec.png";
 import { FiBarChart2, FiLock, FiTag } from "react-icons/fi";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const { token } = useContext(AppAuthContext) || {};
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 2);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
+  
   return (
     <div className="min-h-screen bg-white">
-      <header className={`w-full sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-gray-200 ${scrolled ? 'shadow-sm' : ''}`}>
-        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="Fin Tracker" className="w-[100px] h-[40px] object-contain" width={100} height={40} loading="eager" />
-          </div>
-          <nav className="hidden sm:flex items-center gap-4 text-sm">
-            <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
-            <a href="#features" className="text-gray-700 hover:text-blue-600">Features</a>
-            {token ? (
-              <Link to="/dashboard" className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded">Dashboard</Link>
-            ) : (
-              <>
-                <Link to="/login" className="text-gray-700 hover:text-blue-600">Login</Link>
-                <Link to="/register" className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded">Get Started</Link>
-              </>
-            )}
-          </nav>
-          <button
-            className="sm:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
-            aria-label="Toggle menu"
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              {menuOpen ? (
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              ) : (
-                <path fillRule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 110-2zm0 4h14a1 1 0 010 2H3a1 1 0 110-2zm0 4h14a1 1 0 010 2H3a1 1 0 110-2z" clipRule="evenodd" />
-              )}
-            </svg>
-          </button>
-        </div>
-        {menuOpen && (
-          <div className="sm:hidden border-t border-gray-200">
-            <div className="px-4 py-3 flex flex-col gap-3 text-sm">
-              <Link to="/" className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>Home</Link>
-              <a href="#features" className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>Features</a>
-              {token ? (
-                <Link to="/dashboard" className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded text-center" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-              ) : (
-                <>
-                  <Link to="/login" className="text-gray-700 hover:text-blue-600" onClick={() => setMenuOpen(false)}>Login</Link>
-                  <Link to="/register" className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded text-center" onClick={() => setMenuOpen(false)}>Get Started</Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </header>
+      <Navbar />
 
-      <main>
+      <main className="pt-16">
         <section className="mx-auto max-w-6xl px-4 py-6 md:py-10 grid gap-6 md:grid-cols-2 items-center">
           <div>
             <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="text-3xl md:text-5xl font-extrabold leading-tight text-gray-900">
@@ -120,33 +65,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-gray-200 bg-gray-50">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600 flex flex-col gap-6">
-          <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-            <div className="flex flex-col gap-2">
-              <img src={logo} alt="Fin Tracker" className="w-[100px] h-[40px] object-contain" width={100} height={40} loading="lazy" />
-              <span className="text-gray-500">Track income and expenses effortlessly</span>
-            </div>
-            <div className="flex flex-col gap-2 min-w-[160px]">
-              <span className="text-gray-800 font-medium">Quick links</span>
-              <nav className="flex flex-col gap-1">
-                <Link to="/" className="hover:text-blue-600">Home</Link>
-                <a href="#features" className="hover:text-blue-600">Features</a>
-                <Link to="/register" className="hover:text-blue-600">Register</Link>
-                {token ? (
-                  <Link to="/dashboard" className="hover:text-blue-600">Dashboard</Link>
-                ) : (
-                  <Link to="/login" className="hover:text-blue-600">Login</Link>
-                )}
-              </nav>
-            </div>
-          </div>
-          <div className="w-full border-t border-gray-200 pt-3"></div>
-          <div className="w-full text-xs text-gray-500 text-center">
-            © {new Date().getFullYear()} Fin Tracker. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
