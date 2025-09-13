@@ -12,7 +12,7 @@ import ProfileCard from "../components/ProfileCard";
 import ProfileEditModal from "../components/ProfileEditModal";
 import ConfirmModal from "../components/ConfirmModal";
 import { AuthProvider as ProfileAuthProvider, AuthContext as ProfileContext } from "../context/AuthContext";
-import { toast } from "react-toastify";
+import { useNotification } from "../context/NotificationContext";
 
 export default function Dashboard() {
   const { token, logout } = useContext(AppAuthContext);
@@ -30,6 +30,7 @@ export default function Dashboard() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const menuRef = useRef(null);
+  const { showSuccess, showError } = useNotification();
 
   // Close profile menu on outside click
   useEffect(() => {
@@ -96,25 +97,11 @@ export default function Dashboard() {
       const res = await apiFetch(`/transactions/${transactionToDelete}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete transaction");
       
-      // Show success toast with transaction details
+      // Show success notification
       if (transactionToDeleteData) {
-        toast.success(`Deleted: ${transactionToDeleteData.type === 'income' ? '+' : '-'}$${transactionToDeleteData.amount} (${transactionToDeleteData.category})`, {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        showSuccess(`Deleted: ${transactionToDeleteData.type === 'income' ? '+' : '-'}$${transactionToDeleteData.amount} (${transactionToDeleteData.category})`);
       } else {
-        toast.success("Transaction deleted", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        showSuccess("Transaction deleted");
       }
       
       setTransactions((prev) => prev.filter((t) => t._id !== transactionToDelete));
@@ -128,14 +115,7 @@ export default function Dashboard() {
       setSummary({ income, expense, balance: income - expense });
     } catch (err) {
       console.error("Delete error:", err);
-      toast.error("Failed to delete transaction", {
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      showError("Failed to delete transaction");
     }
   };
 
@@ -163,15 +143,8 @@ export default function Dashboard() {
 
       const updatedTx = await res.json();
       
-      // Show success toast with updated transaction details
-      toast.success(`Updated: ${updatedTx.type === 'income' ? '+' : '-'}$${updatedTx.amount} (${updatedTx.category})`, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      // Show success notification
+      showSuccess(`Updated: ${updatedTx.type === 'income' ? '+' : '-'}$${updatedTx.amount} (${updatedTx.category})`);
       
       setTransactions((prev) =>
         prev.map((tx) => (tx._id === id ? updatedTx : tx))
@@ -188,14 +161,7 @@ export default function Dashboard() {
       setSummary({ income, expense, balance: income - expense });
     } catch (err) {
       console.error("Update error:", err);
-      toast.error("Failed to update transaction", {
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      showError("Failed to update transaction");
       throw err;
     }
   };
