@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { formatDateToIST } from "../utils/api";
+import { loadCategories } from "../utils/categories";
 
 export default function EditTransactionModal({ transaction, isOpen, onClose, onSave }) {
   const [form, setForm] = useState({
@@ -10,6 +11,13 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
     note: "",
   });
   const [isAnimating, setIsAnimating] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  // Load categories on component mount
+  useEffect(() => {
+    const cats = loadCategories();
+    setCategories(cats);
+  }, []);
 
   // Populate form when transaction changes
   useEffect(() => {
@@ -23,6 +31,13 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
       });
     }
   }, [transaction]);
+
+  // Process categories for display (same logic as TransactionForm)
+  const displayCategories = useMemo(() => {
+    const withoutOther = categories.filter((c) => c.toLowerCase() !== "other");
+    const hasOther = categories.some((c) => c.toLowerCase() === "other");
+    return hasOther ? [...withoutOther, "Other"] : withoutOther;
+  }, [categories]);
 
   // Handle animation when modal opens
   useEffect(() => {
@@ -82,14 +97,18 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Category</label>
-            <input
+            <select
               name="category"
-              type="text"
               value={form.category}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border rounded cursor-pointer"
               required
-            />
+            >
+              {displayCategories.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+              {displayCategories.length === 0 && <option value="" disabled>No categories</option>}
+            </select>
           </div>
 
           <div className="mb-4">
@@ -117,17 +136,17 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
 
           <div className="flex gap-2">
             <button
-              type="submit"
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
-            >
-              Save Changes
-            </button>
-            <button
               type="button"
               onClick={onClose}
               className="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded"
             >
               Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+            >
+              Save Changes
             </button>
           </div>
         </form>

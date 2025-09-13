@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AuthContext as AppAuthContext } from "../App";
 import { motion } from "framer-motion";
 import logo from "../assets/web_logo.png";
-import heroImg from "../assets/dashboard-2.png";
+import heroImg from "../assets/herosec.png";
 import { FiBarChart2, FiLock, FiTag } from "react-icons/fi";
 
 export default function Home() {
@@ -70,15 +70,15 @@ export default function Home() {
       </header>
 
       <main>
-        <section className="mx-auto max-w-6xl px-4 py-12 md:py-20 grid gap-8 md:grid-cols-2 items-center">
+        <section className="mx-auto max-w-6xl px-4 py-6 md:py-10 grid gap-6 md:grid-cols-2 items-center">
           <div>
             <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="text-3xl md:text-5xl font-extrabold leading-tight text-gray-900">
               Track your finances with clarity
             </motion.h1>
-            <motion.p initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.05 }} className="mt-4 text-gray-600 md:text-lg">
+            <motion.p initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.05 }} className="mt-3 text-gray-600 md:text-lg">
               Monitor income, expenses, and balance in a clean, modern dashboard.
             </motion.p>
-            <motion.div initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} className="mt-6 flex gap-3">
+            <motion.div initial={{ y: 24, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} className="mt-4 flex gap-3">
               {token ? (
                 <Link to="/dashboard" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg">
                   Go to Dashboard
@@ -95,8 +95,8 @@ export default function Home() {
               )}
             </motion.div>
           </div>
-          <div className="rounded-xl border bg-white shadow p-3">
-            <motion.img initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.7, delay: 0.1 }} src={heroImg} alt="Dashboard preview" className="w-full h-auto rounded-lg" width={1200} height={675} loading="lazy" />
+          <div className="border rounded-lg">
+            <motion.img initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.7, delay: 0.1 }} src={heroImg} alt="Dashboard preview" className="w-full h-auto rounded-lg max-w-md mx-auto" width={800} height={450} loading="lazy" />
           </div>
         </section>
 

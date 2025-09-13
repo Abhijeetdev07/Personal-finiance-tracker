@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { apiFetch } from "../utils/api";
 import { loadCategories } from "../utils/categories";
+import { toast } from "react-toastify";
 
 export default function TransactionForm({ token, onAdd }) {
   const [amount, setAmount] = useState("");
@@ -44,6 +45,16 @@ export default function TransactionForm({ token, onAdd }) {
       const newTx = await res.json();
       if (!res.ok) throw new Error(newTx.error || "Failed to add");
 
+      // Show success toast
+      toast.success(`Added: ${type === 'income' ? '+' : '-'}$${amount} (${category})`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+
       // Update parent list
       onAdd((prev) => [...prev, newTx]);
 
@@ -55,6 +66,14 @@ export default function TransactionForm({ token, onAdd }) {
       setNote("");
     } catch (err) {
       console.error("Add error:", err);
+      toast.error("Failed to add transaction", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } finally {
       setIsLoading(false);
     }

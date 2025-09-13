@@ -41,3 +41,69 @@ select:-webkit-autofill {
 .animate-fade-in {
   animation: fade-in 0.5s ease-out;
 }
+
+/* Responsive Toast Styles */
+.toast-container {
+  /* Mobile-first responsive positioning */
+  top: 1rem !important;
+  right: 1rem !important;
+  left: 1rem !important;
+  width: auto !important;
+  max-width: calc(100vw - 2rem) !important;
+}
+
+.toast-message {
+  /* Mobile responsive sizing */
+  font-size: 0.875rem !important; /* 14px */
+  padding: 0.75rem !important;
+  margin-bottom: 0.5rem !important;
+  border-radius: 0.5rem !important;
+  max-width: 100% !important;
+  word-wrap: break-word !important;
+}
+
+.toast-body {
+  /* Responsive text sizing */
+  font-size: 0.875rem !important; /* 14px */
+  line-height: 1.4 !important;
+  padding: 0 !important;
+}
+
+/* Tablet and larger screens */
+@media (min-width: 640px) {
+  .toast-container {
+    top: 1.5rem !important;
+    right: 1.5rem !important;
+    left: auto !important;
+    width: 400px !important;
+    max-width: 400px !important;
+  }
+  
+  .toast-message {
+    font-size: 0.9rem !important; /* 15px */
+    padding: 1rem !important;
+  }
+  
+  .toast-body {
+    font-size: 0.9rem !important; /* 15px */
+  }
+}
+
+/* Desktop screens */
+@media (min-width: 1024px) {
+  .toast-container {
+    top: 2rem !important;
+    right: 2rem !important;
+    width: 420px !important;
+    max-width: 420px !important;
+  }
+  
+  .toast-message {
+    font-size: 1rem !important; /* 16px */
+    padding: 1.25rem !important;
+  }
+  
+  .toast-body {
+    font-size: 1rem !important; /* 16px */
+  }
+}
