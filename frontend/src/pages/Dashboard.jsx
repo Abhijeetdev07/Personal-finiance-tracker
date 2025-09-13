@@ -209,20 +209,20 @@ export default function Dashboard() {
   return (
     <ProfileAuthProvider>
     <div className="min-h-screen bg-gray-50">
-      <div className="w-full bg-white px-6 py-4 border-b border-gray-200 shadow-sm">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <HeaderProfile
-            onOpenProfile={() => setIsProfileModalOpen(true)}
-            onLogout={logout}
-            isMenuOpen={isProfileMenuOpen}
-            setIsMenuOpen={setIsProfileMenuOpen}
-            menuRef={menuRef}
-          />
+      <div className="w-full fixed top-0 z-10 bg-white px-6 py-4 border-b border-gray-200 shadow-sm">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <HeaderProfile
+              onOpenProfile={() => setIsProfileModalOpen(true)}
+              onLogout={logout}
+              isMenuOpen={isProfileMenuOpen}
+              setIsMenuOpen={setIsProfileMenuOpen}
+              menuRef={menuRef}
+            />
+          </div>
         </div>
-      </div>
 
-      <div className="p-6">
+        <div className="pt-20 p-6">
         {/* Summary */}
         <div className="mb-6">
           <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-4xl mx-auto">
@@ -282,7 +282,7 @@ export default function Dashboard() {
         cancelText="Cancel"
         confirmButtonClass="bg-red-500 hover:bg-red-600"
       />
-      </div>
+        </div>
     </div>
     </ProfileAuthProvider>
   );

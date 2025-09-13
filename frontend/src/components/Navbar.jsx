@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext as AppAuthContext } from "../App";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,45 +7,13 @@ import logo from "../assets/web_logo.png";
 export default function Navbar() {
   const { token } = useContext(AppAuthContext) || {};
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    
-    const onScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY < 10) {
-        setIsNavbarVisible(true);
-        setScrolled(false);
-      } else {
-        setScrolled(true);
-        
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-          setIsNavbarVisible(false);
-        } else {
-          setIsNavbarVisible(true);
-        }
-      }
-      
-      lastScrollY = currentScrollY;
-    };
-    
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   return (
-    <header 
-      className={`w-full fixed top-0 z-10 bg-white/90 backdrop-blur border-b border-gray-200 transition-transform duration-300 ease-in-out ${scrolled ? 'shadow-sm' : ''} ${isNavbarVisible ? 'translate-y-0' : '-translate-y-full'}`}
-      style={{ transform: isNavbarVisible ? 'translateY(0)' : 'translateY(-100%)' }}
-    >
+    <header className="w-full bg-white border-b border-gray-200 shadow-sm">
       <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/">
-            <img src={logo} alt="Fin Tracker" className="w-[100px] h-[40px] object-contain" width={100} height={40} loading="eager" />
+            <img src={logo} alt="Smart Finance" className="w-[100px] h-[40px] object-contain" width={100} height={40} loading="eager" />
           </Link>
         </div>
         <nav className="hidden sm:flex items-center gap-4 text-sm">

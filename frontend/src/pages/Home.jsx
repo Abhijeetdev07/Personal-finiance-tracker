@@ -11,10 +11,10 @@ export default function Home() {
   const { token } = useContext(AppAuthContext) || {};
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-transition">
       <Navbar />
 
-      <main className="pt-16">
+      <main>
         <section className="mx-auto max-w-6xl px-4 py-6 md:py-10 grid gap-6 md:grid-cols-2 items-center">
           <div>
             <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="text-3xl md:text-5xl font-extrabold leading-tight text-gray-900">

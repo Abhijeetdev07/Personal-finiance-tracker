@@ -4,6 +4,15 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 *{
@@ -15,6 +24,56 @@ html {
 button {
   cursor: pointer;
 }
+
+/* Prevent mobile zoom and layout shifts */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection for input fields and text content */
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Prevent mobile zoom on input focus */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  font-size: 16px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Ensure consistent box-sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Prevent layout shifts during animations */
+.motion-safe {
+  will-change: transform, opacity;
+}
+
+/* Ensure smooth page transitions */
+.page-transition {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 
 /* Keep input background consistent when filled or autofilled */
 input:-webkit-autofill,
@@ -45,65 +104,65 @@ select:-webkit-autofill {
 /* Responsive Toast Styles */
 .toast-container {
   /* Mobile-first responsive positioning */
-  top: 1rem !important;
-  right: 1rem !important;
-  left: 1rem !important;
-  width: auto !important;
-  max-width: calc(100vw - 2rem) !important;
+  top: 1rem;
+  right: 1rem;
+  left: 1rem;
+  width: auto;
+  max-width: calc(100vw - 2rem);
 }
 
 .toast-message {
   /* Mobile responsive sizing */
-  font-size: 0.875rem !important; /* 14px */
-  padding: 0.75rem !important;
-  margin-bottom: 0.5rem !important;
-  border-radius: 0.5rem !important;
-  max-width: 100% !important;
-  word-wrap: break-word !important;
+  font-size: 0.875rem; /* 14px */
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .toast-body {
   /* Responsive text sizing */
-  font-size: 0.875rem !important; /* 14px */
-  line-height: 1.4 !important;
-  padding: 0 !important;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.4;
+  padding: 0;
 }
 
 /* Tablet and larger screens */
 @media (min-width: 640px) {
   .toast-container {
-    top: 1.5rem !important;
-    right: 1.5rem !important;
-    left: auto !important;
-    width: 400px !important;
-    max-width: 400px !important;
+    top: 1.5rem;
+    right: 1.5rem;
+    left: auto;
+    width: 400px;
+    max-width: 400px;
   }
   
   .toast-message {
-    font-size: 0.9rem !important; /* 15px */
-    padding: 1rem !important;
+    font-size: 0.9rem; /* 15px */
+    padding: 1rem;
   }
   
   .toast-body {
-    font-size: 0.9rem !important; /* 15px */
+    font-size: 0.9rem; /* 15px */
   }
 }
 
 /* Desktop screens */
 @media (min-width: 1024px) {
   .toast-container {
-    top: 2rem !important;
-    right: 2rem !important;
-    width: 420px !important;
-    max-width: 420px !important;
+    top: 2rem;
+    right: 2rem;
+    width: 420px;
+    max-width: 420px;
   }
   
   .toast-message {
-    font-size: 1rem !important; /* 16px */
-    padding: 1.25rem !important;
+    font-size: 1rem; /* 16px */
+    padding: 1.25rem;
   }
   
   .toast-body {
-    font-size: 1rem !important; /* 16px */
+    font-size: 1rem; /* 16px */
   }
 }

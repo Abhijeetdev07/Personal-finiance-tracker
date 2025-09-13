@@ -84,31 +84,45 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Type</label>
-            <select
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            >
-              <option value="income">Income</option>
-              <option value="expense">Expense</option>
-            </select>
+            <div className="relative">
+              <select
+                name="type"
+                value={form.type}
+                onChange={handleChange}
+                className="w-full p-2 border rounded appearance-none pr-8"
+              >
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Category</label>
-            <select
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              className="w-full p-2 border rounded cursor-pointer"
-              required
-            >
-              {displayCategories.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-              {displayCategories.length === 0 && <option value="" disabled>No categories</option>}
-            </select>
+            <div className="relative">
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className="w-full p-2 border rounded cursor-pointer appearance-none pr-8"
+                required
+              >
+                {displayCategories.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+                {displayCategories.length === 0 && <option value="" disabled>No categories</option>}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
 
           <div className="mb-4">

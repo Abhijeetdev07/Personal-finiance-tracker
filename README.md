@@ -69,7 +69,7 @@ A comprehensive personal finance tracker with authentication, transactions manag
 
 ## 📁 Project Structure
 ```
-fin-tracker/
+smart-finance/
 |
 ├─ backend/
 |  |
@@ -118,7 +118,7 @@ fin-tracker/
    ```
 3. Create a `.env` file in `backend/` with:
    ```env
-   MONGODB_URI=mongodb://localhost:27017/fin-tracker
+   MONGODB_URI=mongodb://localhost:27017/smart-finance
    JWT_SECRET=your-super-secret-jwt-key
    PORT=5000
    

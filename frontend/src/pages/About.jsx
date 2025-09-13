@@ -10,19 +10,19 @@ export default function About() {
   const { token } = useContext(AppAuthContext) || {};
   
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white page-transition">
       <Navbar />
 
-      <main className="pt-16">
+      <main>
         {/* Hero Section */}
         <section className="mx-auto max-w-4xl px-4 py-12 md:py-20 text-center">
           <motion.h1 
             initial={{ y: 20, opacity: 0 }} 
             animate={{ y: 0, opacity: 1 }} 
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-bold text-gray-900 mb-6"
+            className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 motion-safe"
           >
-            About Fin Tracker
+            About Smart Finance
           </motion.h1>
           <motion.p 
             initial={{ y: 24, opacity: 0 }} 
@@ -31,7 +31,7 @@ export default function About() {
             className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
             We're on a mission to make personal finance management simple, secure, and accessible to everyone. 
-            Our platform empowers you to take control of your financial future with confidence.
+            Smart Finance empowers you to take control of your financial future with confidence.
           </motion.p>
         </section>
 
@@ -51,7 +51,7 @@ export default function About() {
                   understand, track, and optimize their personal finances without complexity or jargon.
                 </p>
                 <p className="text-lg text-gray-600 leading-relaxed">
-                  We believe everyone deserves access to powerful financial management tools that are 
+                  Smart Finance believes everyone deserves access to powerful financial management tools that are 
                   both secure and easy to use, regardless of their financial background or technical expertise.
                 </p>
               </motion.div>

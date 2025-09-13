@@ -91,25 +91,39 @@ export default function TransactionForm({ token, onAdd }) {
           className="border p-2 rounded lg:w-1/3 w-full"
           required
         />
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          className="border p-2 rounded lg:w-1/3 w-full cursor-pointer"
-        >
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="border p-2 rounded lg:w-1/3 w-full cursor-pointer"
-          required
-        >
-          {displayCategories.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-          {displayCategories.length === 0 && <option value="" disabled>No categories</option>}
-        </select>
+        <div className="relative lg:w-1/3 w-full">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="border p-2 rounded w-full cursor-pointer appearance-none pr-8"
+          >
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+            <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+        <div className="relative lg:w-1/3 w-full">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border p-2 rounded w-full cursor-pointer appearance-none pr-8"
+            required
+          >
+            {displayCategories.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+            {displayCategories.length === 0 && <option value="" disabled>No categories</option>}
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+            <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
         <input
           type="date"
           placeholder="Date"

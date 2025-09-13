@@ -26,7 +26,7 @@ async function sendPasswordResetOtp({ to, otp }) {
     const mailOptions = {
       from: process.env.EMAIL_FROM || smtpUser,
       to: to,
-      subject: "Password Reset OTP - Fin Tracker",
+      subject: "Password Reset OTP - Smart Finance",
       text: `Your password reset OTP is: ${otp}\n\nThis OTP will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.\n\nThis is an automated email, please do not reply.`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -61,11 +61,11 @@ async function sendWelcomeEmail({ to, username, firstName }) {
   const mailOptions = {
     from: process.env.EMAIL_FROM || smtpUser,
     to,
-    subject: "Welcome to Fin Tracker 🎉",
-    text: `Hi ${firstName || username || "there"},\n\nWelcome to Fin Tracker! Start tracking your income and expenses today.\n\nNeed help? Visit your dashboard or our help section.\n\nThis is an automated email, please do not reply.`,
+    subject: "Welcome to Smart Finance 🎉",
+    text: `Hi ${firstName || username || "there"},\n\nWelcome to Smart Finance! Start tracking your income and expenses today.\n\nNeed help? Visit your dashboard or our help section.\n\nThis is an automated email, please do not reply.`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #007dff;">Welcome to Fin Tracker 🎉</h2>
+        <h2 style="color: #007dff;">Welcome to Smart Finance 🎉</h2>
         <p>Hi <strong>${firstName || username || "there"}</strong>,</p>
         <p>Thanks for signing up! You're all set to track your income and expenses.</p>
         <p>Need help? Visit your dashboard or our help section.</p>
