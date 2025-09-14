@@ -165,14 +165,6 @@ export default function CategoryPieChart({ transactions, showFilter = true, isLo
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    layout: {
-      padding: {
-        top: isMobile ? 10 : 15,
-        bottom: isMobile ? 10 : 15,
-        left: isMobile ? 10 : 15,
-        right: isMobile ? 10 : 15
-      }
-    },
     plugins: {
       legend: { 
         position: "bottom",
