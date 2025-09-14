@@ -82,6 +82,32 @@ export default function CategoryPieChart({ transactions, showFilter = true }) {
     "#fbbf24", // Yellow
   ];
 
+  // Function to convert hex to HSL
+  const hexToHsl = (hex) => {
+    const r = parseInt(hex.slice(1, 3), 16) / 255;
+    const g = parseInt(hex.slice(3, 5), 16) / 255;
+    const b = parseInt(hex.slice(5, 7), 16) / 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    
+    if (max === min) {
+      h = s = 0;
+    } else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    
+    return [h * 360, s * 100, l * 100];
+  };
+
   // Function to generate random colors for remaining categories
   const generateRandomColor = (index) => {
     // Use predefined colors for first 9 categories
@@ -89,12 +115,30 @@ export default function CategoryPieChart({ transactions, showFilter = true }) {
       return predefinedColors[index];
     }
     
-    // Generate random colors for additional categories
-    const hue = (index * 137.5) % 360; // Golden angle for good distribution
-    const saturation = 60 + (index % 3) * 15; // Vary saturation (60-90%)
-    const lightness = 50 + (index % 2) * 10; // Vary lightness (50-60%)
+    // Get predefined color hues to avoid
+    const predefinedHues = predefinedColors.map(color => hexToHsl(color)[0]);
     
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    // Generate colors that are different from predefined ones
+    let attempts = 0;
+    let newHue, newSaturation, newLightness;
+    
+    do {
+      // Use golden angle with offset to avoid predefined hues
+      newHue = ((index * 137.5) + (attempts * 30)) % 360;
+      newSaturation = 65 + (index % 4) * 10; // 65-95%
+      newLightness = 45 + (index % 3) * 15; // 45-75%
+      
+      // Check if this hue is too close to any predefined hue
+      const isTooClose = predefinedHues.some(predefinedHue => {
+        const diff = Math.abs(newHue - predefinedHue);
+        const minDiff = Math.min(diff, 360 - diff); // Handle wraparound
+        return minDiff < 30; // Minimum 30 degrees difference
+      });
+      
+      attempts++;
+    } while (isTooClose && attempts < 10); // Max 10 attempts
+    
+    return `hsl(${Math.round(newHue)}, ${newSaturation}%, ${newLightness}%)`;
   };
 
   const data = {
