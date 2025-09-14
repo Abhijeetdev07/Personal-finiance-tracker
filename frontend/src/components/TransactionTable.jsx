@@ -1,8 +1,9 @@
 
 import { useState } from "react";
 import { formatDateToIST } from "../utils/api";
+import LoadingAnimation from "./LoadingAnimation";
 
-export default function TransactionTable({ transactions, onEdit, onDelete }) {
+export default function TransactionTable({ transactions, onEdit, onDelete, isLoading = false }) {
   const [filter, setFilter] = useState("all");
 
   // Filter transactions based on selected filter
@@ -10,6 +11,17 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
     if (filter === "all") return true;
     return tx.type === filter;
   });
+
+  if (isLoading) {
+    return (
+      <div>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-3">
+          <h2 className="text-xl font-semibold">Transactions</h2>
+        </div>
+        <LoadingAnimation message="Loading data" />
+      </div>
+    );
+  }
 
   return (
     <div>

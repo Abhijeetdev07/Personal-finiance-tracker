@@ -6,10 +6,11 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import LoadingAnimation from "./LoadingAnimation";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function CategoryPieChart({ transactions, showFilter = true }) {
+export default function CategoryPieChart({ transactions, showFilter = true, isLoading = false }) {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -121,6 +122,7 @@ export default function CategoryPieChart({ transactions, showFilter = true }) {
     // Generate colors that are different from predefined ones
     let attempts = 0;
     let newHue, newSaturation, newLightness;
+    let isTooClose;
     
     do {
       // Use golden angle with offset to avoid predefined hues
@@ -129,7 +131,7 @@ export default function CategoryPieChart({ transactions, showFilter = true }) {
       newLightness = 45 + (index % 3) * 15; // 45-75%
       
       // Check if this hue is too close to any predefined hue
-      const isTooClose = predefinedHues.some(predefinedHue => {
+      isTooClose = predefinedHues.some(predefinedHue => {
         const diff = Math.abs(newHue - predefinedHue);
         const minDiff = Math.min(diff, 360 - diff); // Handle wraparound
         return minDiff < 30; // Minimum 30 degrees difference
@@ -231,6 +233,18 @@ export default function CategoryPieChart({ transactions, showFilter = true }) {
       </div>
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow border">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 sm:mb-3 gap-2 sm:gap-3">
+          <h3 className="font-semibold text-sm sm:text-base">Spending by Category</h3>
+          {showFilter && <CustomDropdown />}
+        </div>
+        <LoadingAnimation message="Loading data" />
+      </div>
+    );
+  }
 
   if (labels.length === 0) {
     return (

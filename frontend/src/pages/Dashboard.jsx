@@ -18,6 +18,7 @@ export default function Dashboard() {
   const { token, logout } = useContext(AppAuthContext);
   const navigate = useNavigate();
   const [transactions, setTransactions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [summary, setSummary] = useState({
     income: 0,
     expense: 0,
@@ -47,6 +48,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
+        setIsLoading(true);
         const res = await apiFetch("/transactions");
         const data = await res.json();
 
@@ -76,6 +78,8 @@ export default function Dashboard() {
           logout();
           navigate("/register");
         }
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -212,8 +216,8 @@ export default function Dashboard() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <CategoryPieChart transactions={transactions} />
-        <MonthlyBarChart transactions={transactions} />
+        <CategoryPieChart transactions={transactions} isLoading={isLoading} />
+        <MonthlyBarChart transactions={transactions} isLoading={isLoading} />
       </div>
 
       {/* Add Transaction Form */}
@@ -224,6 +228,7 @@ export default function Dashboard() {
         transactions={transactions} 
         onEdit={editTransaction}
         onDelete={showDeleteConfirmation}
+        isLoading={isLoading}
       />
 
       {/* Edit Modal */}

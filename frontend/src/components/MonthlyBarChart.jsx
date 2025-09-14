@@ -7,10 +7,11 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import LoadingAnimation from "./LoadingAnimation";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
-export default function MonthlyBarChart({ transactions, showWrapper = true }) {
+export default function MonthlyBarChart({ transactions, showWrapper = true, isLoading = false }) {
   // Process transactions for monthly data
   const toMonth = (iso) => {
     const d = new Date(iso);
@@ -57,6 +58,15 @@ export default function MonthlyBarChart({ transactions, showWrapper = true }) {
       y: { beginAtZero: true },
     },
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow border">
+        <h3 className="font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Monthly Trend</h3>
+        <LoadingAnimation message="Loading data" />
+      </div>
+    );
+  }
 
   if (labels.length === 0) {
     return (

@@ -1,4 +1,4 @@
-# Personal Financial Tracker
+# Smart Finance - Personal Financial Tracker
 
 A comprehensive personal finance tracker with authentication, transactions management, password reset functionality, and visual insights. Built with a Node/Express backend, MongoDB database, and a React + Vite frontend.
 
@@ -17,21 +17,35 @@ A comprehensive personal finance tracker with authentication, transactions manag
 - **Income & Expense Tracking** - Separate tracking for income and expenses
 - **Category Management** - Organize transactions by custom categories
 - **Real-time Summary** - Live calculation of income, expenses, and balance
-- **Transaction Filtering** - Filter by transaction type (All/Income/Expense)
+- **Transaction Filtering** - Filter by transaction type (All/Income/Expense) with custom dropdown
+- **Current Date Default** - Transaction form pre-fills with today's date
+- **Custom Notifications** - Success/error notifications for all transaction actions
 
 ### 📊 Data Visualization
-- **Category Pie Chart** - Visual breakdown of spending by category
+- **Category Pie Chart** - Visual breakdown of spending by category with smart color generation
 - **Monthly Bar Chart** - Monthly income vs expense trends over time
 - **Interactive Charts** - Responsive charts with tooltips and legends
 - **Real-time Updates** - Charts update automatically with new data
+- **Month Filtering** - Filter pie chart by specific months or all time
+- **Smart Color System** - Predefined colors for first 9 categories, algorithmically generated distinct colors for additional categories
 
 ### 📱 User Experience
 - **Responsive Design** - Optimized for desktop and mobile devices
-- **Desktop Table View** - Comprehensive transaction table
+- **Desktop Table View** - Comprehensive transaction table with custom dropdown arrows
 - **Mobile Card View** - Touch-friendly card layout for mobile
 - **Floating Labels** - Modern input styling with smooth animations
 - **Loading States** - Proper loading indicators and error handling
 - **Form Validation** - Client-side validation with user-friendly error messages
+- **Custom Modals** - Beautiful confirmation modals with animations
+- **Mobile Optimized** - Prevents zoom on mobile, responsive notifications
+
+### 🎨 UI/UX Enhancements
+- **Custom Notifications** - Slide-in notifications with auto-dismiss
+- **Animated Modals** - Smooth fade and scale animations for modals
+- **Dropdown Arrows** - Custom styled dropdown arrows for better UX
+- **Reusable Components** - Modular Navbar and Footer components
+- **About Page** - Dedicated about page with company information
+- **Professional Styling** - Clean, modern design with consistent branding
 
 ### 🔄 Password Reset Flow
 - **Forgot Password** - Email/username-based password reset initiation
@@ -45,6 +59,8 @@ A comprehensive personal finance tracker with authentication, transactions manag
 - **Email Notifications** - Welcome emails and password reset notifications
 - **Session Management** - Persistent login state with automatic cleanup
 - **Error Handling** - Comprehensive error handling with user-friendly messages
+- **Phone Number Support** - International phone number formatting and validation
+- **Profile Management** - User profile editing with country code selection
 
 ## 🛠 Tech Stack
 
@@ -55,6 +71,8 @@ A comprehensive personal finance tracker with authentication, transactions manag
 - **React Router DOM** - Client-side routing
 - **React Chart.js** - Data visualization library
 - **React Icons** - Icon library for UI elements
+- **Framer Motion** - Animation library for smooth transitions
+- **AOS (Animate On Scroll)** - Scroll-based animations
 
 ### Backend
 - **Node.js** - JavaScript runtime
@@ -70,23 +88,50 @@ A comprehensive personal finance tracker with authentication, transactions manag
 ## 📁 Project Structure
 ```
 smart-finance/
-|
+│
 ├─ backend/
-|  |
+│  │
 │  ├─ controllers/     # Request handlers
 │  ├─ middleware/      # Authentication middleware
 │  ├─ models/          # Mongoose models (User, Transaction)
-│  ├─ routes/          # API routes (auth, transactions)
+│  ├─ routes/          # API routes (auth, transactions, profile)
 │  ├─ utils/           # Email sender utility
 │  └─ server.js        # Express server entry point
 │
 └─ frontend/
-   |
+   │
    ├─ src/
    │  ├─ components/   # Reusable UI components
+   │  │  ├─ CategoryPieChart.jsx
+   │  │  ├─ ConfirmModal.jsx
+   │  │  ├─ CountryCodeSelector.jsx
+   │  │  ├─ CustomNotification.jsx
+   │  │  ├─ EditTransactionModal.jsx
+   │  │  ├─ FloatingInput.jsx
+   │  │  ├─ Footer.jsx
+   │  │  ├─ MonthlyBarChart.jsx
+   │  │  ├─ Navbar.jsx
+   │  │  ├─ ProfileCard.jsx
+   │  │  ├─ ProfileEditModal.jsx
+   │  │  ├─ ProfileForm.jsx
+   │  │  ├─ TransactionForm.jsx
+   │  │  └─ TransactionTable.jsx
    │  ├─ pages/        # Page components
+   │  │  ├─ About.jsx
+   │  │  ├─ Dashboard.jsx
+   │  │  ├─ ForgotPassword.jsx
+   │  │  ├─ Home.jsx
+   │  │  ├─ Login.jsx
+   │  │  ├─ Register.jsx
+   │  │  ├─ ResetPassword.jsx
+   │  │  └─ VerifyResetOtp.jsx
    │  ├─ context/      # React Context for state management
-   │  ├─ utils/         # Utility functions (API, token storage)
+   │  │  ├─ AuthContext.jsx
+   │  │  └─ NotificationContext.jsx
+   │  ├─ utils/         # Utility functions
+   │  │  ├─ api.js
+   │  │  ├─ categories.js
+   │  │  └─ resetTokenStore.js
    │  ├─ App.jsx       # Main application component
    │  └─ main.jsx      # Application entry point
    ├─ index.html
@@ -142,7 +187,7 @@ smart-finance/
    ```
 3. Optionally set API base URL in `frontend/.env`:
    ```env
-   VITE_API_BASE_URL=http://localhost:5000/
+   VITE_API_BASE_URL=http://localhost:5000/api
    ```
 4. Start the development server:
    ```bash
@@ -156,6 +201,8 @@ smart-finance/
 4. **Add transactions** to track your income and expenses
 5. **View charts** for visual insights into your spending patterns
 6. **Use forgot password** if you need to reset your password
+7. **Edit your profile** with personal information and phone number
+8. **Filter transactions** by type or month for better insights
 
 ## 🔧 API Endpoints
 
@@ -172,6 +219,10 @@ smart-finance/
 - `PUT /api/transactions/:id` - Update transaction
 - `DELETE /api/transactions/:id` - Delete transaction
 
+### Profile
+- `GET /api/profile` - Get user profile
+- `PUT /api/profile` - Update user profile
+
 ## 🔒 Security Features
 
 - **JWT Authentication** - Secure token-based authentication
@@ -180,6 +231,16 @@ smart-finance/
 - **Rate Limiting** - OTP retry limits to prevent abuse
 - **Input Validation** - Server-side validation for all inputs
 - **CORS Protection** - Cross-origin resource sharing protection
+- **Phone Number Validation** - International phone number format validation
+
+## 🎨 UI/UX Features
+
+- **Responsive Design** - Mobile-first approach with desktop optimization
+- **Custom Animations** - Smooth transitions and hover effects
+- **Loading States** - Proper feedback during API calls
+- **Error Handling** - User-friendly error messages
+- **Accessibility** - Keyboard navigation and screen reader support
+- **Modern Styling** - Clean, professional design with consistent branding
 
 ## 📝 Notes
 
@@ -189,6 +250,31 @@ smart-finance/
 - **Timezone**: Database timestamps are configured for local timezone
 - **Email Delivery**: Brevo SMTP service provides reliable email delivery with 300 emails/day free tier
 - **User Deletion**: Deleting a user in the database will automatically log them out
+- **Color Generation**: Pie chart uses smart color generation to ensure distinct colors for all categories
+- **Mobile Optimization**: Prevents zoom on mobile devices for better UX
+
+## 🚀 Deployment
+
+### Frontend (Render)
+1. Connect your GitHub repository to Render
+2. Create a new Static Site
+3. Set build command: `npm ci && npm run build`
+4. Set publish directory: `dist`
+5. Add environment variable: `VITE_API_BASE_URL=https://your-backend.onrender.com/api`
+
+### Backend (Render)
+1. Create a new Web Service on Render
+2. Set root directory: `backend`
+3. Set build command: `npm ci`
+4. Set start command: `npm start`
+5. Add environment variables:
+   ```
+   NODE_ENV=production
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   CORS_ORIGIN=https://your-frontend.onrender.com
+   BREVO_API_KEY=your_brevo_api_key
+   ```
 
 ## 🤝 Contributing
 
@@ -206,4 +292,4 @@ This project is licensed under the MIT License.
 
 **Built with ❤️ for better financial management**
 
-
+*Smart Finance - Your personal financial companion*
