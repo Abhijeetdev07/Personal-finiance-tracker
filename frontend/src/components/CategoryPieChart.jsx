@@ -13,9 +13,10 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function CategoryPieChart({ transactions, showFilter = true, isLoading = false }) {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside and handle resize
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -23,9 +24,16 @@ export default function CategoryPieChart({ transactions, showFilter = true, isLo
       }
     };
 
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('resize', handleResize);
+    
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -157,17 +165,25 @@ export default function CategoryPieChart({ transactions, showFilter = true, isLo
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    layout: {
+      padding: {
+        top: isMobile ? 10 : 15,
+        bottom: isMobile ? 10 : 15,
+        left: isMobile ? 10 : 15,
+        right: isMobile ? 10 : 15
+      }
+    },
     plugins: {
       legend: { 
         position: "bottom",
         labels: {
           usePointStyle: true,
-          padding: 5, // Very compact padding
+          padding: isMobile ? 6 : 8, // Compact spacing for both
           font: {
-            size: 9 // Smaller font for mobile
+            size: isMobile ? 9 : 11 // Readable size for both
           },
-          boxWidth: 8, // Smaller legend boxes
-          boxHeight: 8
+          boxWidth: isMobile ? 8 : 10, // Appropriate size for both
+          boxHeight: isMobile ? 8 : 10
         }
       },
       tooltip: {
@@ -268,10 +284,11 @@ export default function CategoryPieChart({ transactions, showFilter = true, isLo
         <h3 className="font-semibold text-sm sm:text-base">Spending by Category</h3>
         {showFilter && <CustomDropdown />}
       </div>
-      <div className="h-48 sm:h-72">
+      <div className="h-auto min-h-60">
         <Pie data={data} options={options} />
       </div>
     </div>
+    
   );
 }
 
