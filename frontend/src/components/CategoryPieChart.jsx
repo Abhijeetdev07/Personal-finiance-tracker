@@ -162,10 +162,12 @@ export default function CategoryPieChart({ transactions, showFilter = true, isLo
         position: "bottom",
         labels: {
           usePointStyle: true,
-          padding: 15,
+          padding: 5, // Very compact padding
           font: {
-            size: 12
-          }
+            size: 9 // Smaller font for mobile
+          },
+          boxWidth: 8, // Smaller legend boxes
+          boxHeight: 8
         }
       },
       tooltip: {
