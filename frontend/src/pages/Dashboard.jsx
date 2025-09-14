@@ -64,9 +64,10 @@ export default function Dashboard() {
 
         // Calculate summary
         let income = 0, expense = 0;
-        data.forEach((tx) =>
-          tx.type === "income" ? (income += tx.amount) : (expense += tx.amount)
-        );
+        data.forEach((tx) => {
+          const amount = Number(tx.amount) || 0; // Ensure amount is a number
+          tx.type === "income" ? (income += amount) : (expense += amount);
+        });
         setSummary({ income, expense, balance: income - expense });
       } catch (err) {
         console.error("Fetch error:", err);
@@ -109,9 +110,10 @@ export default function Dashboard() {
       // Recalculate summary after deletion
       const updatedTransactions = transactions.filter((t) => t._id !== transactionToDelete);
       let income = 0, expense = 0;
-      updatedTransactions.forEach((tx) =>
-        tx.type === "income" ? (income += tx.amount) : (expense += tx.amount)
-      );
+      updatedTransactions.forEach((tx) => {
+        const amount = Number(tx.amount) || 0; // Ensure amount is a number
+        tx.type === "income" ? (income += amount) : (expense += amount);
+      });
       setSummary({ income, expense, balance: income - expense });
     } catch (err) {
       console.error("Delete error:", err);
@@ -155,9 +157,10 @@ export default function Dashboard() {
         tx._id === id ? updatedTx : tx
       );
       let income = 0, expense = 0;
-      updatedTransactions.forEach((tx) =>
-        tx.type === "income" ? (income += tx.amount) : (expense += tx.amount)
-      );
+      updatedTransactions.forEach((tx) => {
+        const amount = Number(tx.amount) || 0; // Ensure amount is a number
+        tx.type === "income" ? (income += amount) : (expense += amount);
+      });
       setSummary({ income, expense, balance: income - expense });
     } catch (err) {
       console.error("Update error:", err);
