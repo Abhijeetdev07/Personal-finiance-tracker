@@ -15,15 +15,33 @@ export default function TransactionTable({ transactions, onEdit, onDelete }) {
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-3">
         <h2 className="text-xl font-semibold">Transactions</h2>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-1 text-sm w-full sm:w-auto"
-        >
-          <option value="all">All</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
+        <div className="relative w-full sm:w-auto">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="border border-gray-300 rounded px-3 py-1 pr-8 text-sm w-full appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="all">All</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          {/* Down Arrow Icon */}
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+            <svg 
+              className="w-4 h-4 text-gray-600" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M19 9l-7 7-7-7" 
+              />
+            </svg>
+          </div>
+        </div>
       </div>
       
       {/* Desktop Table View */}

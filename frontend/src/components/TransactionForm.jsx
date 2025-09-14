@@ -20,6 +20,11 @@ export default function TransactionForm({ token, onAdd }) {
     if (!category && cats.length > 0) {
       setCategory(cats[0]);
     }
+    
+    // Set current date as default
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+    setDate(formattedDate);
   }, []);
 
   const displayCategories = useMemo(() => {
@@ -47,7 +52,7 @@ export default function TransactionForm({ token, onAdd }) {
       if (!res.ok) throw new Error(newTx.error || "Failed to add");
 
       // Show success notification
-      showSuccess(`Added: ${type === 'income' ? '+' : '-'}$${amount} (${category})`);
+      showSuccess("Transaction added successfully");
 
       // Update parent list
       onAdd((prev) => [...prev, newTx]);
@@ -56,7 +61,10 @@ export default function TransactionForm({ token, onAdd }) {
       setAmount("");
       setType("income");
       setCategory(categories[0] || "");
-      setDate("");
+      // Set current date after successful submission
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+      setDate(formattedDate);
       setNote("");
     } catch (err) {
       console.error("Add error:", err);
@@ -113,7 +121,6 @@ export default function TransactionForm({ token, onAdd }) {
         </div>
         <input
           type="date"
-          placeholder="Date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
           className="border p-2 rounded lg:w-1/3 w-full cursor-pointer"
