@@ -69,24 +69,40 @@ export default function CategoryPieChart({ transactions, showFilter = true }) {
     label.length > 15 ? label.substring(0, 15) + '...' : label
   );
 
-  const colors = [
-    "#60a5fa",
-    "#34d399",
-    "#f472b6",
-    "#f59e0b",
-    "#a78bfa",
-    "#f87171",
-    "#10b981",
-    "#22d3ee",
-    "#00ff00",
+  // Predefined colors for first few categories
+  const predefinedColors = [
+    "#60a5fa", // Blue
+    "#34d399", // Green
+    "#f472b6", // Pink
+    "#f59e0b", // Orange
+    "#a78bfa", // Purple
+    "#f87171", // Red
+    "#10b981", // Emerald
+    "#22d3ee", // Cyan
+    "#fbbf24", // Yellow
   ];
+
+  // Function to generate random colors for remaining categories
+  const generateRandomColor = (index) => {
+    // Use predefined colors for first 9 categories
+    if (index < predefinedColors.length) {
+      return predefinedColors[index];
+    }
+    
+    // Generate random colors for additional categories
+    const hue = (index * 137.5) % 360; // Golden angle for good distribution
+    const saturation = 60 + (index % 3) * 15; // Vary saturation (60-90%)
+    const lightness = 50 + (index % 2) * 10; // Vary lightness (50-60%)
+    
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  };
 
   const data = {
     labels: truncatedLabels,
     datasets: [
       {
         data: values,
-        backgroundColor: labels.map((_, i) => colors[i % colors.length]),
+        backgroundColor: labels.map((_, i) => generateRandomColor(i)),
         borderWidth: 0,
       },
     ],
