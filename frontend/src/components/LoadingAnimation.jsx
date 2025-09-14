@@ -17,8 +17,9 @@ export default function LoadingAnimation({ message = "Loading data", className =
   return (
     <div className={`flex items-center justify-center py-8 ${className}`}>
       <div className="text-center">
-        <div className="text-gray-500 text-sm">
-          {message}{dots}
+        <div className="text-gray-500 text-sm font-mono">
+          {message}
+          <span className="inline-block w-8 text-left">{dots}</span>
         </div>
       </div>
     </div>
