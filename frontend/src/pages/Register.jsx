@@ -5,6 +5,8 @@ import { AuthContext } from "../App";
 import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../utils/api";
 import FloatingInput from "../components/FloatingInput";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "", firstName: "", lastName: "" });
@@ -99,14 +101,10 @@ export default function Register() {
   };
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen px-4 py-6"
-      style={{
-        background:
-          "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
-      }}
-    >
-      <form
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <div className="flex items-center justify-center px-4 py-6 min-h-[calc(100vh-200px)]">
+        <form
         onSubmit={handleSubmit}
         className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm"
         autoComplete="on"
@@ -226,7 +224,9 @@ export default function Register() {
             Login
           </Link>
         </p>
-      </form>
+        </form>
+      </div>
+      <Footer />
     </div>
   );
 }

@@ -4,6 +4,8 @@ import FloatingInput from "../components/FloatingInput";
 import { getResetToken, getResetIdentifier, clearResetContext } from "../utils/resetTokenStore";
 import { apiFetch } from "../utils/api";
 import { BiArrowBack } from "react-icons/bi";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -82,10 +84,10 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-6" style={{
-      background: "radial-gradient(circle at top left, #34D399, #3B82F6, #1E40AF)",
-    }}>
-      <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
+    <div className="min-h-screen bg-white">
+      <Navbar />
+      <div className="flex items-center justify-center px-4 py-6 min-h-[calc(100vh-200px)]">
+        <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">
         <div className="relative mb-3 sm:mb-4">
           <button
             type="button"
@@ -153,7 +155,9 @@ export default function ResetPassword() {
         >
           {status.loading ? "Resetting..." : "Reset Password"}
         </button>
-      </form>
+        </form>
+      </div>
+      <Footer />
     </div>
   );
 }

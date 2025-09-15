@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext as AppAuthContext } from "../App";
 import logo from "../assets/web_logo.png";
+import { FaGithub, FaLinkedin, FaXTwitter } from "react-icons/fa6";
 
 export default function Footer() {
   const { token } = useContext(AppAuthContext) || {};
@@ -9,23 +10,56 @@ export default function Footer() {
   return (
     <footer className="border-t border-gray-200 bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600 flex flex-col gap-6">
-        <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-          <div className="flex flex-col gap-2">
-                  <img src={logo} alt="Smart Finance" className="w-[100px] h-[40px] object-contain" width={100} height={40} loading="lazy" />
+        <div className="w-full flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="flex flex-col gap-2 self-start">
+                  <Link to="/">
+                    <img src={logo} alt="Smart Finance" className="w-[100px] h-[40px] object-contain" width={100} height={40} loading="lazy" />
+                  </Link>
             <span className="text-gray-500">Track income and expenses effortlessly</span>
           </div>
-          <div className="flex flex-col gap-2 min-w-[160px]">
-            <span className="text-gray-800 font-medium">Quick links</span>
-            <nav className="flex flex-col gap-1">
-              <Link to="/" className="hover:text-blue-600">Home</Link>
-              <Link to="/about" className="hover:text-blue-600">About</Link>
-              <Link to="/register" className="hover:text-blue-600">Register</Link>
-              {token ? (
-                <Link to="/dashboard" className="hover:text-blue-600">Dashboard</Link>
-              ) : (
-                <Link to="/login" className="hover:text-blue-600">Login</Link>
-              )}
-            </nav>
+          <div className="w-full sm:w-auto sm:ml-auto grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
+            <div className="flex flex-col gap-2 min-w-[160px]">
+              <span className="text-gray-800 font-medium">Quick links</span>
+              <nav className="flex flex-col gap-1">
+                <Link to="/" className="hover:text-blue-600">Home</Link>
+                <Link to="/about" className="hover:text-blue-600">About</Link>
+                <Link to="/register" className="hover:text-blue-600">Register</Link>
+                {token ? (
+                  <Link to="/dashboard" className="hover:text-blue-600">Dashboard</Link>
+                ) : (
+                  <Link to="/login" className="hover:text-blue-600">Login</Link>
+                )}
+              </nav>
+            </div>
+            <div className="flex items-center gap-4 self-end sm:justify-end">
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <FaGithub size={20} />
+              </a>
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <FaLinkedin size={20} />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <FaXTwitter size={20} />
+              </a>
+            </div>
           </div>
         </div>
         <div className="w-full border-t border-gray-200 pt-3"></div>
