@@ -17,6 +17,17 @@ A comprehensive personal finance tracker with authentication, transactions manag
 - Backend: Node.js, Express, JWT, bcryptjs, Nodemailer, Mongoose
 - Database: MongoDB
 
+## 🔒 Security
+
+- Secure authentication (JWT)
+- Passwords are hashed
+- OTP-based password reset
+- Input validation
+- CORS protection
+
+
+
+
 ## 📁 Project Structure (Short)
 ```
 smart-finance/
@@ -95,29 +106,6 @@ smart-finance/
    npm run dev
    ```
 
-
-## 🔒 Security
-
-- JWT, hashed passwords, OTP reset, validation, CORS
-
-## 🎨 UI/UX
-
-- Responsive, accessible, animated
-
-## 📝 Notes
-
-- Password: 8-12 chars, upper/lower/number/special
-- OTP: 10 min expiry, single-use
-
-## 🚀 Deployment
-
-- Deploy frontend as a static site (e.g. Render)
-- Deploy backend as a web service (e.g. Render)
-- Set required environment variables
-
-## 🤝 Contributing
-
-- Fork, branch, commit, push, and open a PR
 
 ## 📄 License
 
