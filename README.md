@@ -75,16 +75,16 @@ smart-finance/
    ```
 3. Create a `.env` file in `backend/` with:
    ```env
-   MONGODB_URI=mongodb://localhost:27017/smart-finance
-   JWT_SECRET=your-super-secret-jwt-key
+   MONGODB_URI=mongodb:<url>
+   JWT_SECRET=<secret-jwt-key>
    PORT=5000
    
    # Brevo SMTP Configuration
-   SMTP_HOST=smtp-relay.brevo.com
-   SMTP_PORT=587
-   SMTP_USER=your-registered-email@domain.com
-   SMTP_PASS=your-brevo-smtp-key
-   EMAIL_FROM=your-registered-email@domain.com
+   SMTP_HOST=<smtp-relay.brevo.com>
+   SMTP_PORT=<port_number>
+   SMTP_USER=<your-registered-email@domain.com>
+   SMTP_PASS=<your-brevo-smtp-key>
+   EMAIL_FROM=<your-registered-email@domain.com>
    ```
 4. Start the backend server:
    ```bash
