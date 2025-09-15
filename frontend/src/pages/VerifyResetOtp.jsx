@@ -6,6 +6,7 @@ import { setResetContext } from "../utils/resetTokenStore";
 import { BiArrowBack } from "react-icons/bi";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import authBg from "../assets/auth.jpg";
 
 export default function VerifyResetOtp() {
   const location = useLocation();
@@ -129,7 +130,15 @@ export default function VerifyResetOtp() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div
+      className="min-h-screen"
+      style={{
+        backgroundImage: `url(${authBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <Navbar />
       <div className="flex items-center justify-center px-4 py-6 min-h-[calc(100vh-200px)]">
         <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-sm">

@@ -53,12 +53,12 @@ smart-finance/
 ## 📸 Screenshots
 
 <p float="left">
-  <img src="./frontend/src/assets/register-page.png" width="400" />
-  <img src="./frontend/src/assets/login-page.png" width="400" />
+  <img src="./readme_assets/register-page.png" width="400" />
+  <img src="./readme_assets/login-page.png" width="400" />
 </p>
 
-![Dashboard](./frontend/src/assets/dashbard.png)
-![Dashboard 2](./frontend/src/assets/dashboard-2.png)
+![Dashboard](./readme_assets/dashbard.png)
+![Dashboard 2](./readme_assets/dashboard-2.png)
 
 ## 🚀 Setup Instructions
 
