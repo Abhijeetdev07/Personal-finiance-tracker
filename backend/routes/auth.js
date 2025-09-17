@@ -38,6 +38,11 @@ router.post("/register", async (req, res) => {
     if (isEmailEmpty) {
       return res.status(400).json({ error: "Email is required" });
     }
+    // Email format validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
     if (isPasswordEmpty) {
       return res.status(400).json({ error: "Password is required" });
     }
