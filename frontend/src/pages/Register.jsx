@@ -90,10 +90,8 @@ export default function Register() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Register failed");
-      if (data.token) {
-        login(data.token);
-      }
-      navigate("/dashboard");
+      // On successful registration, redirect to login instead of auto-login
+      navigate("/login");
     } catch (err) {
       setError(err.message);
     } finally {
