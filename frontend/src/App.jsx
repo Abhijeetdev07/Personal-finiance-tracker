@@ -3,6 +3,7 @@ import { useState, createContext } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Transactions from "./pages/Transactions";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyResetOtp from "./pages/VerifyResetOtp";
 import ResetPassword from "./pages/ResetPassword";
@@ -24,15 +25,15 @@ export default function App() {
   const logout = () => {
     setToken("");
     localStorage.removeItem("token");
-    try {
-      // Redirect to Home after logout
-      window.location.assign("/");
-    } catch (_) {}
+    // Immediately redirect to home page to prevent any race conditions
+    window.location.href = "/";
   };
 
-  // Ensure API helper logs out on 401
+  // Ensure API helper redirects to home on 401
   setUnauthorizedHandler(() => {
-    logout();
+    setToken("");
+    localStorage.removeItem("token");
+    window.location.href = "/";
   });
 
 
@@ -51,8 +52,9 @@ export default function App() {
           <Route path="/verify-otp" element={<VerifyResetOtp />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Protected Dashboard */}
+          {/* Protected Routes */}
           <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/transactions" element={token ? <Transactions /> : <Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>

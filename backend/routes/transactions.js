@@ -19,12 +19,14 @@ router.post("/", auth, async (req, res) => {
   try {
     const { amount, type, category, date, note } = req.body;
     
-    // Convert date to IST if provided
-    let istDate = date;
+    // Use the provided date directly (frontend sends YYYY-MM-DD format)
+    let transactionDate = date;
     if (date) {
-      const inputDate = new Date(date);
-      const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
-      istDate = new Date(inputDate.getTime() + istOffset);
+      // Create date object from YYYY-MM-DD format
+      transactionDate = new Date(date);
+    } else {
+      // Default to current date if no date provided
+      transactionDate = new Date();
     }
     
     const newTx = await Transaction.create({
@@ -32,7 +34,7 @@ router.post("/", auth, async (req, res) => {
       amount,
       type,
       category,
-      date: istDate,
+      date: transactionDate,
       note,
     });
     res.status(201).json(newTx);
@@ -51,17 +53,16 @@ router.put("/:id", auth, async (req, res) => {
     if (tx.user.toString() !== req.user.id)
       return res.status(403).json({ error: "Not authorized" });
 
-    // Convert date to IST if provided
-    let istDate = date;
+    // Use the provided date directly (frontend sends YYYY-MM-DD format)
+    let transactionDate = date;
     if (date) {
-      const inputDate = new Date(date);
-      const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
-      istDate = new Date(inputDate.getTime() + istOffset);
+      // Create date object from YYYY-MM-DD format
+      transactionDate = new Date(date);
     }
 
     const updatedTx = await Transaction.findByIdAndUpdate(
       req.params.id,
-      { amount, type, category, date: istDate, note },
+      { amount, type, category, date: transactionDate, note },
       { new: true }
     );
     

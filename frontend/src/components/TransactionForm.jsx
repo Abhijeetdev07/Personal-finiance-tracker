@@ -51,11 +51,8 @@ export default function TransactionForm({ token, onAdd }) {
       const newTx = await res.json();
       if (!res.ok) throw new Error(newTx.error || "Failed to add");
 
-      // Show success notification
-      showSuccess("Transaction added successfully");
-
-      // Update parent list
-      onAdd((prev) => [...prev, newTx]);
+      // Update parent list - pass the new transaction directly
+      onAdd(newTx);
 
       // Reset form
       setAmount("");

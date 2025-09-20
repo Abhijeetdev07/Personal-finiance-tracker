@@ -1,18 +1,15 @@
 
 import { useEffect, useState, useContext, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { FiPlus } from "react-icons/fi";
 import { AuthContext as AppAuthContext } from "../App";
 import { apiFetch } from "../utils/api";
-import TransactionForm from "../components/TransactionForm";
-import TransactionTable from "../components/TransactionTable";
-import EditTransactionModal from "../components/EditTransactionModal";
 import CategoryPieChart from "../components/CategoryPieChart";
 import MonthlyBarChart from "../components/MonthlyBarChart";
 import ProfileCard from "../components/ProfileCard";
 import ProfileEditModal from "../components/ProfileEditModal";
-import ConfirmModal from "../components/ConfirmModal";
 import { AuthProvider as ProfileAuthProvider, AuthContext as ProfileContext } from "../context/AuthContext";
-import { useNotification } from "../context/NotificationContext";
+import RecentTransactionsCard from "../components/RecentTransactionsCard";
 
 export default function Dashboard() {
   const { token, logout } = useContext(AppAuthContext);
@@ -24,14 +21,9 @@ export default function Dashboard() {
     expense: 0,
     balance: 0,
   });
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState(null);
   const menuRef = useRef(null);
-  const { showSuccess, showError } = useNotification();
 
   // Close profile menu on outside click
   useEffect(() => {
@@ -44,7 +36,7 @@ export default function Dashboard() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Check if user still exists and fetch transactions
+  // Fetch transactions for summary and charts
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -53,7 +45,6 @@ export default function Dashboard() {
         const data = await res.json();
 
         if (!res.ok) {
-          // If user is deleted (401 or 404), logout and redirect to register
           if (res.status === 401 || res.status === 404) {
             logout();
             navigate("/register");
@@ -67,13 +58,12 @@ export default function Dashboard() {
         // Calculate summary
         let income = 0, expense = 0;
         data.forEach((tx) => {
-          const amount = Number(tx.amount) || 0; // Ensure amount is a number
+          const amount = Number(tx.amount) || 0;
           tx.type === "income" ? (income += amount) : (expense += amount);
         });
         setSummary({ income, expense, balance: income - expense });
       } catch (err) {
         console.error("Fetch error:", err);
-        // If it's an unauthorized error, logout and redirect
         if (err.message === "Unauthorized") {
           logout();
           navigate("/register");
@@ -86,178 +76,113 @@ export default function Dashboard() {
     fetchTransactions();
   }, [token, logout, navigate]);
 
-  // Show delete confirmation modal
-  const showDeleteConfirmation = (id) => {
-    setTransactionToDelete(id);
-    setIsDeleteModalOpen(true);
-  };
-
-  // Delete transaction
-  const deleteTransaction = async () => {
-    if (!transactionToDelete) return;
-    try {
-      // Get transaction details before deletion for toast message
-      const transactionToDeleteData = transactions.find(t => t._id === transactionToDelete);
-      
-      const res = await apiFetch(`/transactions/${transactionToDelete}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete transaction");
-      
-      // Show success notification
-      if (transactionToDeleteData) {
-        showSuccess(`Deleted: ${transactionToDeleteData.type === 'income' ? '+' : '-'}$${transactionToDeleteData.amount} (${transactionToDeleteData.category})`);
-      } else {
-        showSuccess("Transaction deleted");
-      }
-      
-      setTransactions((prev) => prev.filter((t) => t._id !== transactionToDelete));
-      
-      // Recalculate summary after deletion
-      const updatedTransactions = transactions.filter((t) => t._id !== transactionToDelete);
-      let income = 0, expense = 0;
-      updatedTransactions.forEach((tx) => {
-        const amount = Number(tx.amount) || 0; // Ensure amount is a number
-        tx.type === "income" ? (income += amount) : (expense += amount);
-      });
-      setSummary({ income, expense, balance: income - expense });
-    } catch (err) {
-      console.error("Delete error:", err);
-      showError("Failed to delete transaction");
-    }
-  };
-
-  // Close delete modal
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setTransactionToDelete(null);
-  };
-
-  // Edit transaction
-  const editTransaction = (transaction) => {
-    setEditingTransaction(transaction);
-    setIsEditModalOpen(true);
-  };
-
-  // Update transaction
-  const updateTransaction = async (id, updatedData) => {
-    try {
-      const res = await apiFetch(`/transactions/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(updatedData),
-      });
-
-      if (!res.ok) throw new Error("Failed to update transaction");
-
-      const updatedTx = await res.json();
-      
-      // Show success notification
-      showSuccess(`Updated: ${updatedTx.type === 'income' ? '+' : '-'}$${updatedTx.amount} (${updatedTx.category})`);
-      
-      setTransactions((prev) =>
-        prev.map((tx) => (tx._id === id ? updatedTx : tx))
-      );
-
-      // Recalculate summary
-      const updatedTransactions = transactions.map((tx) =>
-        tx._id === id ? updatedTx : tx
-      );
-      let income = 0, expense = 0;
-      updatedTransactions.forEach((tx) => {
-        const amount = Number(tx.amount) || 0; // Ensure amount is a number
-        tx.type === "income" ? (income += amount) : (expense += amount);
-      });
-      setSummary({ income, expense, balance: income - expense });
-    } catch (err) {
-      console.error("Update error:", err);
-      showError("Failed to update transaction");
-      throw err;
-    }
-  };
-
-  // Close edit modal
-  const closeEditModal = () => {
-    setIsEditModalOpen(false);
-    setEditingTransaction(null);
-  };
 
   return (
     <ProfileAuthProvider>
-    <div className="min-h-screen bg-gray-50">
-      <div className="w-full fixed top-0 z-10 bg-white px-6 py-4 border-b border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <HeaderProfile
-              onOpenProfile={() => setIsProfileModalOpen(true)}
-              onLogout={logout}
-              isMenuOpen={isProfileMenuOpen}
-              setIsMenuOpen={setIsProfileMenuOpen}
-              menuRef={menuRef}
-            />
-          </div>
-        </div>
-
-        <div className="pt-20 p-6">
-        {/* Summary */}
-        <div className="mb-6">
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-4xl mx-auto">
-            <div className="bg-green-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
-              <h2 className="text-xs sm:text-lg font-semibold text-green-800">Income</h2>
-              <p className="text-xs sm:text-xl text-green-700 truncate">₹{summary.income}</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        {/* Enhanced Header */}
+        <div className="w-full fixed top-0 z-20 bg-white/95 backdrop-blur-sm px-4 sm:px-6 py-4 border-b border-gray-200 shadow-lg">
+          <div className="flex justify-between items-center max-w-7xl mx-auto">
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
             </div>
-            <div className="bg-red-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
-              <h2 className="text-xs sm:text-lg font-semibold text-red-800">Expenses</h2>
-              <p className="text-xs sm:text-xl text-red-700 truncate">₹{summary.expense}</p>
-            </div>
-            <div className="bg-blue-100 p-2 sm:px-6 sm:py-4 rounded-lg shadow">
-              <h2 className="text-xs sm:text-lg font-semibold text-blue-800">Balance</h2>
-              <p className="text-xs sm:text-xl text-blue-700 truncate">₹{summary.balance}</p>
+            
+            <div className="flex items-center gap-4">
+              <Link
+                to="/transactions"
+                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-lg transform hover:scale-105"
+              >
+                <FiPlus size={18} />
+                <span className="hidden sm:inline">Add Transaction</span>
+              </Link>
+              
+              <HeaderProfile
+                onOpenProfile={() => setIsProfileModalOpen(true)}
+                onLogout={logout}
+                isMenuOpen={isProfileMenuOpen}
+                setIsMenuOpen={setIsProfileMenuOpen}
+                menuRef={menuRef}
+              />
             </div>
           </div>
         </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <CategoryPieChart transactions={transactions} isLoading={isLoading} />
-        <MonthlyBarChart transactions={transactions} isLoading={isLoading} />
+        {/* Main Content */}
+        <div className="pt-24 pb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Enhanced Summary Cards */}
+            <div className="mb-8">
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-6">
+                <div className="bg-gradient-to-r from-green-500 to-green-600 p-3 sm:p-6 rounded-lg sm:rounded-xl shadow-lg text-white transform hover:scale-105 transition-all duration-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xs sm:text-sm font-medium text-green-100">Total Income</h2>
+                      <p className="text-sm sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1">₹{summary.income.toLocaleString()}</p>
+                    </div>
+                    <div className="hidden sm:flex w-12 h-12 bg-white/20 rounded-lg items-center justify-center">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-r from-red-500 to-red-600 p-3 sm:p-6 rounded-lg sm:rounded-xl shadow-lg text-white transform hover:scale-105 transition-all duration-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xs sm:text-sm font-medium text-red-100">Total Expenses</h2>
+                      <p className="text-sm sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1">₹{summary.expense.toLocaleString()}</p>
+                    </div>
+                    <div className="hidden sm:flex w-12 h-12 bg-white/20 rounded-lg items-center justify-center">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={`bg-gradient-to-r ${summary.balance >= 0 ? 'from-blue-500 to-blue-600' : 'from-orange-500 to-orange-600'} p-3 sm:p-6 rounded-lg sm:rounded-xl shadow-lg text-white transform hover:scale-105 transition-all duration-200`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xs sm:text-sm font-medium text-white/80">Net Balance</h2>
+                      <p className="text-sm sm:text-2xl lg:text-3xl font-bold mt-0.5 sm:mt-1">₹{summary.balance.toLocaleString()}</p>
+                    </div>
+                    <div className="hidden sm:flex w-12 h-12 bg-white/20 rounded-lg items-center justify-center">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced Charts Section */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+                <CategoryPieChart transactions={transactions} isLoading={isLoading} />
+              </div>
+              <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+                <MonthlyBarChart transactions={transactions} isLoading={isLoading} />
+              </div>
+            </div>
+
+            {/* Enhanced Recent Transactions */}
+            <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200">
+              <RecentTransactionsCard 
+                transactions={transactions} 
+                isLoading={isLoading}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Profile Edit Modal */}
+        <ProfileEditModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+        />
       </div>
-
-      {/* Add Transaction Form */}
-      <TransactionForm token={token} onAdd={setTransactions} />
-
-      {/* Transaction Table */}
-      <TransactionTable 
-        transactions={transactions} 
-        onEdit={editTransaction}
-        onDelete={showDeleteConfirmation}
-        isLoading={isLoading}
-      />
-
-      {/* Edit Modal */}
-      <EditTransactionModal
-        transaction={editingTransaction}
-        isOpen={isEditModalOpen}
-        onClose={closeEditModal}
-        onSave={updateTransaction}
-      />
-
-      {/* Profile Edit Modal */}
-      <ProfileEditModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-      />
-
-      {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={isDeleteModalOpen}
-        onClose={closeDeleteModal}
-        onConfirm={deleteTransaction}
-        title="Delete Transaction"
-        message="Are you sure you want to delete this transaction?"
-        confirmText="Delete"
-        cancelText="Cancel"
-        confirmButtonClass="bg-red-500 hover:bg-red-600"
-      />
-        </div>
-    </div>
     </ProfileAuthProvider>
   );
 }
