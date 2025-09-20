@@ -1,212 +1,372 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useAnimation, useInView } from "framer-motion";
 import { AuthContext as AppAuthContext } from "../App";
-import { FiUsers, FiTarget, FiShield, FiTrendingUp, FiHeart, FiAward } from "react-icons/fi";
+import { FiUsers, FiTarget, FiShield, FiTrendingUp, FiHeart, FiAward, FiZap, FiStar, FiCheckCircle, FiGlobe } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+
+// Scroll Animation Component
+function ScrollAnimatedSection({ children, className = "", delay = 0 }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
+
+  return (
+    <motion.div
+      ref={ref}
+      animate={controls}
+      initial="hidden"
+      variants={{
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.8, delay } }
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Floating Animation Component
+function FloatingElement({ children, delay = 0 }) {
+  return (
+    <motion.div
+      animate={{
+        y: [0, -8, 0],
+      }}
+      transition={{
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export default function About() {
   const { token } = useContext(AppAuthContext) || {};
   
   return (
-    <div className="min-h-screen bg-white page-transition">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 page-transition">
       <Navbar />
 
       <main>
-        {/* Hero Section */}
-        <section className="mx-auto max-w-4xl px-4 py-12 md:py-20 text-center">
-          <motion.h1 
-            initial={{ y: 20, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 motion-safe"
-          >
-            About Smart Finance
-          </motion.h1>
-          <motion.p 
-            initial={{ y: 24, opacity: 0 }} 
-            animate={{ y: 0, opacity: 1 }} 
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
-          >
-            We're on a mission to make personal finance management simple, secure, and accessible to everyone. 
-            Smart Finance empowers you to take control of your financial future with confidence.
-          </motion.p>
-        </section>
-
-        {/* Mission Section */}
-        <section className="bg-gray-50 py-16">
-          <div className="mx-auto max-w-6xl px-4">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <motion.div
-                initial={{ x: -50, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Mission</h2>
-                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                  To democratize financial literacy by providing intuitive tools that help individuals 
-                  understand, track, and optimize their personal finances without complexity or jargon.
-                </p>
-                <p className="text-lg text-gray-600 leading-relaxed">
-                  Smart Finance believes everyone deserves access to powerful financial management tools that are 
-                  both secure and easy to use, regardless of their financial background or technical expertise.
-                </p>
-              </motion.div>
-              <motion.div
-                initial={{ x: 50, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="grid grid-cols-2 gap-6"
-              >
-                <div className="bg-white p-6 rounded-xl shadow-sm border">
-                  <FiTarget className="w-8 h-8 text-blue-600 mb-4" />
-                  <h3 className="font-semibold text-gray-900 mb-2">Clear Goals</h3>
-                  <p className="text-sm text-gray-600">Set and track your financial objectives with precision</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border">
-                  <FiShield className="w-8 h-8 text-green-600 mb-4" />
-                  <h3 className="font-semibold text-gray-900 mb-2">Bank-Grade Security</h3>
-                  <p className="text-sm text-gray-600">Your data is protected with enterprise-level encryption</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border">
-                  <FiTrendingUp className="w-8 h-8 text-purple-600 mb-4" />
-                  <h3 className="font-semibold text-gray-900 mb-2">Smart Insights</h3>
-                  <p className="text-sm text-gray-600">AI-powered analytics to optimize your spending</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border">
-                  <FiUsers className="w-8 h-8 text-orange-600 mb-4" />
-                  <h3 className="font-semibold text-gray-900 mb-2">User-Focused</h3>
-                  <p className="text-sm text-gray-600">Designed with real users' needs in mind</p>
-                </div>
-              </motion.div>
-            </div>
+        {/* Enhanced Hero Section */}
+        <section className="relative w-full">
+          {/* Background Decorations */}
+          <div className="absolute inset-0 w-full overflow-hidden">
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
           </div>
-        </section>
-
-        {/* Values Section */}
-        <section className="py-16">
-          <div className="mx-auto max-w-6xl px-4">
+          
+          <div className="relative mx-auto max-w-6xl px-4 py-2 md:py-8 text-center">
             <motion.div
-              initial={{ y: 30, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-6"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Our Values</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                These core principles guide everything we do and every decision we make
-              </p>
+              <FiStar className="animate-pulse" />
+              About Our Mission
             </motion.div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="text-center p-8 rounded-xl bg-blue-50"
-              >
-                <FiHeart className="w-12 h-12 text-blue-600 mx-auto mb-6" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Empathy First</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  We understand that managing finances can be stressful. Our platform is designed 
-                  with compassion and understanding, making financial management feel less overwhelming.
-                </p>
-              </motion.div>
-              
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-                className="text-center p-8 rounded-xl bg-green-50"
-              >
-                <FiShield className="w-12 h-12 text-green-600 mx-auto mb-6" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Trust & Security</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Your financial data is sacred. We implement the highest security standards and 
-                  never compromise on protecting your privacy and sensitive information.
-                </p>
-              </motion.div>
-              
-              <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="text-center p-8 rounded-xl bg-purple-50"
-              >
-                <FiAward className="w-12 h-12 text-purple-600 mx-auto mb-6" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Excellence</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  We're committed to delivering exceptional user experiences through continuous 
-                  innovation, attention to detail, and relentless pursuit of improvement.
-                </p>
-              </motion.div>
-            </div>
-          </div>
-        </section>
 
-        {/* CTA Section */}
-        <section className="bg-blue-600 py-16">
-          <div className="mx-auto max-w-4xl px-4 text-center">
-            <motion.h2
-              initial={{ y: 20, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold text-white mb-6"
+            <motion.h1 
+              initial={{ y: 50, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }} 
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-6"
             >
-              Ready to Take Control of Your Finances?
-            </motion.h2>
-            <motion.p
-              initial={{ y: 20, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              viewport={{ once: true }}
-              className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto"
+              <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                Empowering
+              </span>
+              <br />
+              <span className="text-gray-900">Financial</span>
+              <br />
+              <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
+                Freedom
+              </span>
+            </motion.h1>
+
+            <motion.p 
+              initial={{ y: 30, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }} 
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8"
             >
-              Join thousands of users who have already transformed their financial management 
-              with our intuitive and secure platform.
+              We're revolutionizing personal finance management by making it simple, secure, and accessible to everyone. 
+              Smart Finance empowers you to take control of your financial future with confidence and clarity.
             </motion.p>
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+
+            {/* Stats */}
+            <motion.div 
+              initial={{ y: 30, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }} 
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
             >
-              {token ? (
-                <Link 
-                  to="/dashboard" 
-                  className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
-                >
-                  Go to Dashboard
-                </Link>
-              ) : (
-                <>
-                  <Link 
-                    to="/register" 
-                    className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
-                  >
-                    Get Started Free
-                  </Link>
-                  <Link 
-                    to="/login" 
-                    className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
-                  >
-                    Sign In
-                  </Link>
-                </>
-              )}
+              {[
+                { number: "10K+", label: "Happy Users", icon: FiUsers },
+                { number: "₹50L+", label: "Money Tracked", icon: FiTrendingUp },
+                { number: "99.9%", label: "Uptime", icon: FiShield },
+                { number: "24/7", label: "Support", icon: FiHeart }
+              ].map((stat, i) => (
+                <FloatingElement key={i} delay={i * 0.2}>
+                  <div className="text-center bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/20">
+                    <stat.icon className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                    <div className="text-lg font-bold text-gray-900 mb-1">{stat.number}</div>
+                    <div className="text-xs text-gray-600">{stat.label}</div>
+                  </div>
+                </FloatingElement>
+              ))}
             </motion.div>
           </div>
         </section>
+
+        {/* Enhanced Mission Section */}
+        <ScrollAnimatedSection className="py-20">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="text-center mb-16">
+              <motion.h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-6">
+                Our Mission & Vision
+              </motion.h2>
+              <motion.p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Transforming the way people manage their finances through innovation, security, and simplicity
+              </motion.p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
+              <ScrollAnimatedSection delay={0.2}>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-3xl blur-xl"></div>
+                  <div className="relative bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100">
+                    <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center mb-8">
+                      <FiTarget className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Our Mission</h3>
+                    <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                      To democratize financial literacy by providing intuitive tools that help individuals 
+                      understand, track, and optimize their personal finances without complexity or jargon.
+                    </p>
+                    <p className="text-lg text-gray-600 leading-relaxed">
+                      We believe everyone deserves access to powerful financial management tools that are 
+                      both secure and easy to use, regardless of their financial background or technical expertise.
+                    </p>
+                  </div>
+                </div>
+              </ScrollAnimatedSection>
+
+              <ScrollAnimatedSection delay={0.4}>
+                <div className="grid grid-cols-2 gap-6">
+                  {[
+                    { 
+                      title: "Clear Goals", 
+                      desc: "Set and track your financial objectives with precision and clarity", 
+                      icon: FiTarget,
+                      gradient: "from-blue-500 to-cyan-500"
+                    },
+                    { 
+                      title: "Bank-Grade Security", 
+                      desc: "Your data is protected with enterprise-level encryption and security", 
+                      icon: FiShield,
+                      gradient: "from-green-500 to-emerald-500"
+                    },
+                    { 
+                      title: "Smart Insights", 
+                      desc: "AI-powered analytics to optimize your spending and savings", 
+                      icon: FiTrendingUp,
+                      gradient: "from-purple-500 to-pink-500"
+                    },
+                    { 
+                      title: "User-Focused", 
+                      desc: "Designed with real users' needs and feedback in mind", 
+                      icon: FiUsers,
+                      gradient: "from-orange-500 to-red-500"
+                    }
+                  ].map((feature, i) => (
+                    <motion.div
+                      key={feature.title}
+                      whileHover={{ y: -5, scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      className="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl border border-gray-100 transition-all duration-300"
+                    >
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.gradient} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                        <feature.icon className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+                        {feature.title}
+                      </h4>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {feature.desc}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              </ScrollAnimatedSection>
+            </div>
+          </div>
+        </ScrollAnimatedSection>
+
+        {/* Enhanced Values Section */}
+        <ScrollAnimatedSection className="py-20 bg-gradient-to-br from-gray-50 to-blue-50/30">
+          <div className="mx-auto max-w-7xl px-4">
+            <div className="text-center mb-16">
+              <motion.h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-6">
+                Our Core Values
+              </motion.h2>
+              <motion.p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                These fundamental principles guide everything we do and every decision we make
+              </motion.p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              {[
+                {
+                  title: "Empathy First",
+                  desc: "We understand that managing finances can be stressful. Our platform is designed with compassion and understanding.",
+                  icon: FiHeart,
+                  gradient: "from-pink-500 to-rose-500",
+                  bgGradient: "from-pink-50 to-rose-50"
+                },
+                {
+                  title: "Trust & Security",
+                  desc: "Your financial data is sacred. We implement the highest security standards and never compromise on protecting your privacy.",
+                  icon: FiShield,
+                  gradient: "from-green-500 to-emerald-500",
+                  bgGradient: "from-green-50 to-emerald-50"
+                },
+                {
+                  title: "Excellence",
+                  desc: "We're committed to delivering exceptional user experiences through continuous innovation and attention to detail.",
+                  icon: FiAward,
+                  gradient: "from-purple-500 to-indigo-500",
+                  bgGradient: "from-purple-50 to-indigo-50"
+                }
+              ].map((value, i) => (
+                <ScrollAnimatedSection key={value.title} delay={i * 0.2}>
+                  <motion.div
+                    whileHover={{ y: -5, scale: 1.01 }}
+                    transition={{ duration: 0.3 }}
+                    className={`group relative text-center aspect-square flex flex-col justify-center p-6 rounded-2xl bg-gradient-to-br ${value.bgGradient} border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden`}
+                  >
+                    <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <div className="relative flex flex-col justify-center h-full">
+                      <FloatingElement delay={i * 0.3}>
+                        <div className={`w-16 h-16 bg-gradient-to-r ${value.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                          <value.icon className="w-8 h-8 text-white" />
+                        </div>
+                      </FloatingElement>
+                      
+                      <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                        {value.title}
+                      </h3>
+                      
+                      <p className="text-gray-600 leading-relaxed text-sm">
+                        {value.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                </ScrollAnimatedSection>
+              ))}
+            </div>
+          </div>
+        </ScrollAnimatedSection>
+
+        {/* Enhanced CTA Section */}
+        <ScrollAnimatedSection className="relative py-20">
+          <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl mx-4 md:mx-8 p-12 md:p-16 text-center overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-20 -translate-y-20"></div>
+              <div className="absolute bottom-0 right-0 w-60 h-60 bg-white rounded-full translate-x-30 translate-y-30"></div>
+              <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16"></div>
+            </div>
+            
+            <div className="relative max-w-4xl mx-auto">
+              <motion.div
+                className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium mb-8"
+              >
+                <FiCheckCircle className="animate-pulse" />
+                Join Our Community
+              </motion.div>
+
+              <motion.h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+                Ready to Transform Your Financial Future?
+              </motion.h2>
+              
+              <motion.p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Join thousands of users who have already taken control of their finances with Smart Finance. 
+                Start your journey to financial freedom today.
+              </motion.p>
+              
+              <motion.div className="flex flex-row gap-3 sm:gap-4 justify-center">
+                {token ? (
+                  <Link 
+                    to="/dashboard" 
+                    className="group relative bg-white text-blue-600 hover:bg-blue-50 px-4 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  >
+                    <span className="flex items-center gap-1 sm:gap-2">
+                      <FiTrendingUp size={16} className="sm:hidden" />
+                      <FiTrendingUp className="hidden sm:inline" />
+                      <span className="hidden sm:inline">Go to Dashboard</span>
+                      <span className="sm:hidden">Dashboard</span>
+                    </span>
+                  </Link>
+                ) : (
+                  <>
+                    <Link 
+                      to="/register" 
+                      className="group relative bg-white text-blue-600 hover:bg-blue-50 px-4 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    >
+                      <span className="flex items-center gap-1 sm:gap-2">
+                        <FiZap size={16} className="sm:hidden" />
+                        <FiZap className="hidden sm:inline" />
+                        <span className="hidden sm:inline">Get Started Free</span>
+                        <span className="sm:hidden">Get Started</span>
+                      </span>
+                    </Link>
+                    <Link 
+                      to="/login" 
+                      className="group border-2 border-white text-white hover:bg-white hover:text-blue-600 px-4 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    >
+                      <span className="flex items-center gap-1 sm:gap-2">
+                        <FiShield size={16} className="sm:hidden" />
+                        <FiShield className="hidden sm:inline" />
+                        <span className="hidden sm:inline">Sign In</span>
+                        <span className="sm:hidden">Sign In</span>
+                      </span>
+                    </Link>
+                  </>
+                )}
+              </motion.div>
+
+              {/* Trust Indicators */}
+              <motion.div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
+                {[
+                  { icon: FiShield, text: "Secure" },
+                  { icon: FiUsers, text: "10K+ Users" },
+                  { icon: FiGlobe, text: "Global" },
+                  { icon: FiHeart, text: "Trusted" }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-center gap-2 text-blue-100">
+                    <item.icon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{item.text}</span>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </ScrollAnimatedSection>
       </main>
 
       <Footer />
