@@ -62,8 +62,8 @@ export default function About() {
 
       <main>
         {/* Simple Hero Section */}
-        <section className="py-2 md:py-8">
-          <div className="mx-auto max-w-4xl px-4 text-center">
+        <section className="pt-8 pb-2 md:py-8">
+          <div className="mx-auto max-w-4xl px-4 text-left">
             <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-6">
               <FiStar />
               About Smart Finance
@@ -73,7 +73,7 @@ export default function About() {
               Empowering Financial Freedom
             </h1>
 
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
+            <p className="text-lg text-gray-600 max-w-2xl leading-relaxed mb-8">
               We're revolutionizing personal finance management by making it simple, secure, and accessible to everyone. 
               Smart Finance empowers you to take control of your financial future with confidence.
             </p>
@@ -247,7 +247,7 @@ export default function About() {
 
         {/* Enhanced CTA Section */}
         <ScrollAnimatedSection className="relative py-12">
-          <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-2xl mx-4 md:mx-8 p-8 md:p-10 text-center overflow-hidden">
+          <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-2xl mx-4 md:mx-8 p-8 md:p-10 text-left overflow-hidden">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-20 -translate-y-20"></div>

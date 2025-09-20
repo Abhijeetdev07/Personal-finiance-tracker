@@ -71,9 +71,9 @@ export default function Home() {
             <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
           </div>
           
-          <div className="relative mx-auto max-w-7xl px-4 py-2 md:py-8">
+          <div className="relative mx-auto max-w-7xl px-4 pt-8 pb-2 md:py-8">
             <div className="relative grid gap-8 lg:grid-cols-2 items-center">
-            <div className="text-center lg:text-left">
+            <div className="text-left">
               <motion.div
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -97,7 +97,7 @@ export default function Home() {
                 initial={{ y: 30, opacity: 0 }} 
                 animate={{ y: 0, opacity: 1 }} 
                 transition={{ duration: 0.8, delay: 0.4 }} 
-                className="mt-4 text-lg text-gray-600 max-w-xl mx-auto lg:mx-0"
+                className="mt-4 text-lg text-gray-600 max-w-xl"
               >
                 Transform your financial life with our intelligent dashboard. Monitor income, track expenses, and achieve your financial goals with powerful insights and beautiful visualizations.
               </motion.p>
@@ -106,7 +106,7 @@ export default function Home() {
                 initial={{ y: 30, opacity: 0 }} 
                 animate={{ y: 0, opacity: 1 }} 
                 transition={{ duration: 0.8, delay: 0.6 }} 
-                className="mt-6 flex flex-row gap-2 sm:gap-3 justify-center lg:justify-start"
+                className="mt-6 flex flex-row gap-2 sm:gap-3 justify-start"
               >
                 {token ? (
                   <Link 
@@ -155,7 +155,7 @@ export default function Home() {
                 initial={{ y: 30, opacity: 0 }} 
                 animate={{ y: 0, opacity: 1 }} 
                 transition={{ duration: 0.8, delay: 0.8 }} 
-                className="mt-8 grid grid-cols-3 gap-4 max-w-sm mx-auto lg:mx-0"
+                className="mt-8 grid grid-cols-3 gap-4 max-w-sm"
               >
                 {[
                   { number: "10K+", label: "Users" },
