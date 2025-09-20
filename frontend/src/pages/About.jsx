@@ -61,74 +61,37 @@ export default function About() {
       <Navbar />
 
       <main>
-        {/* Enhanced Hero Section */}
-        <section className="relative w-full">
-          {/* Background Decorations */}
-          <div className="absolute inset-0 w-full overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
-          </div>
-          
-          <div className="relative mx-auto max-w-6xl px-4 py-2 md:py-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-6"
-            >
-              <FiStar className="animate-pulse" />
-              About Our Mission
-            </motion.div>
+        {/* Simple Hero Section */}
+        <section className="py-2 md:py-8">
+          <div className="mx-auto max-w-4xl px-4 text-center">
+            <div className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <FiStar />
+              About Smart Finance
+            </div>
 
-            <motion.h1 
-              initial={{ y: 50, opacity: 0 }} 
-              animate={{ y: 0, opacity: 1 }} 
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-6"
-            >
-              <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                Empowering
-              </span>
-              <br />
-              <span className="text-gray-900">Financial</span>
-              <br />
-              <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
-                Freedom
-              </span>
-            </motion.h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              Empowering Financial Freedom
+            </h1>
 
-            <motion.p 
-              initial={{ y: 30, opacity: 0 }} 
-              animate={{ y: 0, opacity: 1 }} 
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8"
-            >
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
               We're revolutionizing personal finance management by making it simple, secure, and accessible to everyone. 
-              Smart Finance empowers you to take control of your financial future with confidence and clarity.
-            </motion.p>
+              Smart Finance empowers you to take control of your financial future with confidence.
+            </p>
 
-            {/* Stats */}
-            <motion.div 
-              initial={{ y: 30, opacity: 0 }} 
-              animate={{ y: 0, opacity: 1 }} 
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
-            >
+            {/* Simple Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
               {[
-                { number: "10K+", label: "Happy Users", icon: FiUsers },
-                { number: "₹50L+", label: "Money Tracked", icon: FiTrendingUp },
-                { number: "99.9%", label: "Uptime", icon: FiShield },
-                { number: "24/7", label: "Support", icon: FiHeart }
+                { number: "10K+", label: "Users" },
+                { number: "₹50L+", label: "Tracked" },
+                { number: "99.9%", label: "Uptime" },
+                { number: "24/7", label: "Support" }
               ].map((stat, i) => (
-                <FloatingElement key={i} delay={i * 0.2}>
-                  <div className="text-center bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-white/20">
-                    <stat.icon className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                    <div className="text-lg font-bold text-gray-900 mb-1">{stat.number}</div>
-                    <div className="text-xs text-gray-600">{stat.label}</div>
-                  </div>
-                </FloatingElement>
+                <div key={i} className="text-center">
+                  <div className="text-2xl font-bold text-blue-600 mb-1">{stat.number}</div>
+                  <div className="text-sm text-gray-600">{stat.label}</div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
         </section>
 

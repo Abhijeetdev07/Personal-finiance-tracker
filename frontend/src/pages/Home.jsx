@@ -88,17 +88,9 @@ export default function Home() {
                 initial={{ y: 50, opacity: 0 }} 
                 animate={{ y: 0, opacity: 1 }} 
                 transition={{ duration: 0.8, delay: 0.2 }} 
-                className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight"
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight"
               >
-                <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
-                  Track Your
-                </span>
-                <br />
-                <span className="text-gray-900">Finances</span>
-                <br />
-                <span className="bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent">
-                  With Clarity
-                </span>
+                Track Your Finances With Clarity
               </motion.h1>
 
               <motion.p 
@@ -190,9 +182,9 @@ export default function Home() {
                   <img 
                     src={heroImg} 
                     alt="Dashboard preview" 
-                    className="relative w-full h-auto rounded-xl shadow-xl border border-white/20 backdrop-blur-sm max-w-md mx-auto" 
-                    width={600} 
-                    height={350} 
+                    className="relative w-full h-auto rounded-xl shadow-xl border border-white/20 backdrop-blur-sm max-w-lg mx-auto" 
+                    width={800} 
+                    height={450} 
                     loading="lazy" 
                   />
                 </motion.div>
