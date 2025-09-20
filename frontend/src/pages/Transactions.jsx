@@ -1,13 +1,15 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { AuthContext as AppAuthContext } from "../App";
 import { apiFetch } from "../utils/api";
 import TransactionForm from "../components/TransactionForm";
 import TransactionTable from "../components/TransactionTable";
 import EditTransactionModal from "../components/EditTransactionModal";
 import ConfirmModal from "../components/ConfirmModal";
+import ExportModal from "../components/ExportModal";
 import { useNotification } from "../context/NotificationContext";
-import { FiArrowLeft, FiPlus, FiTrendingUp, FiTrendingDown } from "react-icons/fi";
+import { FiArrowLeft, FiPlus, FiTrendingUp, FiTrendingDown, FiDownload } from "react-icons/fi";
 
 export default function Transactions() {
   const { token, logout } = useContext(AppAuthContext);
@@ -24,6 +26,8 @@ export default function Transactions() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isExportInProgress, setIsExportInProgress] = useState(false);
   const { showSuccess, showError } = useNotification();
 
   // Fetch transactions
@@ -172,6 +176,29 @@ export default function Transactions() {
     showSuccess(`Added: ${newTransaction.type === 'income' ? '+' : '-'}₹${newTransaction.amount} (${newTransaction.category})`);
   };
 
+  // Handle export completion
+  const handleExportComplete = (result) => {
+    setIsExportInProgress(false);
+    
+    if (result.success) {
+      showSuccess(`Successfully exported ${result.summary?.totalTransactions || 0} transactions to PDF`);
+    } else {
+      showError(result.error || 'Export failed. Please try again.');
+    }
+  };
+
+  // Handle export start
+  const handleExportStart = () => {
+    setIsExportInProgress(true);
+    setIsExportModalOpen(true);
+  };
+
+  // Handle export modal close
+  const handleExportModalClose = () => {
+    setIsExportModalOpen(false);
+    setIsExportInProgress(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Enhanced Header */}
@@ -191,17 +218,59 @@ export default function Transactions() {
               <p className="text-sm text-gray-500 hidden sm:block">Manage your financial records</p>
             </div>
           </div>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-              showAddForm 
-                ? 'bg-gray-600 hover:bg-gray-700 text-white' 
-                : 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg'
-            }`}
-          >
-            <FiPlus size={18} className={showAddForm ? 'rotate-45' : ''} style={{ transition: 'transform 0.2s' }} />
-            <span className="hidden sm:inline">{showAddForm ? 'Cancel' : 'Add Transaction'}</span>
-          </button>
+          
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Export Button */}
+            <button
+              onClick={handleExportStart}
+              disabled={transactions.length === 0 || isExportInProgress}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white ${
+                isExportInProgress
+                  ? 'bg-blue-600 cursor-wait'
+                  : transactions.length === 0
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 hover:shadow-lg'
+              }`}
+              title={
+                transactions.length === 0 
+                  ? 'No transactions to export' 
+                  : isExportInProgress 
+                  ? 'Export in progress...' 
+                  : 'Export transactions to PDF'
+              }
+            >
+              {isExportInProgress ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <FiDownload size={18} />
+                  </motion.div>
+                  <span className="hidden sm:inline">Exporting...</span>
+                </>
+              ) : (
+                <>
+                  <FiDownload size={18} />
+                  <span className="hidden sm:inline">Export PDF</span>
+                </>
+              )}
+            </button>
+            
+            {/* Add Transaction Button */}
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                showAddForm 
+                  ? 'bg-gray-600 hover:bg-gray-700 text-white' 
+                  : 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-lg'
+              }`}
+            >
+              <FiPlus size={18} className={showAddForm ? 'rotate-45' : ''} style={{ transition: 'transform 0.2s' }} />
+              <span className="hidden sm:inline">{showAddForm ? 'Cancel' : 'Add Transaction'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -324,6 +393,14 @@ export default function Transactions() {
         confirmText="Delete"
         cancelText="Cancel"
         confirmButtonClass="bg-red-500 hover:bg-red-600"
+      />
+
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={isExportModalOpen}
+        onClose={handleExportModalClose}
+        transactions={transactions}
+        onExportComplete={handleExportComplete}
       />
     </div>
   );
