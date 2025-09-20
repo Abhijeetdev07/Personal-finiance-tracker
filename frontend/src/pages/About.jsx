@@ -191,7 +191,7 @@ export default function About() {
               </motion.p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto px-4">
               {[
                 {
                   title: "Empathy First",
@@ -219,22 +219,22 @@ export default function About() {
                   <motion.div
                     whileHover={{ y: -5, scale: 1.01 }}
                     transition={{ duration: 0.3 }}
-                    className={`group relative text-center aspect-square flex flex-col justify-center p-6 rounded-2xl bg-gradient-to-br ${value.bgGradient} border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden`}
+                    className={`group relative text-center aspect-square flex flex-col justify-center p-4 rounded-xl bg-gradient-to-br ${value.bgGradient} border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden w-full max-w-xs mx-auto`}
                   >
                     <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
                     <div className="relative flex flex-col justify-center h-full">
                       <FloatingElement delay={i * 0.3}>
-                        <div className={`w-16 h-16 bg-gradient-to-r ${value.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                          <value.icon className="w-8 h-8 text-white" />
+                        <div className={`w-14 h-14 bg-gradient-to-r ${value.gradient} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                          <value.icon className="w-7 h-7 text-white" />
                         </div>
                       </FloatingElement>
                       
-                      <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                      <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-3 lg:mb-4 group-hover:text-blue-600 transition-colors duration-300">
                         {value.title}
                       </h3>
                       
-                      <p className="text-gray-600 leading-relaxed text-sm">
+                      <p className="text-sm lg:text-base text-gray-600 leading-relaxed">
                         {value.desc}
                       </p>
                     </div>
@@ -246,8 +246,8 @@ export default function About() {
         </ScrollAnimatedSection>
 
         {/* Enhanced CTA Section */}
-        <ScrollAnimatedSection className="relative py-20">
-          <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-3xl mx-4 md:mx-8 p-12 md:p-16 text-center overflow-hidden">
+        <ScrollAnimatedSection className="relative py-12">
+          <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-2xl mx-4 md:mx-8 p-8 md:p-10 text-center overflow-hidden">
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-20 -translate-y-20"></div>
@@ -257,26 +257,26 @@ export default function About() {
             
             <div className="relative max-w-4xl mx-auto">
               <motion.div
-                className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium mb-8"
+                className="inline-flex items-center gap-2 bg-white/20 text-white px-3 py-1.5 rounded-full text-xs font-medium mb-4"
               >
                 <FiCheckCircle className="animate-pulse" />
                 Join Our Community
               </motion.div>
 
-              <motion.h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+              <motion.h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
                 Ready to Transform Your Financial Future?
               </motion.h2>
               
-              <motion.p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+              <motion.p className="text-base text-blue-100 mb-6 max-w-xl mx-auto leading-relaxed">
                 Join thousands of users who have already taken control of their finances with Smart Finance. 
                 Start your journey to financial freedom today.
               </motion.p>
               
-              <motion.div className="flex flex-row gap-3 sm:gap-4 justify-center">
+              <motion.div className="flex flex-row gap-2 sm:gap-3 justify-center">
                 {token ? (
                   <Link 
                     to="/dashboard" 
-                    className="group relative bg-white text-blue-600 hover:bg-blue-50 px-4 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                    className="group relative bg-white text-blue-600 hover:bg-blue-50 px-3 sm:px-6 py-2 sm:py-3 rounded-md sm:rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
                   >
                     <span className="flex items-center gap-1 sm:gap-2">
                       <FiTrendingUp size={16} className="sm:hidden" />
@@ -289,7 +289,7 @@ export default function About() {
                   <>
                     <Link 
                       to="/register" 
-                      className="group relative bg-white text-blue-600 hover:bg-blue-50 px-4 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                      className="group relative bg-white text-blue-600 hover:bg-blue-50 px-3 sm:px-6 py-2 sm:py-3 rounded-md sm:rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
                     >
                       <span className="flex items-center gap-1 sm:gap-2">
                         <FiZap size={16} className="sm:hidden" />
@@ -300,7 +300,7 @@ export default function About() {
                     </Link>
                     <Link 
                       to="/login" 
-                      className="group border-2 border-white text-white hover:bg-white hover:text-blue-600 px-4 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                      className="group border-2 border-white text-white hover:bg-white hover:text-blue-600 px-3 sm:px-6 py-2 sm:py-3 rounded-md sm:rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
                     >
                       <span className="flex items-center gap-1 sm:gap-2">
                         <FiShield size={16} className="sm:hidden" />
@@ -314,16 +314,16 @@ export default function About() {
               </motion.div>
 
               {/* Trust Indicators */}
-              <motion.div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
+              <motion.div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-xl mx-auto">
                 {[
                   { icon: FiShield, text: "Secure" },
                   { icon: FiUsers, text: "10K+ Users" },
                   { icon: FiGlobe, text: "Global" },
                   { icon: FiHeart, text: "Trusted" }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center justify-center gap-2 text-blue-100">
-                    <item.icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{item.text}</span>
+                  <div key={i} className="flex items-center justify-center gap-1 text-blue-100">
+                    <item.icon className="w-3 h-3" />
+                    <span className="text-xs font-medium">{item.text}</span>
                   </div>
                 ))}
               </motion.div>
