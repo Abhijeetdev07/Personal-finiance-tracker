@@ -271,7 +271,7 @@ export class TransactionPDFExporter {
   }
 
  // Create enhanced transactions table with better formatting
-  createTransactionsTable(transactions, startY = 120, userInfo) {
+  createTransactionsTable(transactions, startY = 120) {
     const doc = this.doc;
     
     // Table section header
@@ -517,7 +517,7 @@ export class TransactionPDFExporter {
   }
 
   // Simplified PDF export function
-  async exportTransactionsPDF(transactions, filterInfo = {}, userInfo = {}, filename = null) {
+  async exportTransactionsPDF(transactions, filterInfo = {}, filename = null) {
     try {
       // Load logo first
       await this.loadLogo();
@@ -531,15 +531,12 @@ export class TransactionPDFExporter {
       // Add simple header
       const headerEndY = this.addHeader(filterInfo, 1, 1);
       
-      // Add user information section
-      const userInfoEndY = this.addUserInformation(userInfo, headerEndY + 10);
-      
       // Add income/expense summary
-      const summaryEndY = this.addIncomeExpenseSummary(transactions, userInfoEndY + 10);
+      const summaryEndY = this.addIncomeExpenseSummary(transactions, headerEndY + 10);
       
       // Add transactions table or no data message
       if (transactions.length > 0) {
-        this.createTransactionsTable(transactions, summaryEndY + 10, userInfo);
+        this.createTransactionsTable(transactions, summaryEndY + 10);
       } else {
         // No transactions message
         this.doc.setFontSize(14);
@@ -618,9 +615,9 @@ export class TransactionPDFExporter {
 }
 
 // Convenience function for quick export
-export async function exportTransactionsToPDF(transactions, filterInfo = {}, userInfo = {}, filename = null) {
+export async function exportTransactionsToPDF(transactions, filterInfo = {}, filename = null) {
   const exporter = new TransactionPDFExporter();
-  return await exporter.exportTransactionsPDF(transactions, filterInfo, userInfo, filename);
+  return await exporter.exportTransactionsPDF(transactions, filterInfo, filename);
 }
 
 // Export filter helper functions
