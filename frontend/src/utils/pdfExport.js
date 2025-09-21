@@ -314,6 +314,51 @@ export class TransactionPDFExporter {
     doc.text(filterText, this.margin + 5, currentY + 30);
   }
 
+  // Add user information section above transaction summary
+  addUserInformation(userInfo, startY = 50) {
+    const doc = this.doc;
+    
+    // Only add user info section if userInfo is provided and has data
+    if (!userInfo || (!userInfo.name && !userInfo.email && !userInfo.mobile)) {
+      return startY; // Return original Y position if no user info
+    }
+    
+    let currentY = startY;
+    
+    // No background box or border - just text
+    
+    // Section title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0); // Black text
+    doc.text('Details', this.margin, currentY);
+    
+    currentY += 8; // Move down after title
+    
+    // User details in column layout
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0); // Black text
+    
+    // Display each field in a new line (column layout)
+    if (userInfo.name) {
+      doc.text(`Name: ${userInfo.name}`, this.margin, currentY);
+      currentY += 6; // Move to next line
+    }
+    
+    if (userInfo.email) {
+      doc.text(`Email: ${userInfo.email}`, this.margin, currentY);
+      currentY += 6; // Move to next line
+    }
+    
+    if (userInfo.mobile) {
+      doc.text(`Mobile: ${userInfo.mobile}`, this.margin, currentY);
+      currentY += 6; // Move to next line
+    }
+    
+    return currentY + 1; // Return next Y position with small spacing
+  }
+
   // Create enhanced transactions table with better formatting
   createTransactionsTable(transactions, startY = 120) {
     const doc = this.doc;
@@ -561,7 +606,7 @@ export class TransactionPDFExporter {
   }
 
   // Simplified PDF export function
-  async exportTransactionsPDF(transactions, filterInfo = {}, filename = null) {
+  async exportTransactionsPDF(transactions, filterInfo = {}, filename = null, userInfo = null) {
     try {
       // Load logo first
       await this.loadLogo();
@@ -575,8 +620,15 @@ export class TransactionPDFExporter {
       // Add simple header
       const headerEndY = this.addHeader(filterInfo, 1, 1);
       
+      // Add user information section if userInfo is provided
+      let currentY = headerEndY + 5;
+      if (userInfo) {
+        currentY = this.addUserInformation(userInfo, currentY);
+        currentY += 5; // Add spacing after user info
+      }
+      
       // Add income/expense summary
-      const summaryEndY = this.addIncomeExpenseSummary(transactions, filterInfo, headerEndY + 5);
+      const summaryEndY = this.addIncomeExpenseSummary(transactions, filterInfo, currentY);
       
       // Add transactions table or no data message
       if (transactions.length > 0) {
@@ -659,9 +711,9 @@ export class TransactionPDFExporter {
 }
 
 // Convenience function for quick export
-export async function exportTransactionsToPDF(transactions, filterInfo = {}, filename = null) {
+export async function exportTransactionsToPDF(transactions, filterInfo = {}, filename = null, userInfo = null) {
   const exporter = new TransactionPDFExporter();
-  return await exporter.exportTransactionsPDF(transactions, filterInfo, filename);
+  return await exporter.exportTransactionsPDF(transactions, filterInfo, filename, userInfo);
 }
 
 // Export filter helper functions

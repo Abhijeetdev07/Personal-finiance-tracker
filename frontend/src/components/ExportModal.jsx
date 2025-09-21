@@ -4,6 +4,7 @@ import { FiX, FiDownload, FiCalendar, FiFilter, FiFileText, FiLoader, FiCheck, F
 import { exportTransactionsFromBackend, exportTransactionsFromLocal } from '../utils/exportService';
 import { ExportFilters } from '../utils/pdfExport';
 import { ExportStatusIndicator, LoadingOverlay } from './LoadingSpinner';
+import { apiFetch } from '../utils/api';
 
 export default function ExportModal({ isOpen, onClose, transactions = [], onExportComplete }) {
   const [exportType, setExportType] = useState('all-time'); // all-time, date-range, monthly
@@ -14,6 +15,7 @@ export default function ExportModal({ isOpen, onClose, transactions = [], onExpo
   const [exportMessage, setExportMessage] = useState('');
   const [exportStatus, setExportStatus] = useState('idle'); // idle, loading, success, error
   const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   
   // Date range states
   const [startDate, setStartDate] = useState('');
@@ -26,6 +28,33 @@ export default function ExportModal({ isOpen, onClose, transactions = [], onExpo
   // Error and success states
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Fetch user data when modal opens
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await apiFetch('/profile');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.profile) {
+            const profile = data.profile;
+            setUserInfo({
+              name: `${profile.firstName || ''} ${profile.lastName || ''}`.trim() || profile.username,
+              email: profile.email,
+              mobile: profile.phone && profile.countryCode ? `${profile.countryCode} ${profile.phone}` : profile.phone
+            });
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to fetch user data for PDF export:', error);
+        // Don't show error to user, just proceed without user info
+      }
+    };
+
+    if (isOpen) {
+      fetchUserData();
+    }
+  }, [isOpen]);
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -178,7 +207,7 @@ export default function ExportModal({ isOpen, onClose, transactions = [], onExpo
       // Try backend export first, fallback to local if needed
       let result;
       try {
-        result = await exportTransactionsFromBackend(filters, onProgress);
+        result = await exportTransactionsFromBackend(filters, onProgress, userInfo);
       } catch (backendError) {
         console.warn('Backend export failed, falling back to local export:', backendError);
         

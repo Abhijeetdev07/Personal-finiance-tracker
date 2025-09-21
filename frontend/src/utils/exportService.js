@@ -192,9 +192,10 @@ export class ExportService {
    * Main export function - fetches data from backend and generates PDF
    * @param {Object} filters - Export filter parameters
    * @param {Function} onProgress - Progress callback function
+   * @param {Object} userInfo - User information for PDF header
    * @returns {Promise<Object>} Export result
    */
-  async exportTransactions(filters = {}, onProgress = null) {
+  async exportTransactions(filters = {}, onProgress = null, userInfo = null) {
     if (this.isExporting) {
       return {
         success: false,
@@ -256,7 +257,7 @@ export class ExportService {
       // Step 6: Generate PDF
       if (onProgress) onProgress(75, 'Generating PDF document...');
       
-      const pdfResult = await exportTransactionsToPDF(transactions, filterInfo, filename);
+      const pdfResult = await exportTransactionsToPDF(transactions, filterInfo, filename, userInfo);
 
       if (!pdfResult.success) {
         throw new Error(pdfResult.error || 'Failed to generate PDF');
@@ -405,8 +406,8 @@ export class ExportService {
 const exportService = new ExportService();
 
 // Export convenience functions
-export async function exportTransactionsFromBackend(filters, onProgress) {
-  return await exportService.exportTransactions(filters, onProgress);
+export async function exportTransactionsFromBackend(filters, onProgress, userInfo) {
+  return await exportService.exportTransactions(filters, onProgress, userInfo);
 }
 
 export async function exportTransactionsFromLocal(transactions, filters, onProgress) {
