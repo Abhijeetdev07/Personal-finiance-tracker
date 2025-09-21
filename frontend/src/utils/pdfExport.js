@@ -532,17 +532,17 @@ export class TransactionPDFExporter {
       const headerEndY = this.addHeader(filterInfo, 1, 1);
       
       // Add income/expense summary
-      const summaryEndY = this.addIncomeExpenseSummary(transactions, headerEndY + 10);
+      const summaryEndY = this.addIncomeExpenseSummary(transactions, headerEndY + 5);
       
       // Add transactions table or no data message
       if (transactions.length > 0) {
-        this.createTransactionsTable(transactions, summaryEndY + 10);
+        this.createTransactionsTable(transactions, summaryEndY + 5);
       } else {
         // No transactions message
         this.doc.setFontSize(14);
         this.doc.setFont('helvetica', 'normal');
         this.doc.setTextColor(100, 100, 100);
-        this.doc.text('No transactions found for the selected criteria.', this.margin, summaryEndY + 50);
+        this.doc.text('No transactions found for the selected criteria.', this.margin, summaryEndY + 20);
       }
       
       // Handle multi-page documents
