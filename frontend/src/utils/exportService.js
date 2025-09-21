@@ -256,7 +256,7 @@ export class ExportService {
       // Step 6: Generate PDF
       if (onProgress) onProgress(75, 'Generating PDF document...');
       
-      const pdfResult = exportTransactionsToPDF(transactions, filterInfo, filename);
+      const pdfResult = await exportTransactionsToPDF(transactions, filterInfo, filename);
 
       if (!pdfResult.success) {
         throw new Error(pdfResult.error || 'Failed to generate PDF');
@@ -361,8 +361,8 @@ export class ExportService {
       const filename = this.generateFilename(filterInfo);
 
       if (onProgress) onProgress(80, 'Finalizing document...');
-
-      const pdfResult = exportTransactionsToPDF(filteredTransactions, filterInfo, filename);
+      
+      const pdfResult = await exportTransactionsToPDF(filteredTransactions, filterInfo, filename);
 
       if (onProgress) onProgress(100, 'Export completed!');
 

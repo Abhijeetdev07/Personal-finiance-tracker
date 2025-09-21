@@ -8,6 +8,7 @@ export class TransactionPDFExporter {
     this.pageWidth = 210; // A4 width in mm
     this.pageHeight = 297; // A4 height in mm
     this.margin = 20;
+    this.logoImage = null; // Custom logo image
   }
 
   // Initialize PDF document
@@ -64,13 +65,21 @@ export class TransactionPDFExporter {
   addHeader(filterInfo = {}, pageNumber = 1, totalPages = 1) {
     const doc = this.doc;
     
-    // Company Logo
-    doc.setFillColor(37, 99, 235);
-    doc.circle(this.margin + 8, 20, 8, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('SF', this.margin + 5, 24);
+    // Add custom logo if available
+    if (this.logoImage) {
+      try {
+        // Add logo image (38.5x14mm size to maintain aspect ratio of 110x40px)
+        // 110px:40px = 2.75:1 ratio, so 38.5mm:14mm maintains this ratio
+        doc.addImage(this.logoImage, 'PNG', this.margin, 10, 38.5, 14);
+      } catch (error) {
+        console.warn('Failed to add logo to PDF:', error);
+        // Fallback to simple circle logo
+        this.addFallbackLogo(doc);
+      }
+    } else {
+      // Fallback to simple circle logo
+      this.addFallbackLogo(doc);
+    }
     
     // Generated info (right side)
     const now = new Date();
@@ -88,11 +97,26 @@ export class TransactionPDFExporter {
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(0, 0, 0);
-    const generatedText = `Generated: ${dateTime}`;
+    const generatedText = `Generated on: ${dateTime}`;
     const textWidth = doc.getTextWidth(generatedText);
     doc.text(generatedText, this.pageWidth - this.margin - textWidth, 24);
     
-    return 40; // Return next Y position
+    // Add horizontal ruler line below header
+    doc.setDrawColor(200, 200, 200); // Light gray color
+    doc.setLineWidth(0.5);
+    doc.line(this.margin, 35, this.pageWidth - this.margin, 35);
+    
+    return 45; // Return next Y position (increased to account for ruler line)
+  }
+
+  // Fallback logo when custom logo fails to load
+  addFallbackLogo(doc) {
+    doc.setFillColor(37, 99, 235);
+    doc.circle(this.margin + 8, 20, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('SF', this.margin + 5, 24);
   }
 
   // Add enhanced summary section with detailed metrics
@@ -435,8 +459,11 @@ export class TransactionPDFExporter {
   }
 
   // Simplified PDF export function
-  exportTransactionsPDF(transactions, filterInfo = {}, filename = null) {
+  async exportTransactionsPDF(transactions, filterInfo = {}, filename = null) {
     try {
+      // Load logo first
+      await this.loadLogo();
+      
       // Initialize PDF
       this.initializePDF();
       
@@ -495,12 +522,46 @@ export class TransactionPDFExporter {
       };
     }
   }
+
+  // Load logo image from assets
+  async loadLogo() {
+    try {
+      // Import the logo from assets
+      const logoModule = await import('/src/assets/web_logo.png');
+      const logoUrl = logoModule.default;
+      
+      // Convert image to base64 for PDF
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          const dataURL = canvas.toDataURL('image/png');
+          this.logoImage = dataURL;
+          resolve(dataURL);
+        };
+        img.onerror = () => {
+          console.warn('Failed to load logo image');
+          reject(new Error('Logo load failed'));
+        };
+        img.src = logoUrl;
+      });
+    } catch (error) {
+      console.warn('Logo not found in assets:', error);
+      return null;
+    }
+  }
+
 }
 
 // Convenience function for quick export
-export function exportTransactionsToPDF(transactions, filterInfo = {}, filename = null) {
+export async function exportTransactionsToPDF(transactions, filterInfo = {}, filename = null) {
   const exporter = new TransactionPDFExporter();
-  return exporter.exportTransactionsPDF(transactions, filterInfo, filename);
+  return await exporter.exportTransactionsPDF(transactions, filterInfo, filename);
 }
 
 // Export filter helper functions
