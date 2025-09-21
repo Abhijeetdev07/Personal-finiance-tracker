@@ -217,7 +217,7 @@ export class TransactionPDFExporter {
   }
 
   // Add income/expense summary above transaction table
-  addIncomeExpenseSummary(transactions, startY) {
+  addIncomeExpenseSummary(transactions, filterInfo, startY) {
     const doc = this.doc;
     let currentY = startY;
     
@@ -235,12 +235,12 @@ export class TransactionPDFExporter {
     
     // Summary section background
     doc.setFillColor(248, 250, 252); // Very light blue-gray
-    doc.rect(this.margin, currentY, 170, 25, 'F');
+    doc.rect(this.margin, currentY, 170, 35, 'F'); // Increased height for filter info
     
     // Summary section border
     doc.setDrawColor(203, 213, 225);
     doc.setLineWidth(0.5);
-    doc.rect(this.margin, currentY, 170, 25);
+    doc.rect(this.margin, currentY, 170, 35); // Increased height for filter info
     
     // Title
     doc.setFont('helvetica', 'bold');
@@ -255,22 +255,66 @@ export class TransactionPDFExporter {
     // Total Income (left side)
     doc.setTextColor(34, 197, 94); // Green
     doc.setFont('helvetica', 'bold');
-    doc.text('Total Income:', this.margin + 10, currentY + 18);
+    doc.text('Total Income:', this.margin + 10, currentY + 20);
     const incomeText = this.formatCurrency(totalIncome);
     const incomeWidth = doc.getTextWidth('Total Income: ');
-    doc.text(incomeText, this.margin + 10 + incomeWidth, currentY + 18);
+    doc.text(incomeText, this.margin + 10 + incomeWidth, currentY + 20);
     
     // Total Expense (right side)
     doc.setTextColor(239, 68, 68); // Red
-    doc.text('Total Expense:', this.margin + 90, currentY + 18);
+    doc.text('Total Expense:', this.margin + 90, currentY + 20);
     const expenseText = this.formatCurrency(totalExpense);
     const expenseWidth = doc.getTextWidth('Total Expense: ');
-    doc.text(expenseText, this.margin + 90 + expenseWidth, currentY + 18);
+    doc.text(expenseText, this.margin + 90 + expenseWidth, currentY + 20);
     
-    return currentY + 35; // Return next Y position with some spacing
+    // Add filter information
+    this.addFilterInfoToSummary(filterInfo, currentY);
+    
+    return currentY + 40; // Return next Y position with spacing for integrated layout
   }
 
- // Create enhanced transactions table with better formatting
+  // Add filter information integrated into summary
+  addFilterInfoToSummary(filterInfo, currentY) {
+    const doc = this.doc;
+    
+    // Only add if filter info is provided and has meaningful data
+    if (!filterInfo || Object.keys(filterInfo).length === 0) {
+      return;
+    }
+    
+    // Filter details (smaller text, below the totals)
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10); //
+    doc.setTextColor(100, 100, 100); // Light gray
+    
+    let filterText = 'Filters: ';
+    
+    // Build filter text based on available filter info
+    if (filterInfo.dateRange) {
+      filterText += `${filterInfo.dateRange}`;
+    } else if (filterInfo.period) {
+      filterText += `${filterInfo.period}`;
+    }
+    
+    if (filterInfo.type && filterInfo.type !== 'all') {
+      if (filterText !== 'Filters: ') filterText += ' • ';
+      filterText += `${filterInfo.type.charAt(0).toUpperCase() + filterInfo.type.slice(1)}`;
+    }
+    
+    if (filterInfo.category && filterInfo.category !== 'all') {
+      if (filterText !== 'Filters: ') filterText += ' • ';
+      filterText += `${filterInfo.category}`;
+    }
+    
+    // If no specific filters, show default
+    if (filterText === 'Filters: ') {
+      filterText = 'Filters: All transactions';
+    }
+    
+    doc.text(filterText, this.margin + 5, currentY + 30);
+  }
+
+  // Create enhanced transactions table with better formatting
   createTransactionsTable(transactions, startY = 120) {
     const doc = this.doc;
     
@@ -532,7 +576,7 @@ export class TransactionPDFExporter {
       const headerEndY = this.addHeader(filterInfo, 1, 1);
       
       // Add income/expense summary
-      const summaryEndY = this.addIncomeExpenseSummary(transactions, headerEndY + 5);
+      const summaryEndY = this.addIncomeExpenseSummary(transactions, filterInfo, headerEndY + 5);
       
       // Add transactions table or no data message
       if (transactions.length > 0) {
