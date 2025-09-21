@@ -270,8 +270,8 @@ export class TransactionPDFExporter {
     return currentY + 35; // Return next Y position with some spacing
   }
 
-  // Create enhanced transactions table with better formatting
-  createTransactionsTable(transactions, startY = 120) {
+ // Create enhanced transactions table with better formatting
+  createTransactionsTable(transactions, startY = 120, userInfo) {
     const doc = this.doc;
     
     // Table section header
@@ -517,7 +517,7 @@ export class TransactionPDFExporter {
   }
 
   // Simplified PDF export function
-  async exportTransactionsPDF(transactions, filterInfo = {}, filename = null) {
+  async exportTransactionsPDF(transactions, filterInfo = {}, userInfo = {}, filename = null) {
     try {
       // Load logo first
       await this.loadLogo();
@@ -531,12 +531,15 @@ export class TransactionPDFExporter {
       // Add simple header
       const headerEndY = this.addHeader(filterInfo, 1, 1);
       
+      // Add user information section
+      const userInfoEndY = this.addUserInformation(userInfo, headerEndY + 10);
+      
       // Add income/expense summary
-      const summaryEndY = this.addIncomeExpenseSummary(transactions, headerEndY + 10);
+      const summaryEndY = this.addIncomeExpenseSummary(transactions, userInfoEndY + 10);
       
       // Add transactions table or no data message
       if (transactions.length > 0) {
-        this.createTransactionsTable(transactions, summaryEndY + 10);
+        this.createTransactionsTable(transactions, summaryEndY + 10, userInfo);
       } else {
         // No transactions message
         this.doc.setFontSize(14);
@@ -615,9 +618,9 @@ export class TransactionPDFExporter {
 }
 
 // Convenience function for quick export
-export async function exportTransactionsToPDF(transactions, filterInfo = {}, filename = null) {
+export async function exportTransactionsToPDF(transactions, filterInfo = {}, userInfo = {}, filename = null) {
   const exporter = new TransactionPDFExporter();
-  return await exporter.exportTransactionsPDF(transactions, filterInfo, filename);
+  return await exporter.exportTransactionsPDF(transactions, filterInfo, userInfo, filename);
 }
 
 // Export filter helper functions
