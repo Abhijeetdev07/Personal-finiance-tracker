@@ -216,6 +216,60 @@ export class TransactionPDFExporter {
     return currentY; // Return next Y position
   }
 
+  // Add income/expense summary above transaction table
+  addIncomeExpenseSummary(transactions, startY) {
+    const doc = this.doc;
+    let currentY = startY;
+    
+    // Calculate totals
+    let totalIncome = 0;
+    let totalExpense = 0;
+    
+    transactions.forEach(transaction => {
+      if (transaction.type === 'income') {
+        totalIncome += transaction.amount;
+      } else {
+        totalExpense += transaction.amount;
+      }
+    });
+    
+    // Summary section background
+    doc.setFillColor(248, 250, 252); // Very light blue-gray
+    doc.rect(this.margin, currentY, 170, 25, 'F');
+    
+    // Summary section border
+    doc.setDrawColor(203, 213, 225);
+    doc.setLineWidth(0.5);
+    doc.rect(this.margin, currentY, 170, 25);
+    
+    // Title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Transaction Summary', this.margin + 5, currentY + 8);
+    
+    // Income and Expense in two columns
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    
+    // Total Income (left side)
+    doc.setTextColor(34, 197, 94); // Green
+    doc.setFont('helvetica', 'bold');
+    doc.text('Total Income:', this.margin + 10, currentY + 18);
+    const incomeText = this.formatCurrency(totalIncome);
+    const incomeWidth = doc.getTextWidth('Total Income: ');
+    doc.text(incomeText, this.margin + 10 + incomeWidth, currentY + 18);
+    
+    // Total Expense (right side)
+    doc.setTextColor(239, 68, 68); // Red
+    doc.text('Total Expense:', this.margin + 90, currentY + 18);
+    const expenseText = this.formatCurrency(totalExpense);
+    const expenseWidth = doc.getTextWidth('Total Expense: ');
+    doc.text(expenseText, this.margin + 90 + expenseWidth, currentY + 18);
+    
+    return currentY + 35; // Return next Y position with some spacing
+  }
+
   // Create enhanced transactions table with better formatting
   createTransactionsTable(transactions, startY = 120) {
     const doc = this.doc;
@@ -477,15 +531,18 @@ export class TransactionPDFExporter {
       // Add simple header
       const headerEndY = this.addHeader(filterInfo, 1, 1);
       
+      // Add income/expense summary
+      const summaryEndY = this.addIncomeExpenseSummary(transactions, headerEndY + 10);
+      
       // Add transactions table or no data message
       if (transactions.length > 0) {
-        this.createTransactionsTable(transactions, headerEndY + 10);
+        this.createTransactionsTable(transactions, summaryEndY + 10);
       } else {
         // No transactions message
         this.doc.setFontSize(14);
         this.doc.setFont('helvetica', 'normal');
         this.doc.setTextColor(100, 100, 100);
-        this.doc.text('No transactions found for the selected criteria.', this.margin, headerEndY + 50);
+        this.doc.text('No transactions found for the selected criteria.', this.margin, summaryEndY + 50);
       }
       
       // Handle multi-page documents
