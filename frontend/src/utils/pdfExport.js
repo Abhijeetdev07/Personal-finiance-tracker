@@ -427,6 +427,10 @@ export class TransactionPDFExporter {
     const doc = this.doc;
     const footerY = this.pageHeight - 15;
     
+    // Clear footer area to prevent overlapping
+    doc.setFillColor(255, 255, 255); // White background
+    doc.rect(this.pageWidth - this.margin - 50, footerY - 5, 50, 10, 'F'); // Clear area for page number
+    
     // Page number (right side)
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
@@ -484,18 +488,13 @@ export class TransactionPDFExporter {
         this.doc.text('No transactions found for the selected criteria.', this.margin, headerEndY + 50);
       }
       
-      // Add simple footer
-      this.addFooter(summary, 1, 1);
-      
       // Handle multi-page documents
       const totalPages = this.doc.internal.getNumberOfPages();
       
-      // Update page numbers on all pages
-      if (totalPages > 1) {
-        for (let i = 1; i <= totalPages; i++) {
-          this.doc.setPage(i);
-          this.addFooter(summary, i, totalPages);
-        }
+      // Add footer to all pages with correct page numbers
+      for (let i = 1; i <= totalPages; i++) {
+        this.doc.setPage(i);
+        this.addFooter(summary, i, totalPages);
       }
       
       // Generate filename
