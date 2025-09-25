@@ -12,6 +12,7 @@ import authBg from "../assets/auth.jpg";
 export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "", firstName: "", lastName: "" });
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [passwordHint, setPasswordHint] = useState({ len: false, upper: false, lower: false, num: false, special: false });
   const [showPassword, setShowPassword] = useState(false); // password visibility
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +21,10 @@ export default function Register() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    // Clear field-specific error on change
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    }
     if (e.target.name === "password") {
       const pwd = e.target.value;
       setPasswordHint({
@@ -35,6 +40,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
 
     // Trim inputs
     const username = form.username.trim();
@@ -43,42 +49,35 @@ export default function Register() {
     const firstName = form.firstName.replace(/\s/g, "");
     const lastName = form.lastName.replace(/\s/g, "");
 
+    const newFieldErrors = {};
+
     // Required checks
-    if (!username || !email || !password || !firstName) {
-      setError("Username, email, password and first name are required");
-      return;
-    }
+    if (!firstName) newFieldErrors.firstName = "First name is required";
+    if (!username) newFieldErrors.username = "Username is required";
+    if (!email) newFieldErrors.email = "Email is required";
+    if (!password) newFieldErrors.password = "Password is required";
 
     // Username validation
-    if (username.length < 5) {
-      setError("Username must be at least 5 characters long");
-      return;
-    }
+    if (username && username.length < 5) newFieldErrors.username = "Username must be at least 5 characters long";
     const usernamePattern = /^[a-zA-Z0-9]+$/;
-    if (!usernamePattern.test(username)) {
-      setError("Username can only contain letters and numbers");
-      return;
-    }
+    if (username && !usernamePattern.test(username)) newFieldErrors.username = "Username can only contain letters and numbers";
 
     // Names validation: letters only
     const namePattern = /^[a-zA-Z]+$/;
-    if (!namePattern.test(firstName)) {
-      setError("First name can only contain letters (no spaces or symbols)");
-      return;
-    }
-    if (firstName.length < 3) {
-      setError("First name must be at least 3 characters long");
-      return;
-    }
-    if (lastName && !namePattern.test(lastName)) {
-      setError("Last name can only contain letters (no spaces or symbols)");
-      return;
-    }
+    if (firstName && !namePattern.test(firstName)) newFieldErrors.firstName = "First name can only contain letters (no spaces or symbols)";
+    if (firstName && firstName.length < 3) newFieldErrors.firstName = "First name must be at least 3 characters long";
+    if (lastName && !namePattern.test(lastName)) newFieldErrors.lastName = "Last name can only contain letters (no spaces or symbols)";
 
     // Client-side strong password check (mirrors backend)
     const strong = passwordHint.len && passwordHint.upper && passwordHint.lower && passwordHint.num && passwordHint.special;
-    if (!strong) {
-      setError("Password must be 8-12 chars with upper, lower, number and special character");
+    if (password && !strong) newFieldErrors.password = "Password must be 8-12 chars with upper, lower, number and special character";
+
+    // If any field errors, set them and stop
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
+      // Show first error as general message for accessibility
+      const firstMsg = Object.values(newFieldErrors)[0];
+      setError(firstMsg);
       return;
     }
 
@@ -146,7 +145,7 @@ export default function Register() {
             onChange={handleChange}
             className="mb-0"
             required
-            hasError={!!error}
+            hasError={!!fieldErrors.firstName}
             autoComplete="given-name"
           />
 
@@ -158,7 +157,7 @@ export default function Register() {
             onChange={handleChange}
             className="mb-0"
             required
-            hasError={!!error}
+            hasError={!!fieldErrors.lastName}
             autoComplete="family-name"
           />
         </div>
@@ -171,7 +170,7 @@ export default function Register() {
           onChange={handleChange}
           className="mb-3 sm:mb-4"
           required
-          hasError={!!error}
+          hasError={!!fieldErrors.username}
           autoComplete="username"
         />
         
@@ -183,7 +182,7 @@ export default function Register() {
           onChange={handleChange}
           className="mb-3 sm:mb-4"
           required
-          hasError={!!error}
+          hasError={!!fieldErrors.email}
           autoComplete="email"
         />
 
@@ -198,7 +197,7 @@ export default function Register() {
           showPasswordToggle={true}
           onTogglePassword={() => setShowPassword(!showPassword)}
           showPassword={showPassword}
-          hasError={!!error}
+          hasError={!!fieldErrors.password}
           autoComplete="new-password"
         />
 
