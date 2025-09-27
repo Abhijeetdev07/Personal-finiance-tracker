@@ -79,11 +79,11 @@ smart-finance/
    JWT_SECRET=<secret-jwt-key>
    PORT=5000
    
-   # Brevo SMTP Configuration
-   SMTP_HOST=<smtp-relay.brevo.com>
+   # SMTP Configuration
+   SMTP_HOST=<smtp-relay.com>
    SMTP_PORT=<port_number>
    SMTP_USER=<your-registered-email@domain.com>
-   SMTP_PASS=<your-brevo-smtp-key>
+   SMTP_PASS=<your-smtp-key>
    EMAIL_FROM=<your-registered-email@domain.com>
    ```
 4. Start the backend server:
