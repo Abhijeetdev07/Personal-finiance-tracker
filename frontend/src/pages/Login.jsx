@@ -12,6 +12,7 @@ import authBg from "../assets/auth.jpg";
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false); // state for password visibility
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(AuthContext);
@@ -19,6 +20,19 @@ export default function Login() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    
+    // Clear any login errors when user starts typing
+    if (error) {
+      setError("");
+    }
+    
+    // Clear field-specific error on change
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    }
+    
+    // Note: Removed real-time email format validation for login page
+    // Login accepts both email and username, so format validation is not needed
   };
 
   const handleSubmit = async (e) => {

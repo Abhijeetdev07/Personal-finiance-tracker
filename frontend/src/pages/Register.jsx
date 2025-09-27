@@ -25,6 +25,23 @@ export default function Register() {
     if (fieldErrors[e.target.name]) {
       setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
     }
+    
+    // Real-time email format validation
+    if (e.target.name === "email") {
+      const email = e.target.value.trim();
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (email && !emailPattern.test(email)) {
+        setFieldErrors((prev) => ({ ...prev, email: "Invalid email format" }));
+        setError("Invalid email format");
+      } else if (email && emailPattern.test(email)) {
+        // Clear email error if format becomes valid
+        setFieldErrors((prev) => ({ ...prev, email: "" }));
+        if (error === "Invalid email format") {
+          setError("");
+        }
+      }
+    }
+    
     if (e.target.name === "password") {
       const pwd = e.target.value;
       setPasswordHint({
@@ -56,6 +73,10 @@ export default function Register() {
     if (!username) newFieldErrors.username = "Username is required";
     if (!email) newFieldErrors.email = "Email is required";
     if (!password) newFieldErrors.password = "Password is required";
+
+    // Email format validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailPattern.test(email)) newFieldErrors.email = "Invalid email format";
 
     // Username validation
     if (username && username.length < 5) newFieldErrors.username = "Username must be at least 5 characters long";
