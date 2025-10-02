@@ -88,12 +88,13 @@ export default function Dashboard() {
             </div>
             
             <div className="flex items-center gap-4">
+              {/* Hide Add Transaction button on mobile, show on desktop */}
               <Link
                 to="/transactions"
-                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-lg transform hover:scale-105"
+                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-lg transform hover:scale-105"
               >
                 <FiPlus size={18} />
-                <span className="hidden sm:inline">Add Transaction</span>
+                <span>Add Transaction</span>
               </Link>
               
               <HeaderProfile
@@ -182,6 +183,15 @@ export default function Dashboard() {
           isOpen={isProfileModalOpen}
           onClose={() => setIsProfileModalOpen(false)}
         />
+
+        {/* Fixed Floating Action Button for Mobile */}
+        <Link
+          to="/transactions"
+          className="sm:hidden fixed bottom-6 right-6 z-30 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200 animate-pulse-slow"
+          aria-label="Add Transaction"
+        >
+          <FiPlus size={24} />
+        </Link>
       </div>
     </ProfileAuthProvider>
   );

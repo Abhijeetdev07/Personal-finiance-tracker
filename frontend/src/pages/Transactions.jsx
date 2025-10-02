@@ -221,11 +221,11 @@ export default function Transactions() {
           
           {/* Action Buttons */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Export Button */}
+            {/* Export PDF Button - Hidden on mobile, shown on desktop */}
             <button
               onClick={handleExportStart}
               disabled={transactions.length === 0 || isExportInProgress}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white ${
+              className={`hidden sm:flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white ${
                 isExportInProgress
                   ? 'bg-blue-600 cursor-wait'
                   : transactions.length === 0
@@ -248,12 +248,12 @@ export default function Transactions() {
                   >
                     <FiDownload size={18} />
                   </motion.div>
-                  <span className="hidden sm:inline">Exporting...</span>
+                  <span className="hidden lg:inline">Exporting...</span>
                 </>
               ) : (
                 <>
                   <FiDownload size={18} />
-                  <span className="hidden sm:inline">Export PDF</span>
+                  <span className="hidden lg:inline">Export PDF</span>
                 </>
               )}
             </button>
@@ -371,6 +371,43 @@ export default function Transactions() {
                 onDelete={showDeleteConfirmation}
                 isLoading={isLoading}
               />
+              
+              {/* Export PDF Button at bottom right - Visible on mobile, optional on desktop */}
+              {transactions.length > 0 && (
+                <div className="flex justify-end mt-6 border-t pt-6">
+                  <button
+                    onClick={handleExportStart}
+                    disabled={isExportInProgress}
+                    className={`flex sm:hidden items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-200 text-white ${
+                      isExportInProgress
+                        ? 'bg-blue-600 cursor-wait'
+                        : 'bg-green-600 hover:bg-green-700 hover:shadow-lg transform hover:scale-105'
+                    }`}
+                    title={
+                      isExportInProgress 
+                        ? 'Export in progress...' 
+                        : 'Export transactions to PDF'
+                    }
+                  >
+                    {isExportInProgress ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                        >
+                          <FiDownload size={18} />
+                        </motion.div>
+                        <span>Exporting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FiDownload size={18} />
+                        <span>Export PDF</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
