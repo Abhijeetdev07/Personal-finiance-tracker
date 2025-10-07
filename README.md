@@ -56,7 +56,7 @@ smart-finance/
   <img src="./readme_assets/register-page.png" width="400" />
   <img src="./readme_assets/login-page.png" width="400" />
 </p>
-
+  
 ![Dashboard](./readme_assets/dashbard.png)
 ![Dashboard 2](./readme_assets/dashboard-2.png)
 
