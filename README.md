@@ -6,7 +6,7 @@ A comprehensive personal finance tracker with authentication, transactions manag
 
 - Auth: Register, Login, Protected routes, Email OTP reset, JWT
 - Transactions: CRUD, categories, filters, summaries
-- Charts: Category pie, monthly bar, responsive with tooltips
+- Charts: Category pie, monthly bar, responsive with tooltips    
 - UX: Responsive UI, forms with validation, custom notifications/modals
 - Profile: Edit first/last name, phone with country code, bio
 - Email: Welcome email, password reset OTP
