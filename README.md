@@ -2,7 +2,7 @@
 
 A comprehensive personal finance tracker with authentication, transactions management, password reset functionality, and visual insights. Built with a Node/Express backend, MongoDB database, and a React + Vite frontend.
 
-## 🚀 Features (Brief)
+## 🚀 Features (Brief) 
 
 - Auth: Register, Login, Protected routes, Email OTP reset, JWT
 - Transactions: CRUD, categories, filters, summaries
