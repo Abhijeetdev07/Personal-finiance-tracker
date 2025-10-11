@@ -10,6 +10,8 @@ export default function DeviceManager({ isOpen, onClose }) {
   const [currentDeviceId, setCurrentDeviceId] = useState(null);
   const [securityAnalysis, setSecurityAnalysis] = useState(null);
   const [showSecurity, setShowSecurity] = useState(false);
+  const [isRemovingOthers, setIsRemovingOthers] = useState(false);
+  const [removingDeviceId, setRemovingDeviceId] = useState(null);
   const { showSuccess, showError } = useNotification();
   const { token } = useContext(AppAuthContext);
 
@@ -57,6 +59,7 @@ export default function DeviceManager({ isOpen, onClose }) {
 
   const removeDevice = async (deviceId) => {
     try {
+      setRemovingDeviceId(deviceId);
       const res = await apiFetch(`/devices/${deviceId}`, { method: 'DELETE' });
       const data = await res.json();
       
@@ -69,11 +72,14 @@ export default function DeviceManager({ isOpen, onClose }) {
     } catch (error) {
       console.error('Error removing device:', error);
       showError('Failed to remove device');
+    } finally {
+      setRemovingDeviceId(null);
     }
   };
 
   const removeAllOtherDevices = async () => {
     try {
+      setIsRemovingOthers(true);
       const res = await apiFetch('/devices/others', { method: 'DELETE' });
       const data = await res.json();
       
@@ -86,6 +92,8 @@ export default function DeviceManager({ isOpen, onClose }) {
     } catch (error) {
       console.error('Error removing other devices:', error);
       showError('Failed to remove other devices');
+    } finally {
+      setIsRemovingOthers(false);
     }
   };
 
@@ -326,11 +334,26 @@ export default function DeviceManager({ isOpen, onClose }) {
                     {!isCurrentDevice(device.deviceId) && (
                       <button
                         onClick={() => removeDevice(device.deviceId)}
-                        className="p-2 sm:p-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                        title="Remove device"
+                        disabled={removingDeviceId === device.deviceId || isRemovingOthers}
+                        className={`p-2 sm:p-2.5 rounded-lg transition-colors flex-shrink-0 flex items-center justify-center ${
+                          removingDeviceId === device.deviceId || isRemovingOthers
+                            ? 'text-red-400 cursor-not-allowed'
+                            : 'text-red-500 hover:text-red-700 hover:bg-red-50'
+                        }`}
+                        title={
+                          removingDeviceId === device.deviceId 
+                            ? "Removing..." 
+                            : isRemovingOthers 
+                            ? "Please wait..." 
+                            : "Remove device"
+                        }
                         aria-label={`Remove ${device.deviceName}`}
                       >
-                        <FiTrash2 className="w-4 h-4 sm:w-4 sm:h-4" />
+                        {removingDeviceId === device.deviceId ? (
+                          <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <FiTrash2 className="w-4 h-4 sm:w-4 sm:h-4" />
+                        )}
                       </button>
                     )}
                   </div>
@@ -351,9 +374,21 @@ export default function DeviceManager({ isOpen, onClose }) {
               </div>
               <button
                 onClick={removeAllOtherDevices}
-                className="px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors w-full sm:w-auto"
+                disabled={isRemovingOthers || removingDeviceId !== null}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors w-full sm:w-auto flex items-center justify-center gap-2 ${
+                  isRemovingOthers || removingDeviceId !== null
+                    ? 'bg-red-400 cursor-not-allowed' 
+                    : 'bg-red-600 hover:bg-red-700'
+                } text-white`}
               >
-                Remove All Others
+                {isRemovingOthers ? (
+                  <>
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Removing...</span>
+                  </>
+                ) : (
+                  'Remove All Others'
+                )}
               </button>
             </div>
           </div>
