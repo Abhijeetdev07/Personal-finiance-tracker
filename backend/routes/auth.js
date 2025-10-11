@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { sendPasswordResetOtp, sendWelcomeEmail } = require("../utils/emailSender");
+const { extractDeviceInfo } = require("../utils/deviceDetector");
+const { addOrUpdateSession } = require("../utils/sessionManager");
 
 const router = express.Router();
 
@@ -135,9 +137,23 @@ router.post("/login", async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(400).json({ error: "Invalid credentials" });
 
+    // Extract device information (now async)
+    const deviceInfo = await extractDeviceInfo(req);
+    
+    // Add or update session
+    await addOrUpdateSession(user._id, deviceInfo);
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-    res.json({ message: "Login successful", token, user: { id: user._id, username: user.username } });
+    res.json({ 
+      message: "Login successful", 
+      token, 
+      user: { id: user._id, username: user.username },
+      deviceInfo: {
+        deviceId: deviceInfo.deviceId,
+        deviceName: deviceInfo.deviceName
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

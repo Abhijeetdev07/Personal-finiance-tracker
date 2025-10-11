@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { updateSessionActivity } = require("../utils/sessionManager");
+const { extractDeviceInfo } = require("../utils/deviceDetector");
 
 
 async function auth(req, res, next) {
@@ -16,6 +18,17 @@ async function auth(req, res, next) {
     }
 
     req.user = { id: user._id.toString() };
+    
+    // Update session activity (non-blocking)
+    setImmediate(async () => {
+      try {
+        const deviceInfo = await extractDeviceInfo(req);
+        await updateSessionActivity(user._id, deviceInfo.deviceId);
+      } catch (error) {
+        console.error("Error updating session activity:", error);
+      }
+    });
+    
     next();
   } catch (err) {
     return res.status(401).json({ error: "Invalid token" });

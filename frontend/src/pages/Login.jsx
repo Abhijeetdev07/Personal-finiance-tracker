@@ -47,6 +47,12 @@ export default function Login() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
+      
+      // Store device ID for session tracking
+      if (data.deviceInfo && data.deviceInfo.deviceId) {
+        localStorage.setItem('currentDeviceId', data.deviceInfo.deviceId);
+      }
+      
       login(data.token);
       navigate("/dashboard");
     } catch (err) {

@@ -8,6 +8,8 @@ import CategoryPieChart from "../components/CategoryPieChart";
 import MonthlyBarChart from "../components/MonthlyBarChart";
 import ProfileCard from "../components/ProfileCard";
 import ProfileEditModal from "../components/ProfileEditModal";
+import ProfileSidebar from "../components/ProfileSidebar";
+import DeviceManager from "../components/DeviceManager";
 import { AuthProvider as ProfileAuthProvider, AuthContext as ProfileContext } from "../context/AuthContext";
 import RecentTransactionsCard from "../components/RecentTransactionsCard";
 
@@ -22,19 +24,9 @@ export default function Dashboard() {
     balance: 0,
   });
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+  const [isProfileSidebarOpen, setIsProfileSidebarOpen] = useState(false);
+  const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
 
-  // Close profile menu on outside click
-  useEffect(() => {
-    const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setIsProfileMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
 
   // Fetch transactions for summary and charts
   useEffect(() => {
@@ -98,11 +90,7 @@ export default function Dashboard() {
               </Link>
               
               <HeaderProfile
-                onOpenProfile={() => setIsProfileModalOpen(true)}
-                onLogout={logout}
-                isMenuOpen={isProfileMenuOpen}
-                setIsMenuOpen={setIsProfileMenuOpen}
-                menuRef={menuRef}
+                onOpenProfile={() => setIsProfileSidebarOpen(true)}
               />
             </div>
           </div>
@@ -184,6 +172,20 @@ export default function Dashboard() {
           onClose={() => setIsProfileModalOpen(false)}
         />
 
+        {/* Profile Sidebar */}
+        <ProfileSidebar
+          isOpen={isProfileSidebarOpen}
+          onClose={() => setIsProfileSidebarOpen(false)}
+          onOpenDevices={() => setIsDeviceModalOpen(true)}
+          onLogout={logout}
+        />
+
+        {/* Device Manager Modal */}
+        <DeviceManager
+          isOpen={isDeviceModalOpen}
+          onClose={() => setIsDeviceModalOpen(false)}
+        />
+
         {/* Fixed Floating Action Button for Mobile */}
         <Link
           to="/transactions"
@@ -197,48 +199,26 @@ export default function Dashboard() {
   );
 }
 
-function HeaderProfile({ onOpenProfile, onLogout, isMenuOpen, setIsMenuOpen, menuRef }) {
+function HeaderProfile({ onOpenProfile }) {
   const { profile } = useContext(ProfileContext) || {};
 
   const avatarContent = (
-    <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold">
+    <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-200">
       {(profile?.firstName?.[0] || profile?.username?.[0] || "U").toUpperCase()}
     </div>
   );
 
   return (
-    <div className="relative" ref={menuRef}>
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="flex items-center gap-2 focus:outline-none"
-        >
-          {avatarContent}
-          <span className="hidden sm:block text-sm text-gray-800">
-            {profile?.firstName || profile?.username || "Profile"}
-          </span>
-        </button>
-      </div>
-      {isMenuOpen && (
-        <div className="absolute right-0 mt-3 w-64 sm:w-80 bg-white border rounded-lg shadow-lg p-3 z-20">
-          <ProfileCard />
-          <div className="flex flex-wrap justify-end gap-2 mt-3">
-            <button
-              onClick={() => { setIsMenuOpen(false); onOpenProfile(); }}
-              className="px-2 py-1 sm:px-3 sm:py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm"
-            >
-              Edit Profile
-            </button>
-            <button
-              onClick={() => { setIsMenuOpen(false); onLogout(); }}
-              className="px-2 py-1 sm:px-3 sm:py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+    <button
+      onClick={onOpenProfile}
+      className="flex items-center gap-2 focus:outline-none hover:bg-gray-100 px-2 py-1 rounded-lg transition-colors"
+      title="Open Profile"
+    >
+      {avatarContent}
+      <span className="hidden sm:block text-sm text-gray-800 font-medium">
+        {profile?.firstName || profile?.username || "Profile"}
+      </span>
+    </button>
   );
 }
 
