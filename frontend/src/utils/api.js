@@ -159,29 +159,4 @@ export function formatDateTimeToIST(dateString) {
   });
 }
 
-// Device management API helpers
-export async function getDevices() {
-  const res = await apiFetch("/devices", { method: "GET" });
-  return res.json();
-}
-
-export async function removeDevice(deviceId) {
-  const res = await apiFetch(`/devices/${deviceId}`, { method: "DELETE" });
-  return res.json();
-}
-
-export async function removeAllOtherDevices() {
-  const res = await apiFetch("/devices/others", { method: "DELETE" });
-  return res.json();
-}
-
-export async function updateDeviceActivity() {
-  const res = await apiFetch("/devices/activity", { method: "PUT" });
-  return res.json();
-}
-
-export async function getSecurityAnalysis() {
-  const res = await apiFetch("/devices/security", { method: "GET" });
-  return res.json();
-}
 

@@ -16,28 +16,6 @@ const userSchema = new mongoose.Schema({
   // Rate limiting for forgot-password OTP requests
   resetOtpRequestCount: { type: Number, default: 0 },
   resetOtpRequestWindowStart: { type: Date },
-  // Device tracking
-  activeSessions: [{
-    deviceId: { type: String, required: true },
-    deviceName: { type: String, required: true },
-    deviceType: { type: String, enum: ['desktop', 'mobile', 'tablet'], required: true },
-    browser: { type: String, required: true },
-    os: { type: String, required: true },
-    location: {
-      ip: { type: String, required: true },
-      country: { type: String, default: 'Unknown' },
-      city: { type: String, default: 'Unknown' },
-      region: { type: String, default: 'Unknown' },
-      timezone: { type: String, default: 'UTC' },
-      isp: { type: String, default: 'Unknown' },
-      latitude: { type: Number },
-      longitude: { type: Number },
-      formatted: { type: String, default: 'Unknown Location' }
-    },
-    lastActive: { type: Date, default: Date.now },
-    isActive: { type: Boolean, default: true },
-    loginTime: { type: Date, default: Date.now }
-  }],
 }, { 
   timestamps: {
     createdAt: true,

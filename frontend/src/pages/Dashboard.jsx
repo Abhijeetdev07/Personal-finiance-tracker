@@ -9,7 +9,6 @@ import MonthlyBarChart from "../components/MonthlyBarChart";
 import ProfileCard from "../components/ProfileCard";
 import ProfileEditModal from "../components/ProfileEditModal";
 import ProfileSidebar from "../components/ProfileSidebar";
-import DeviceManager from "../components/DeviceManager";
 import { AuthProvider as ProfileAuthProvider, AuthContext as ProfileContext } from "../context/AuthContext";
 import RecentTransactionsCard from "../components/RecentTransactionsCard";
 
@@ -25,7 +24,6 @@ export default function Dashboard() {
   });
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isProfileSidebarOpen, setIsProfileSidebarOpen] = useState(false);
-  const [isDeviceModalOpen, setIsDeviceModalOpen] = useState(false);
 
 
   // Fetch transactions for summary and charts
@@ -176,14 +174,7 @@ export default function Dashboard() {
         <ProfileSidebar
           isOpen={isProfileSidebarOpen}
           onClose={() => setIsProfileSidebarOpen(false)}
-          onOpenDevices={() => setIsDeviceModalOpen(true)}
           onLogout={logout}
-        />
-
-        {/* Device Manager Modal */}
-        <DeviceManager
-          isOpen={isDeviceModalOpen}
-          onClose={() => setIsDeviceModalOpen(false)}
         />
 
         {/* Fixed Floating Action Button for Mobile */}

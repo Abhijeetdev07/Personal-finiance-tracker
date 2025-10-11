@@ -1,13 +1,13 @@
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { FiUser, FiShield, FiX, FiMail, FiPhone, FiMapPin, FiCalendar, FiSave } from "react-icons/fi";
+import { FiUser, FiX, FiMail, FiPhone, FiMapPin, FiCalendar, FiSave } from "react-icons/fi";
 import { FaRegEdit } from "react-icons/fa";
 import { TbLogout } from "react-icons/tb";
 import { formatDateTimeToIST, updateUserProfile } from "../utils/api";
 import { useNotification } from "../context/NotificationContext";
 import CountryCodeSelector from "./CountryCodeSelector";
 
-export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onOpenDevices, onLogout }) {
+export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogout }) {
   const { profile, isProfileLoading, saveProfile } = useContext(AuthContext);
   const { showSuccess, showError } = useNotification();
   const [isClosing, setIsClosing] = useState(false);
@@ -293,16 +293,6 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onOpenD
             )}
           </div>
 
-          {/* Navigation Menu */}
-          <div className="p-6">
-            <button
-              onClick={() => handleAction(onOpenDevices)}
-              className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors group"
-            >
-              <FiShield className="w-5 h-5 text-gray-400 group-hover:text-green-600" />
-              <span className="font-medium">Manage Devices</span>
-            </button>
-          </div>
         </div>
 
         {/* Fixed Logout Button at Bottom */}

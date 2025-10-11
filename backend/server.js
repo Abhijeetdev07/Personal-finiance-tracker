@@ -6,8 +6,6 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth");
 const transactionRoutes = require("./routes/transactions");
 const profileRoutes = require("./routes/profile");
-const deviceRoutes = require("./routes/devices");
-const { startCleanupJob } = require("./utils/cleanup");
 
 const app = express(); // <-- initialize app first
 
@@ -33,9 +31,6 @@ app.use("/api/transactions", transactionRoutes);
 // Profile routes
 app.use("/api/profile", profileRoutes);
 
-// Device routes
-app.use("/api/devices", deviceRoutes);
-
 // Protected example route
 app.get("/api/protected", require("./middleware/auth"), (req, res) => {
   res.json({ message: "You accessed a protected route!", user: req.user });
@@ -45,9 +40,6 @@ app.get("/api/protected", require("./middleware/auth"), (req, res) => {
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
-    
-    // Start cleanup job for inactive sessions
-    startCleanupJob();
     
     const PORT = 5000;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
