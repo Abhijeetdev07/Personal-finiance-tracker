@@ -121,11 +121,11 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto scrollbar-hide min-h-0">
+        <div className="flex-1 overflow-hidden">
           {/* Profile Info */}
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-4 sm:p-6 border-b border-gray-200">
             {isProfileLoading ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-gray-200 rounded-full animate-pulse"></div>
                   <div className="space-y-2 flex-1">
@@ -135,7 +135,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                 </div>
               </div>
             ) : profile ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* Avatar and Basic Info */}
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-2xl font-bold">
@@ -143,7 +143,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                   </div>
                   <div className="flex-1 min-w-0">
                     {isEditing ? (
-                      <div className="space-y-2">
+                      <div className="space-y-1">
                         <div className="grid grid-cols-2 gap-2">
                           <input
                             type="text"
@@ -182,7 +182,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                   </div>
                   
                   {isEditing ? (
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <FiPhone className="w-4 h-4 text-gray-400" />
                         <div className="flex-1 flex gap-2">
@@ -222,7 +222,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                 </div>
 
                 {/* Bio */}
-                <div className="pt-2">
+                <div className="pt-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
                   {isEditing ? (
                     <div>
@@ -235,7 +235,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                           }
                         }}
                         placeholder="Tell us about yourself..."
-                        rows={3}
+                        rows={2}
                         maxLength={100}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none break-words overflow-hidden"
                         style={{ wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'pre-wrap' }}
@@ -255,11 +255,11 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
 
                 {/* Action Buttons */}
                 {isEditing ? (
-                  <div className="flex space-x-2 pt-2">
+                  <div className="flex space-x-2 pt-1">
                     <button
                       onClick={handleSave}
                       disabled={isSaving}
-                      className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg text-sm font-medium transition-colors"
+                      className="flex items-center space-x-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       <FiSave className="w-4 h-4" />
                       <span>{isSaving ? 'Saving...' : 'Save'}</span>
@@ -267,7 +267,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                     <button
                       onClick={handleCancel}
                       disabled={isSaving}
-                      className="flex items-center space-x-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white rounded-lg text-sm font-medium transition-colors"
+                      className="flex items-center space-x-1 px-3 py-1.5 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       <FiX className="w-4 h-4" />
                       <span>Cancel</span>
