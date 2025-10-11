@@ -6,7 +6,6 @@ import { AuthContext as AppAuthContext } from "../App";
 import { apiFetch } from "../utils/api";
 import CategoryPieChart from "../components/CategoryPieChart";
 import MonthlyBarChart from "../components/MonthlyBarChart";
-import ProfileEditModal from "../components/ProfileEditModal";
 import ProfileSidebar from "../components/ProfileSidebar";
 import { AuthProvider as ProfileAuthProvider, AuthContext as ProfileContext } from "../context/AuthContext";
 import RecentTransactionsCard from "../components/RecentTransactionsCard";
@@ -21,7 +20,6 @@ export default function Dashboard() {
     expense: 0,
     balance: 0,
   });
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isProfileSidebarOpen, setIsProfileSidebarOpen] = useState(false);
 
 
@@ -163,11 +161,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Profile Edit Modal */}
-        <ProfileEditModal
-          isOpen={isProfileModalOpen}
-          onClose={() => setIsProfileModalOpen(false)}
-        />
 
         {/* Profile Sidebar */}
         <ProfileSidebar

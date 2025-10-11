@@ -62,12 +62,12 @@ const CustomNotification = ({ message, type = 'success', duration = 3000, onClos
   };
 
   return (
-    <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-500 ease-out ${
+    <div className={`fixed top-2 left-2 right-2 sm:top-4 sm:left-1/2 sm:right-auto sm:transform sm:-translate-x-1/2 sm:max-w-[450px] sm:w-auto z-50 transition-all duration-500 ease-out ${
       isLeaving 
         ? 'opacity-0 translate-y-[-100%] scale-95' 
         : 'opacity-100 translate-y-0 scale-100'
     }`}>
-      <div className={`${getBgColor()} border rounded-lg p-3 max-w-[450px] w-full mx-4 transform transition-all duration-500 ${
+      <div className={`${getBgColor()} border rounded-lg p-3 w-full transform transition-all duration-500 ${
         isLeaving 
           ? 'scale-95 opacity-0' 
           : 'scale-100 opacity-100 animate-bounce-in'
@@ -79,7 +79,7 @@ const CustomNotification = ({ message, type = 'success', duration = 3000, onClos
             {getIcon()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className={`text-sm font-medium text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis transform transition-all duration-300 delay-150 ${
+            <p className={`text-sm font-medium text-gray-900 sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis whitespace-normal break-words transform transition-all duration-300 delay-150 ${
               isLeaving ? 'translate-x-4 opacity-0' : 'translate-x-0 opacity-100'
             }`}>
               {message}

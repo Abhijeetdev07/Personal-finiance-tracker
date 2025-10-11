@@ -103,7 +103,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed right-0 top-0 h-screen w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 ${
+    <div className={`fixed right-0 top-0 h-[90vh] w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 ${
       isClosing ? 'translate-x-full' : 'translate-x-0'
     } flex flex-col max-h-screen overflow-hidden`}>
         {/* Header */}
@@ -297,13 +297,15 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
 
         {/* Fixed Logout Button at Bottom */}
         <div className="border-t border-gray-200 bg-white p-3 sm:p-4 flex-shrink-0 sticky bottom-0">
-          <button
-            onClick={() => handleAction(onLogout)}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors group font-medium text-sm sm:text-base"
-          >
-            <TbLogout className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 group-hover:text-red-600" />
-            <span>Logout</span>
-          </button>
+          <div className="flex justify-end">
+            <button
+              onClick={() => handleAction(onLogout)}
+              className="flex items-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors group font-medium text-sm sm:text-base"
+            >
+              <span>Logout</span>
+              <TbLogout className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 group-hover:text-red-600" />
+            </button>
+          </div>
         </div>
       </div>
   );
