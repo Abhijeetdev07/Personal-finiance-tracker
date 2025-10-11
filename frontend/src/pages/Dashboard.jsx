@@ -6,7 +6,6 @@ import { AuthContext as AppAuthContext } from "../App";
 import { apiFetch } from "../utils/api";
 import CategoryPieChart from "../components/CategoryPieChart";
 import MonthlyBarChart from "../components/MonthlyBarChart";
-import ProfileCard from "../components/ProfileCard";
 import ProfileEditModal from "../components/ProfileEditModal";
 import ProfileSidebar from "../components/ProfileSidebar";
 import { AuthProvider as ProfileAuthProvider, AuthContext as ProfileContext } from "../context/AuthContext";
