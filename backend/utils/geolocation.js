@@ -7,14 +7,31 @@ const axios = require('axios');
  */
 async function getLocationFromIP(ip) {
   try {
-    // Skip geolocation for local/private IPs
+    // For private IPs, try to get location from a public IP service first
     if (isPrivateIP(ip)) {
+      // Try to get the user's public IP from a service
+      try {
+        const publicIPResponse = await axios.get('https://api.ipify.org?format=json', {
+          timeout: 3000,
+          headers: { 'User-Agent': 'SmartFinance/1.0' }
+        });
+        
+        if (publicIPResponse.data && publicIPResponse.data.ip) {
+          console.log('Got public IP for private IP:', publicIPResponse.data.ip);
+          // Use the public IP to get real location
+          return await getLocationFromIPFallback(publicIPResponse.data.ip);
+        }
+      } catch (error) {
+        console.log('Could not get public IP, using local network info');
+      }
+      
+      // Fallback to local network info
       return {
-        country: 'Local',
-        city: 'Local Network',
-        region: 'Private Network',
+        country: 'Development',
+        city: 'Local Environment',
+        region: 'Development Network',
         timezone: 'UTC',
-        isp: 'Private Network'
+        isp: 'Development Environment'
       };
     }
 

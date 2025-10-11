@@ -57,23 +57,137 @@ function generateDeviceName(userAgent, deviceType) {
   const browser = detectBrowser(userAgent);
   const os = detectOS(userAgent);
   
+  // More descriptive device names
   if (deviceType === 'mobile') {
-    return `${os} Mobile (${browser})`;
+    // For mobile devices, prioritize device model if available
+    if (userAgent.includes('iPhone')) {
+      const model = extractiPhoneModel(userAgent);
+      return model ? `${model} (${browser})` : `iPhone (${browser})`;
+    } else if (userAgent.includes('Android')) {
+      const model = extractAndroidModel(userAgent);
+      return model ? `${model} (${browser})` : `Android Phone (${browser})`;
+    } else {
+      return `${os} Mobile (${browser})`;
+    }
   } else if (deviceType === 'tablet') {
-    return `${os} Tablet (${browser})`;
+    if (userAgent.includes('iPad')) {
+      return `iPad (${browser})`;
+    } else if (userAgent.includes('Android')) {
+      return `Android Tablet (${browser})`;
+    } else {
+      return `${os} Tablet (${browser})`;
+    }
   } else {
-    return `${os} Desktop (${browser})`;
+    // For desktop, try to get more specific info
+    if (userAgent.includes('Windows')) {
+      const windowsVersion = extractWindowsVersion(userAgent);
+      return windowsVersion ? `${windowsVersion} (${browser})` : `Windows PC (${browser})`;
+    } else if (userAgent.includes('Mac')) {
+      return `Mac (${browser})`;
+    } else {
+      return `${os} Computer (${browser})`;
+    }
   }
 }
 
-// Function to get client IP address
+// Helper function to extract iPhone model
+function extractiPhoneModel(userAgent) {
+  if (userAgent.includes('iPhone')) {
+    // Try to extract iPhone model from user agent
+    if (userAgent.includes('iPhone14,2')) return 'iPhone 13 Pro';
+    if (userAgent.includes('iPhone14,3')) return 'iPhone 13 Pro Max';
+    if (userAgent.includes('iPhone13,2')) return 'iPhone 12';
+    if (userAgent.includes('iPhone13,3')) return 'iPhone 12 Pro';
+    if (userAgent.includes('iPhone12,1')) return 'iPhone 11';
+    if (userAgent.includes('iPhone12,3')) return 'iPhone 11 Pro';
+    if (userAgent.includes('iPhone12,5')) return 'iPhone 11 Pro Max';
+    if (userAgent.includes('iPhone11,2')) return 'iPhone XS';
+    if (userAgent.includes('iPhone11,4')) return 'iPhone XS Max';
+    if (userAgent.includes('iPhone11,6')) return 'iPhone XS Max';
+    if (userAgent.includes('iPhone10,3')) return 'iPhone X';
+    if (userAgent.includes('iPhone10,6')) return 'iPhone X';
+    return 'iPhone';
+  }
+  return null;
+}
+
+// Helper function to extract Android model
+function extractAndroidModel(userAgent) {
+  // Look for common Android device patterns
+  const androidPatterns = [
+    /Samsung[^;)]*/i,
+    /Pixel[^;)]*/i,
+    /OnePlus[^;)]*/i,
+    /Xiaomi[^;)]*/i,
+    /Huawei[^;)]*/i,
+    /LG[^;)]*/i,
+    /Sony[^;)]*/i,
+    /Motorola[^;)]*/i,
+    /OPPO[^;)]*/i,
+    /Vivo[^;)]*/i,
+    /Realme[^;)]*/i,
+    /Redmi[^;)]*/i
+  ];
+  
+  for (const pattern of androidPatterns) {
+    const match = userAgent.match(pattern);
+    if (match) {
+      let deviceName = match[0].trim();
+      // Clean up the device name
+      deviceName = deviceName.replace(/[;)]/g, '').trim();
+      return deviceName;
+    }
+  }
+  
+  // Try to extract from Build information
+  const buildMatch = userAgent.match(/Build\/([^;)]*)/i);
+  if (buildMatch) {
+    return `Android Device (${buildMatch[1].substring(0, 20)}...)`;
+  }
+  
+  return null;
+}
+
+// Helper function to extract Windows version
+function extractWindowsVersion(userAgent) {
+  if (userAgent.includes('Windows NT 10.0')) return 'Windows 10/11';
+  if (userAgent.includes('Windows NT 6.3')) return 'Windows 8.1';
+  if (userAgent.includes('Windows NT 6.2')) return 'Windows 8';
+  if (userAgent.includes('Windows NT 6.1')) return 'Windows 7';
+  return 'Windows';
+}
+
+// Function to get client IP address with better mobile support
 function getClientIP(req) {
-  return req.ip || 
-         req.connection.remoteAddress || 
-         req.socket.remoteAddress ||
-         (req.connection.socket ? req.connection.socket.remoteAddress : null) ||
-         req.headers['x-forwarded-for']?.split(',')[0] ||
-         '127.0.0.1';
+  // Try multiple sources to get the real IP, especially for mobile devices
+  const possibleIPs = [
+    req.ip,
+    req.connection.remoteAddress,
+    req.socket.remoteAddress,
+    req.connection.socket?.remoteAddress,
+    req.headers['x-forwarded-for']?.split(',')[0]?.trim(),
+    req.headers['x-real-ip'],
+    req.headers['x-client-ip'],
+    req.headers['cf-connecting-ip'], // Cloudflare
+    req.headers['x-cluster-client-ip'],
+    req.headers['x-forwarded'],
+    req.headers['forwarded-for'],
+    req.headers['forwarded']
+  ];
+
+  // Find the first valid IP that's not localhost
+  for (const ip of possibleIPs) {
+    if (ip && ip !== '127.0.0.1' && ip !== '::1' && ip !== '::ffff:127.0.0.1') {
+      // Clean up the IP (remove IPv6 prefix if present)
+      const cleanIP = ip.replace(/^::ffff:/, '');
+      if (cleanIP && cleanIP !== '127.0.0.1') {
+        return cleanIP;
+      }
+    }
+  }
+
+  // Fallback to localhost if no valid IP found
+  return '127.0.0.1';
 }
 
 // Main function to extract device information
