@@ -203,7 +203,7 @@ function HeaderProfile({ onOpenProfile }) {
   const { profile } = useContext(ProfileContext) || {};
 
   const avatarContent = (
-    <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-200">
+    <div className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-semibold hover:bg-gray-300 transition-all duration-200">
       {(profile?.firstName?.[0] || profile?.username?.[0] || "U").toUpperCase()}
     </div>
   );

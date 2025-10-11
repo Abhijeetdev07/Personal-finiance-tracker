@@ -138,7 +138,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onOpenD
               <div className="space-y-4">
                 {/* Avatar and Basic Info */}
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-2xl font-bold">
+                  <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-2xl font-bold">
                     {(profile.firstName?.[0] || profile.username?.[0] || "U").toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">

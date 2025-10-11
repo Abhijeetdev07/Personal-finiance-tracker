@@ -27,7 +27,7 @@ export default function ProfileCard() {
   return (
     <div className="bg-white p-2 sm:p-4 rounded-lg shadow border max-w-56 sm:max-w-sm mx-auto">
       <div className="flex items-start gap-2 sm:gap-4">
-        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center text-gray-500 text-sm sm:text-xl flex-shrink-0">
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-gray-600 text-sm sm:text-xl flex-shrink-0">
           {(profile.firstName?.[0] || profile.username?.[0] || "U").toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
