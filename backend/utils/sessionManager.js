@@ -127,6 +127,19 @@ async function removeAllOtherSessions(userId, currentDeviceId) {
   }
 }
 
+// Function to check if a session exists for a device
+async function sessionExists(userId, deviceId) {
+  try {
+    const user = await User.findById(userId).select('activeSessions');
+    if (!user) return false;
+
+    return user.activeSessions.some(session => session.deviceId === deviceId);
+  } catch (error) {
+    console.error('Error checking session existence:', error);
+    return false;
+  }
+}
+
 // Function to clean up inactive sessions (older than 7 days)
 async function cleanupInactiveSessions() {
   try {
@@ -155,5 +168,6 @@ module.exports = {
   getUserSessions,
   removeSession,
   removeAllOtherSessions,
+  sessionExists,
   cleanupInactiveSessions
 };

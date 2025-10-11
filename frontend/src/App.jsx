@@ -30,9 +30,12 @@ export default function App() {
   };
 
   // Ensure API helper redirects to home on 401
-  setUnauthorizedHandler(() => {
+  setUnauthorizedHandler((message) => {
     setToken("");
     localStorage.removeItem("token");
+    if (message) {
+      alert(message);
+    }
     window.location.href = "/";
   });
 

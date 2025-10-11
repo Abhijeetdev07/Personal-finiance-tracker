@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { updateSessionActivity } = require("../utils/sessionManager");
+const { updateSessionActivity, sessionExists } = require("../utils/sessionManager");
 const { extractDeviceInfo } = require("../utils/deviceDetector");
 
 
@@ -19,15 +19,30 @@ async function auth(req, res, next) {
 
     req.user = { id: user._id.toString() };
     
-    // Update session activity (non-blocking)
-    setImmediate(async () => {
-      try {
-        const deviceInfo = await extractDeviceInfo(req);
-        await updateSessionActivity(user._id, deviceInfo.deviceId);
-      } catch (error) {
-        console.error("Error updating session activity:", error);
+    // Check if current session still exists (session validation)
+    try {
+      const deviceInfo = await extractDeviceInfo(req);
+      const sessionStillExists = await sessionExists(user._id, deviceInfo.deviceId);
+      
+      if (!sessionStillExists) {
+        return res.status(401).json({ 
+          error: "Session has been terminated. Please log in again.",
+          code: "SESSION_TERMINATED"
+        });
       }
-    });
+      
+      // Update session activity (non-blocking)
+      setImmediate(async () => {
+        try {
+          await updateSessionActivity(user._id, deviceInfo.deviceId);
+        } catch (error) {
+          console.error("Error updating session activity:", error);
+        }
+      });
+    } catch (error) {
+      console.error("Error validating session:", error);
+      return res.status(401).json({ error: "Session validation failed" });
+    }
     
     next();
   } catch (err) {

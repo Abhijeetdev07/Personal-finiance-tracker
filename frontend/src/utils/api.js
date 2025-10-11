@@ -25,11 +25,23 @@ export async function apiFetch(path, options = {}) {
 
   if (response.status === 401) {
     try {
+      const errorData = await response.json().catch(() => ({}));
       localStorage.removeItem("token");
-      if (onUnauthorizedHandler) {
-        onUnauthorizedHandler();
+      
+      // Handle session termination specifically
+      if (errorData.code === "SESSION_TERMINATED") {
+        if (onUnauthorizedHandler) {
+          onUnauthorizedHandler("Session has been terminated. Please log in again.");
+        } else {
+          alert("Your session has been terminated. Please log in again.");
+          window.location.assign("/login");
+        }
       } else {
-        window.location.assign("/login");
+        if (onUnauthorizedHandler) {
+          onUnauthorizedHandler();
+        } else {
+          window.location.assign("/login");
+        }
       }
     } catch (_) {
       // noop
