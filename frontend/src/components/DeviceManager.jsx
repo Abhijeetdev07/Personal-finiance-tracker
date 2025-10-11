@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { apiFetch } from '../utils/api';
 import { useNotification } from '../context/NotificationContext';
 import { AuthContext as AppAuthContext } from '../App';
-import { FiSmartphone, FiMonitor, FiTablet, FiMapPin, FiClock, FiTrash2, FiShield, FiWifi, FiWifiOff, FiGlobe, FiNavigation, FiAlertTriangle, FiEye, FiKey, FiCode } from 'react-icons/fi';
+import { FiSmartphone, FiMonitor, FiTablet, FiMapPin, FiClock, FiTrash2, FiShield, FiWifi, FiWifiOff, FiGlobe, FiNavigation, FiAlertTriangle, FiEye, FiKey } from 'react-icons/fi';
 
 export default function DeviceManager({ isOpen, onClose }) {
   const [devices, setDevices] = useState([]);
@@ -141,13 +141,12 @@ export default function DeviceManager({ isOpen, onClose }) {
 
   const getLocationIcon = (location) => {
     if (!location || location.country === 'Unknown') return <FiGlobe className="w-3 h-3 sm:w-4 sm:h-4" />;
-    if (location.country === 'Development') return <FiCode className="w-3 h-3 sm:w-4 sm:h-4" />;
     return <FiNavigation className="w-3 h-3 sm:w-4 sm:h-4" />;
   };
 
   const getLocationColor = (location) => {
     if (!location || location.country === 'Unknown') return 'text-gray-400';
-    if (location.country === 'Local' || location.country === 'Development') return 'text-blue-500';
+    if (location.country === 'Local') return 'text-blue-500';
     return 'text-green-500';
   };
 

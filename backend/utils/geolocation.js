@@ -7,17 +7,14 @@ const axios = require('axios');
  */
 async function getLocationFromIP(ip) {
   try {
-    // Handle localhost/development environment
-    if (isPrivateIP(ip) || ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') {
+    // Skip geolocation for local/private IPs
+    if (isPrivateIP(ip)) {
       return {
-        country: 'Development',
-        city: 'Local Environment',
-        region: 'Development Server',
+        country: 'Local',
+        city: 'Local Network',
+        region: 'Private Network',
         timezone: 'UTC',
-        isp: 'Local Development',
-        latitude: null,
-        longitude: null,
-        formatted: 'Development Environment'
+        isp: 'Private Network'
       };
     }
 
@@ -45,24 +42,12 @@ async function getLocationFromIP(ip) {
     return await getLocationFromIPFallback(ip);
   } catch (error) {
     console.error('Geolocation error:', error.message);
-    // Return development-friendly default for localhost
-    if (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') {
-      return {
-        country: 'Development',
-        city: 'Local Environment',
-        region: 'Development Server',
-        timezone: 'UTC',
-        isp: 'Local Development',
-        formatted: 'Development Environment'
-      };
-    }
     return {
       country: 'Unknown',
       city: 'Unknown',
       region: 'Unknown',
       timezone: 'UTC',
-      isp: 'Unknown',
-      formatted: 'Unknown Location'
+      isp: 'Unknown'
     };
   }
 }
@@ -74,20 +59,6 @@ async function getLocationFromIP(ip) {
  */
 async function getLocationFromIPFallback(ip) {
   try {
-    // Handle localhost in fallback too
-    if (ip === '127.0.0.1' || ip === '::1' || ip === 'localhost') {
-      return {
-        country: 'Development',
-        city: 'Local Environment',
-        region: 'Development Server',
-        timezone: 'UTC',
-        isp: 'Local Development',
-        latitude: null,
-        longitude: null,
-        formatted: 'Development Environment'
-      };
-    }
-
     const response = await axios.get(`http://ip-api.com/json/${ip}`, {
       timeout: 5000,
       headers: {
@@ -103,12 +74,7 @@ async function getLocationFromIPFallback(ip) {
         timezone: response.data.timezone || 'UTC',
         isp: response.data.isp || 'Unknown ISP',
         latitude: response.data.lat,
-        longitude: response.data.lon,
-        formatted: formatLocation({
-          country: response.data.country,
-          city: response.data.city,
-          region: response.data.regionName
-        })
+        longitude: response.data.lon
       };
     }
   } catch (error) {
@@ -120,8 +86,7 @@ async function getLocationFromIPFallback(ip) {
     city: 'Unknown',
     region: 'Unknown',
     timezone: 'UTC',
-    isp: 'Unknown',
-    formatted: 'Unknown Location'
+    isp: 'Unknown'
   };
 }
 
