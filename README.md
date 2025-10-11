@@ -2,11 +2,11 @@
 
 A comprehensive personal finance tracker with authentication, transactions management, password reset functionality, and visual insights. Built with a Node/Express backend, MongoDB database, and a React + Vite frontend.
 
-## 🚀 Features (Brief)
+## 🚀 Features (Brief) 
 
 - Auth: Register, Login, Protected routes, Email OTP reset, JWT
 - Transactions: CRUD, categories, filters, summaries
-- Charts: Category pie, monthly bar, responsive with tooltips
+- Charts: Category pie, monthly bar, responsive with tooltips    
 - UX: Responsive UI, forms with validation, custom notifications/modals
 - Profile: Edit first/last name, phone with country code, bio
 - Email: Welcome email, password reset OTP
@@ -56,7 +56,7 @@ smart-finance/
   <img src="./readme_assets/register-page.png" width="400" />
   <img src="./readme_assets/login-page.png" width="400" />
 </p>
-
+  
 ![Dashboard](./readme_assets/dashbard.png)
 ![Dashboard 2](./readme_assets/dashboard-2.png)
 
