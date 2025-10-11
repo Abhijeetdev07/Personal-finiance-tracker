@@ -103,9 +103,9 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onOpenD
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed right-0 top-0 h-screen w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 overflow-hidden ${
+    <div className={`fixed right-0 top-0 h-screen w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 ${
       isClosing ? 'translate-x-full' : 'translate-x-0'
-    }`}>
+    } flex flex-col`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-[14px] border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
           <div>
@@ -121,7 +121,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onOpenD
         </div>
 
         {/* Content */}
-        <div className="flex flex-col h-full overflow-y-auto scrollbar-hide" style={{ height: 'calc(100vh - 60px)' }}>
+        <div className="flex-1 overflow-y-auto scrollbar-hide">
           {/* Profile Info */}
           <div className="p-6 border-b border-gray-200">
             {isProfileLoading ? (
@@ -294,28 +294,26 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onOpenD
           </div>
 
           {/* Navigation Menu */}
-          <div className="flex-1 p-6 flex flex-col">
-            <nav className="space-y-2 flex-1">
-              <button
-                onClick={() => handleAction(onOpenDevices)}
-                className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors group"
-              >
-                <FiShield className="w-5 h-5 text-gray-400 group-hover:text-green-600" />
-                <span className="font-medium">Manage Devices</span>
-              </button>
-            </nav>
-            
-            {/* Logout Button at Bottom */}
-            <div className="mt-auto pt-4 flex justify-end">
-              <button
-                onClick={() => handleAction(onLogout)}
-                className="flex items-center space-x-2 px-4 py-2 my-5 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors group"
-              >
-                <span className="font-medium">Logout</span>
-                <TbLogout className="w-5 h-5 text-red-500 group-hover:text-red-600" />
-              </button>
-            </div>
+          <div className="p-6">
+            <button
+              onClick={() => handleAction(onOpenDevices)}
+              className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-colors group"
+            >
+              <FiShield className="w-5 h-5 text-gray-400 group-hover:text-green-600" />
+              <span className="font-medium">Manage Devices</span>
+            </button>
           </div>
+        </div>
+
+        {/* Fixed Logout Button at Bottom */}
+        <div className="border-t border-gray-200 bg-white p-4">
+          <button
+            onClick={() => handleAction(onLogout)}
+            className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors group"
+          >
+            <span className="font-medium">Logout</span>
+            <TbLogout className="w-5 h-5 text-red-500 group-hover:text-red-600" />
+          </button>
         </div>
       </div>
   );
