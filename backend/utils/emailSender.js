@@ -14,17 +14,31 @@ const transporter = nodemailer.createTransport({
     user: smtpUser,
     pass: smtpPass
   },
-  // Additional options for Gmail
+  // Gmail-specific options for Render deployment
   tls: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+    ciphers: 'SSLv3'
+  },
+  // Connection timeout settings
+  connectionTimeout: 60000, // 60 seconds
+  greetingTimeout: 30000,   // 30 seconds
+  socketTimeout: 60000      // 60 seconds
 });
+
+// Debug SMTP configuration
+console.log("🔍 SMTP Configuration Debug:");
+console.log("Host:", smtpHost);
+console.log("Port:", smtpPort);
+console.log("User:", smtpUser);
+console.log("Pass length:", smtpPass ? smtpPass.length : "undefined");
+console.log("Pass starts with:", smtpPass ? smtpPass.substring(0, 5) + "..." : "undefined");
 
 // Verify configuration once on startup (helps diagnose EAUTH/EHOST issues)
 transporter.verify().then(() => {
   console.log("📧 SMTP transporter verified (", smtpHost, ":", smtpPort, ")");
 }).catch((err) => {
   console.error("❌ SMTP verify failed:", err.message);
+  console.error("❌ Full error:", err);
 });
 
 // Helper function to send password reset OTP with timeout
