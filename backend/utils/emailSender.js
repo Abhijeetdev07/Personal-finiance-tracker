@@ -9,8 +9,15 @@ const smtpPass = process.env.SMTP_PASS;
 const transporter = nodemailer.createTransport({
   host: smtpHost,
   port: smtpPort,
-  secure: smtpPort === 465, // Gmail SSL on 465, STARTTLS on 587
-  auth: smtpUser && smtpPass ? { user: smtpUser, pass: smtpPass } : undefined,
+  secure: smtpPort === 465, // SSL on 465, STARTTLS on 587
+  auth: {
+    user: smtpUser,
+    pass: smtpPass
+  },
+  // Additional options for Gmail
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 // Verify configuration once on startup (helps diagnose EAUTH/EHOST issues)
