@@ -54,13 +54,25 @@ export default function ForgotPassword() {
     }
     // Show guidance message immediately on click
     setStatus({ loading: true, message: "you will get otp on your registred email address", error: "" });
+    
+    // Create timeout promise (45 seconds - longer than backend timeout)
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error("Request timeout - server is not responding. Please check your connection and try again."));
+      }, 45000); // 45 seconds
+    });
+
     try {
-      const res = await apiFetch("/auth/forgot-password", {
+      const requestPromise = apiFetch("/auth/forgot-password", {
         method: "POST",
         headers: { Authorization: "skip" },
         body: JSON.stringify({ identifier }),
       });
+
+      // Race between request and timeout
+      const res = await Promise.race([requestPromise, timeoutPromise]);
       const data = await res.json();
+      
       if (!res.ok) throw new Error(data.error || "Request failed");
       setStatus({ loading: false, message: "you will get otp on your registred email address", error: "" });
       // Start 60s cooldown on each successful request

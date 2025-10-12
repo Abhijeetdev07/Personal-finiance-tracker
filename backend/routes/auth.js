@@ -149,11 +149,20 @@ router.post("/login", async (req, res) => {
 
 // Forgot Password
 router.post("/forgot-password", async (req, res) => {
+  // Set a timeout for the entire request (60 seconds)
+  const requestTimeout = setTimeout(() => {
+    if (!res.headersSent) {
+      console.error("Forgot password request timeout");
+      res.status(408).json({ error: "Request timeout - please try again" });
+    }
+  }, 60000);
+
   try {
     console.log("🚀 FORGOT PASSWORD ENDPOINT CALLED!");
     const { identifier } = req.body;
 
     if (!identifier) {
+      clearTimeout(requestTimeout);
       return res.status(400).json({ error: "Email or username is required" });
     }
 
@@ -171,6 +180,7 @@ router.post("/forgot-password", async (req, res) => {
     };
 
     if (!user) {
+      clearTimeout(requestTimeout);
       return res.json(genericResponse);
     }
 
@@ -183,6 +193,7 @@ router.post("/forgot-password", async (req, res) => {
     }
     if (user.resetOtpRequestCount >= 3) {
       // Respond with generic response to avoid enumeration, but do not send OTP
+      clearTimeout(requestTimeout);
       return res.json(genericResponse);
     }
 
@@ -201,7 +212,7 @@ router.post("/forgot-password", async (req, res) => {
     user.resetOtpRequestCount += 1;
     await user.save();
 
-    // Send OTP via email
+    // Send OTP via email with timeout handling
     try {
       await sendPasswordResetOtp({ to: user.email, otp });
       console.log(`Password reset OTP sent to ${user.email}`);
@@ -215,10 +226,14 @@ router.post("/forgot-password", async (req, res) => {
       // Still return success to user for security
     }
 
+    clearTimeout(requestTimeout);
     res.json(genericResponse);
   } catch (err) {
     console.error("Forgot password error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    clearTimeout(requestTimeout);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
 });
 
