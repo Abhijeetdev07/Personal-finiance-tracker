@@ -6,6 +6,15 @@ const smtpPort = Number(process.env.SMTP_PORT || 587);
 const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
 
+// Validate required environment variables
+if (!smtpHost || !smtpUser || !smtpPass) {
+  console.error("❌ Missing required SMTP environment variables:");
+  console.error("SMTP_HOST:", smtpHost ? "✅ Set" : "❌ Missing");
+  console.error("SMTP_USER:", smtpUser ? "✅ Set" : "❌ Missing");
+  console.error("SMTP_PASS:", smtpPass ? "✅ Set" : "❌ Missing");
+  console.error("Please set all required SMTP environment variables");
+}
+
 const transporter = nodemailer.createTransport({
   host: smtpHost,
   port: smtpPort,
@@ -14,15 +23,14 @@ const transporter = nodemailer.createTransport({
     user: smtpUser,
     pass: smtpPass
   },
-  // Gmail-specific options for Render deployment
+  // Generic SMTP configuration for any provider
   tls: {
-    rejectUnauthorized: false,
-    ciphers: 'SSLv3'
+    rejectUnauthorized: false
   },
-  // Connection timeout settings
-  connectionTimeout: 60000, // 60 seconds
-  greetingTimeout: 30000,   // 30 seconds
-  socketTimeout: 60000      // 60 seconds
+  // Standard timeout settings
+  connectionTimeout: 30000, // 30 seconds
+  greetingTimeout: 15000,   // 15 seconds
+  socketTimeout: 30000      // 30 seconds
 });
 
 // Debug SMTP configuration
@@ -34,16 +42,26 @@ console.log("Pass length:", smtpPass ? smtpPass.length : "undefined");
 console.log("Pass starts with:", smtpPass ? smtpPass.substring(0, 5) + "..." : "undefined");
 
 // Verify configuration once on startup (helps diagnose EAUTH/EHOST issues)
-transporter.verify().then(() => {
-  console.log("📧 SMTP transporter verified (", smtpHost, ":", smtpPort, ")");
-}).catch((err) => {
-  console.error("❌ SMTP verify failed:", err.message);
-  console.error("❌ Full error:", err);
-});
+if (smtpHost && smtpUser && smtpPass) {
+  transporter.verify().then(() => {
+    console.log("📧 SMTP transporter verified (", smtpHost, ":", smtpPort, ")");
+  }).catch((err) => {
+    console.error("❌ SMTP verify failed:", err.message);
+    console.error("❌ Full error:", err);
+  });
+} else {
+  console.error("❌ Skipping SMTP verification - missing credentials");
+}
 
 // Helper function to send password reset OTP with timeout
 async function sendPasswordResetOtp({ to, otp }) {
   const EMAIL_TIMEOUT = 30000; // 30 seconds timeout
+  
+  // Check if SMTP is properly configured
+  if (!smtpHost || !smtpUser || !smtpPass) {
+    console.error("❌ Cannot send email - SMTP not configured");
+    throw new Error("Email service is not configured. Please contact support.");
+  }
   
   try {
     const mailOptions = {
@@ -90,7 +108,9 @@ async function sendPasswordResetOtp({ to, otp }) {
       console.error("SMTP timeout - server is not responding within 30 seconds");
       throw new Error("Email service is temporarily unavailable. Please try again in a few moments.");
     } else if (error && error.responseCode === 535) {
-      console.error("Hint: Gmail requires an App Password. Set SMTP_USER to your Gmail and SMTP_PASS to a 16-char App Password. See: https://support.google.com/mail/answer/185833");
+      console.error("Hint: Authentication failed. Check your SMTP credentials:");
+      console.error("- For Gmail: Use App Password (16 characters)");
+      console.error("- For other providers: Check username/password");
       throw new Error("Email configuration error. Please contact support.");
     } else if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
       console.error("SMTP connection failed:", error.code);
@@ -104,6 +124,12 @@ async function sendPasswordResetOtp({ to, otp }) {
 // Helper to send welcome email after registration with timeout
 async function sendWelcomeEmail({ to, username, firstName }) {
   const EMAIL_TIMEOUT = 30000; // 30 seconds timeout
+  
+  // Check if SMTP is properly configured
+  if (!smtpHost || !smtpUser || !smtpPass) {
+    console.error("❌ Cannot send welcome email - SMTP not configured");
+    return { success: false, error: "Email service is not configured" };
+  }
   
   try {
     const mailOptions = {
