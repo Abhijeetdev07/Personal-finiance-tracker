@@ -36,12 +36,30 @@ app.get("/api/protected", require("./middleware/auth"), (req, res) => {
   res.json({ message: "You accessed a protected route!", user: req.user });
 });
 
-// Connect to MongoDB and start server
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("MongoDB connected");
-    
-    const PORT = 5000;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch(err => console.error("MongoDB error:", err));
+// Connect to MongoDB once (serverless-friendly) and export app for Vercel
+let mongoConnectionPromise = null;
+
+function connectToMongoOnce() {
+  if (mongoose.connection.readyState === 1) {
+    return Promise.resolve();
+  }
+  if (!mongoConnectionPromise) {
+    mongoConnectionPromise = mongoose
+      .connect(process.env.MONGO_URI)
+      .then(() => {
+        console.log("MongoDB connected");
+      })
+      .catch((err) => {
+        console.error("MongoDB error:", err);
+        // Reset the promise so we can retry on next invocation
+        mongoConnectionPromise = null;
+        throw err;
+      });
+  }
+  return mongoConnectionPromise;
+}
+
+// Kick off connection at cold start (non-blocking for import)
+connectToMongoOnce().catch(() => {});
+
+module.exports = app;
