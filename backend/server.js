@@ -16,6 +16,39 @@ const allowedOrigin = process.env.CORS_ORIGIN
   : ["http://localhost:5173"];
 app.use(cors({ origin: allowedOrigin, credentials: true }));
 
+// Ensure MongoDB is connected before handling any request
+let mongoConnectionPromise = null;
+
+function connectToMongoOnce() {
+  if (mongoose.connection.readyState === 1) {
+    return Promise.resolve();
+  }
+  if (!mongoConnectionPromise) {
+    mongoConnectionPromise = mongoose
+      .connect(process.env.MONGO_URI)
+      .then(() => {
+        console.log("MongoDB connected");
+      })
+      .catch((err) => {
+        console.error("MongoDB error:", err);
+        mongoConnectionPromise = null;
+        throw err;
+      });
+  }
+  return mongoConnectionPromise;
+}
+
+// Kick off connection at cold start (non-blocking) and also await per-request
+connectToMongoOnce().catch(() => {});
+app.use(async (req, res, next) => {
+  try {
+    await connectToMongoOnce();
+    next();
+  } catch (e) {
+    res.status(500).json({ error: "Database connection error" });
+  }
+});
+
 // ✅ Test route
 app.get("/api/test", (req, res) => {
   res.json({ message: "Backend is working!" });
@@ -36,30 +69,12 @@ app.get("/api/protected", require("./middleware/auth"), (req, res) => {
   res.json({ message: "You accessed a protected route!", user: req.user });
 });
 
-// Connect to MongoDB once (serverless-friendly) and export app for Vercel
-let mongoConnectionPromise = null;
-
-function connectToMongoOnce() {
-  if (mongoose.connection.readyState === 1) {
-    return Promise.resolve();
-  }
-  if (!mongoConnectionPromise) {
-    mongoConnectionPromise = mongoose
-      .connect(process.env.MONGO_URI)
-      .then(() => {
-        console.log("MongoDB connected");
-      })
-      .catch((err) => {
-        console.error("MongoDB error:", err);
-        // Reset the promise so we can retry on next invocation
-        mongoConnectionPromise = null;
-        throw err;
-      });
-  }
-  return mongoConnectionPromise;
+// Start server locally when executed directly
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
 }
-
-// Kick off connection at cold start (non-blocking for import)
-connectToMongoOnce().catch(() => {});
 
 module.exports = app;

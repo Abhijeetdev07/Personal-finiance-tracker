@@ -1,4 +1,19 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+// Normalize API base URL. Accepts full URL, relative "/api", or port-prefixed ":5000/api"
+let BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
+if (typeof window !== 'undefined' && BASE_URL) {
+  // Handle values like ":5000/api" → "http(s)://{host}:5000/api"
+  if (/^:\d+\//.test(BASE_URL)) {
+    BASE_URL = `${window.location.protocol}//${window.location.hostname}${BASE_URL}`;
+  }
+  // Handle values like "/api" → "{origin}/api"
+  if (/^\//.test(BASE_URL)) {
+    BASE_URL = `${window.location.origin}${BASE_URL}`;
+  }
+}
+
+// Ensure no trailing slash on base URL for clean joins
+BASE_URL = BASE_URL.replace(/\/$/, "");
 
 let onUnauthorizedHandler = null;
 
@@ -8,7 +23,9 @@ export function setUnauthorizedHandler(handler) {
 
 export async function apiFetch(path, options = {}) {
   const isAbsolute = /^https?:\/\//i.test(path);
-  const url = isAbsolute ? path : `${BASE_URL}${path}`;
+  // Ensure path starts with "/" when joining with base
+  const normalizedPath = isAbsolute ? path : (path.startsWith('/') ? path : `/${path}`);
+  const url = isAbsolute ? path : `${BASE_URL}${normalizedPath}`;
 
   const storedToken = localStorage.getItem("token");
 
