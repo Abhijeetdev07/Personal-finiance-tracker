@@ -340,6 +340,7 @@ export default function Transactions() {
                 <TransactionForm 
                   token={token} 
                   onAdd={handleTransactionAdded}
+                  currentBalance={summary.balance}
                 />
               </div>
             </div>
@@ -419,6 +420,8 @@ export default function Transactions() {
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
         onSave={updateTransaction}
+        currentBalance={summary.balance}
+        originalTransaction={editingTransaction}
       />
 
       <ConfirmModal

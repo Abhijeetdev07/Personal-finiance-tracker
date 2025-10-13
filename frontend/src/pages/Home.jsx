@@ -229,7 +229,7 @@ export default function Home() {
               },
               { 
                 title: "Expense Tracking", 
-                desc: "Monitor every rupee with detailed expense tracking and customizable budget alerts.", 
+                desc: "Monitor every rupee with detailed expense tracking and comprehensive financial insights.", 
                 Icon: FiDollarSign,
                 gradient: "from-orange-500 to-red-500"
               },
