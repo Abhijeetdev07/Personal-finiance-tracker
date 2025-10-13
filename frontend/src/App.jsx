@@ -25,8 +25,8 @@ export default function App() {
   const logout = () => {
     setToken("");
     localStorage.removeItem("token");
-    // Immediately redirect to home page to prevent any race conditions
-    window.location.href = "/";
+    // Immediately redirect to login page to prevent any race conditions
+    window.location.href = "/login";
   };
 
   // Ensure API helper redirects to home on 401
