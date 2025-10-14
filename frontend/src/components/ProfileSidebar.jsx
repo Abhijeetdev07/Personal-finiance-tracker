@@ -103,9 +103,17 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
   if (!isOpen) return null;
 
   return (
-    <div className={`fixed right-0 top-0 h-[90vh] w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 ${
-      isClosing ? 'translate-x-full' : 'translate-x-0'
-    } flex flex-col max-h-screen overflow-hidden`}>
+    <>
+      {/* Backdrop overlay */}
+      <div 
+        className="fixed inset-0 bg-opacity-50 z-40"
+        onClick={handleClose}
+      />
+      
+      {/* Sidebar */}
+      <div className={`fixed right-0 top-0 h-[90vh] w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 ${
+        isClosing ? 'translate-x-full' : 'translate-x-0'
+      } flex flex-col max-h-screen overflow-hidden`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-[14px] border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
           <div>
@@ -308,5 +316,6 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
           </div>
         </div>
       </div>
+    </>
   );
 }
