@@ -7,12 +7,25 @@ import {
   BarElement,
   LineElement,
   PointElement,
+  LineController,
+  BarController,
   Tooltip,
   Legend,
 } from "chart.js";
 import LoadingAnimation from "./LoadingAnimation";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  // Ensure controllers are registered for mixed bar+line charts in production builds
+  LineController,
+  BarController,
+  Tooltip,
+  Legend
+);
 
 export default function MonthlyBarChart({ transactions, showWrapper = true, isLoading = false }) {
   const [filter, setFilter] = useState("all"); // "all", "income", "expense"
