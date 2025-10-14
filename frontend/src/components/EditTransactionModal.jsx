@@ -17,6 +17,7 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
   const [showBalanceWarning, setShowBalanceWarning] = useState(false);
   const [pendingFormData, setPendingFormData] = useState(null);
   const [isProceeding, setIsProceeding] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { showError, showSuccess } = useNotification();
 
   // Load categories on component mount
@@ -97,11 +98,15 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
 
   const submitUpdate = async (formData) => {
     try {
+      setIsSaving(true);
       await onSave(transaction._id, formData);
       onClose();
       showSuccess("Transaction updated successfully!");
     } catch (err) {
       console.error("Update error:", err);
+      showError("Failed to update transaction");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -222,9 +227,14 @@ export default function EditTransactionModal({ transaction, isOpen, onClose, onS
             </button>
             <button
               type="submit"
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+              disabled={isSaving}
+              className={`flex-1 text-white p-2 rounded transition-colors ${
+                isSaving 
+                  ? 'bg-blue-400 cursor-not-allowed' 
+                  : 'bg-blue-500 hover:bg-blue-600'
+              }`}
             >
-              Save Changes
+              {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>
