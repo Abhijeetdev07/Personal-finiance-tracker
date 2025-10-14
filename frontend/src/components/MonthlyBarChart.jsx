@@ -1,19 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Tooltip,
   Legend,
 } from "chart.js";
 import LoadingAnimation from "./LoadingAnimation";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Tooltip, Legend);
 
 export default function MonthlyBarChart({ transactions, showWrapper = true, isLoading = false }) {
   const [filter, setFilter] = useState("all"); // "all", "income", "expense"
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const apply = () => setIsMobile(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
   // Process transactions for monthly data
   const toMonth = (iso) => {
     const d = new Date(iso);
@@ -44,6 +55,22 @@ export default function MonthlyBarChart({ transactions, showWrapper = true, isLo
         borderWidth: 1,
         borderRadius: 6,
       });
+      // Income trend line overlay (green)
+      datasets.push({
+        type: "line",
+        label: "Income Trend",
+        parsing: false,
+        // shift points slightly left to align with the left bar in the group
+        data: labels.map((_, i) => ({ x: i - 0.2, y: (monthlyIncome[labels[i]] || 0) })),
+        borderColor: "#22c55e", // green-500
+        backgroundColor: "rgba(34, 197, 94, 0.76)",
+        borderWidth: 2,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        tension: 0.3,
+        xAxisID: "x",
+        order: 3,
+      });
     }
     
     if (filter === "all" || filter === "expense") {
@@ -57,6 +84,23 @@ export default function MonthlyBarChart({ transactions, showWrapper = true, isLo
       });
     }
     
+    // Expense trend line overlay (red)
+    datasets.push({
+      type: "line",
+      label: "Expense Trend",
+      parsing: false,
+      // shift points slightly right to align with the right bar in the group
+      data: labels.map((_, i) => ({ x: i + 0.2, y: (monthlyExpense[labels[i]] || 0) })),
+      borderColor: "#ef4444", // red-500
+      backgroundColor: "rgba(239, 68, 68, 0.15)",
+      borderWidth: 2,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      tension: 0.3,
+      xAxisID: "x",
+      order: 3,
+    });
+    
     return datasets;
   };
 
@@ -69,11 +113,30 @@ export default function MonthlyBarChart({ transactions, showWrapper = true, isLo
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "bottom" },
+      legend: {
+        position: "bottom",
+        labels: {
+          // Use small circular markers and smaller font on mobile
+          usePointStyle: isMobile,
+          boxWidth: isMobile ? 18 : 24,
+          boxHeight: isMobile ? 10 : 12,
+          padding: isMobile ? 10 : 16,
+          font: { size: isMobile ? 10 : 12 },
+        },
+      },
     },
+    interaction: { mode: "index", intersect: false },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: isMobile ? 10 : 12 } },
+        // Align line points with the visual center of the grouped bars
+        offset: true,
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { font: { size: isMobile ? 10 : 12 } },
+      },
     },
   };
 
