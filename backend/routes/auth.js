@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const { sendPasswordResetOtp, sendWelcomeEmail } = require("../utils/emailSender");
+const { sendPasswordResetOtp } = require("../utils/emailSender");
 
 const router = express.Router();
 
@@ -94,14 +94,6 @@ router.post("/register", async (req, res) => {
 
     const user = await User.create({ username, email, password: hashed, firstName, lastName });
 
-    // Fire-and-forget welcome email (non-blocking)
-    (async () => {
-      try {
-        await sendWelcomeEmail({ to: user.email, username: user.username, firstName: user.firstName });
-      } catch (e) {
-        console.error("Welcome email failed:", e?.message || e);
-      }
-    })();
 
     // Issue token on registration
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
