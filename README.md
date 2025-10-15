@@ -2,6 +2,11 @@
 
 A comprehensive personal finance tracker with authentication, transactions management, password reset functionality, and visual insights. Built with a Node/Express backend, MongoDB database, and a React + Vite frontend.
 
+## 🔗 Project Link
+
+[Smart-Finance](https://smart-finance-o4s9.onrender.com)
+
+
 ## 🚀 Features (Brief) 
 
 - Auth: Register, Login, Protected routes, Email OTP reset, JWT
