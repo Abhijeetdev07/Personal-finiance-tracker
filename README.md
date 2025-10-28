@@ -100,7 +100,7 @@ smart-finance/
    ```bash
    npm install
    ```
-3. Optionally set API base URL in `frontend/.env`:
+3. Set API base URL in `frontend/.env`:
    ```env
    VITE_API_BASE_URL=http://localhost:5000/api
    ```
