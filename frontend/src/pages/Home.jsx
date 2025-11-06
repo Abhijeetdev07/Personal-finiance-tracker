@@ -7,7 +7,7 @@ import { FiBarChart2, FiLock, FiTag, FiTrendingUp, FiDollarSign, FiPieChart, FiS
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useRef } from "react";
-
+ 
 // Scroll Animation Component
 function ScrollAnimatedSection({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
