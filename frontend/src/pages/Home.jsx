@@ -13,7 +13,7 @@ function ScrollAnimatedSection({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const controls = useAnimation();
-
+  
   useEffect(() => {
     if (isInView) {
       controls.start("visible");
