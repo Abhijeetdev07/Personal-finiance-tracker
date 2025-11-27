@@ -7,7 +7,7 @@ A comprehensive personal finance tracker with authentication, transactions manag
 [Smart-Finance](https://smart-finance-o4s9.onrender.com)
   
 
-## 🚀 Features (Brief) 
+## 🚀 Features (Brief)   
 
 - Auth: Register, Login, Protected routes, Email OTP reset, JWT
 - Transactions: CRUD, categoheck ries, filters, summaries
