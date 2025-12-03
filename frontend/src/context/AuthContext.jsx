@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [profile, setProfile] = useState(null);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
-
+ 
   // Save token to localStorage whenever it changes
   useEffect(() => {
     if (token) localStorage.setItem("token", token);
