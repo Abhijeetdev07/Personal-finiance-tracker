@@ -8,7 +8,7 @@ export default function FaceVerification({ onVerified }) {
   const [verificationState, setVerificationState] = useState("IDLE");
   const [message, setMessage] = useState("Initializing verification...");
   const [progress, setProgress] = useState(0);
-
+ 
   // Auto-verify after camera loads (mock verification for testing)
   useEffect(() => {
     if (webcamReady && verificationState === "IDLE") {
