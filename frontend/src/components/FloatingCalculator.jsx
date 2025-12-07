@@ -1,15 +1,45 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BsCalculator } from "react-icons/bs";
 import { FiX } from "react-icons/fi";
+import { useLocation } from "react-router-dom";
 import Calculator from "./Calculator";
 
 export default function FloatingCalculator() {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef(null);
+  const calculatorRef = useRef(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        isOpen &&
+        calculatorRef.current &&
+        !calculatorRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Only show on authenticated pages
+  const allowedPaths = ["/dashboard", "/transactions"];
+  if (!allowedPaths.includes(location.pathname)) {
+    return null;
+  }
 
   return (
     <>
       {/* Floating Button */}
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className={`fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r ${isOpen ? 'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700' : 'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'} text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 flex items-center justify-center z-50`}
         aria-label={isOpen ? "Close Calculator" : "Open Calculator"}
@@ -19,7 +49,11 @@ export default function FloatingCalculator() {
       </button>
 
       {/* Calculator Modal */}
-      {isOpen && <Calculator onClose={() => setIsOpen(false)} />}
+      {isOpen && (
+        <div ref={calculatorRef}>
+          <Calculator onClose={() => setIsOpen(false)} />
+        </div>
+      )}
     </>
   );
 }

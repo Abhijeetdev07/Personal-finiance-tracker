@@ -10,7 +10,7 @@ import ResetPassword from "./pages/ResetPassword";
 import { setUnauthorizedHandler } from "./utils/api";
 import Home from "./pages/Home";
 import About from "./pages/About";
-import FloatingCalculator from "./components/FloatingCalculator";
+
 
 // Create auth context to share token across app
 export const AuthContext = createContext();
@@ -60,9 +60,6 @@ export default function App() {
           <Route path="/dashboard" element={token ? <Dashboard /> : <Navigate to="/login" />} />
           <Route path="/transactions" element={token ? <Transactions /> : <Navigate to="/login" />} />
         </Routes>
-        
-        {/* Global Floating Calculator */}
-        <FloatingCalculator />
       </BrowserRouter>
     </AuthContext.Provider>
   );
