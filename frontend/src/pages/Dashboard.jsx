@@ -170,13 +170,7 @@ export default function Dashboard() {
         />
 
         {/* Fixed Floating Action Button for Mobile */}
-        <Link
-          to="/transactions"
-          className="sm:hidden fixed bottom-6 right-6 z-30 flex items-center justify-center w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200 animate-pulse-slow"
-          aria-label="Add Transaction"
-        >
-          <FiPlus size={24} />
-        </Link>
+
       </div>
     </ProfileAuthProvider>
   );
