@@ -16,6 +16,9 @@ const userSchema = new mongoose.Schema({
   // Rate limiting for forgot-password OTP requests
   resetOtpRequestCount: { type: Number, default: 0 },
   resetOtpRequestWindowStart: { type: Date },
+  
+  // Verification flags
+  isVerifiedHuman: { type: Boolean, default: false },
 }, { 
   timestamps: {
     createdAt: true,
