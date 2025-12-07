@@ -121,7 +121,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                 {(profile.firstName?.[0] || profile.username?.[0] || "U").toUpperCase()}
              </div>
              <div>
-                <h2 className="text-xl font-bold text-gray-900">ABHIJEET</h2>
+                <h2 className="text-xl font-bold text-gray-900">My Profile</h2>
                 <div className="flex items-center space-x-3 text-sm">
                     {/* <FiMail className="w-4 h-4 text-gray-400" /> */}
                     <span className="text-gray-700 truncate">{profile.email}</span>
