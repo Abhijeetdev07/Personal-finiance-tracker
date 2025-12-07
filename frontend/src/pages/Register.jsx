@@ -8,19 +8,14 @@ import FloatingInput from "../components/FloatingInput";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import authBg from "../assets/auth.jpg";
-import FaceVerification from "../components/FaceVerification";
 
 export default function Register() {
   const [form, setForm] = useState({ username: "", email: "", password: "", firstName: "", lastName: "" });
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
   const [passwordHint, setPasswordHint] = useState({ len: false, upper: false, lower: false, num: false, special: false });
-  const [showPassword, setShowPassword] = useState(false); // password visibility
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Verification State
-  const [isVerified, setIsVerified] = useState(false);
-  const [showCamera, setShowCamera] = useState(false);
 
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -112,7 +107,7 @@ export default function Register() {
     try {
       const res = await apiFetch("/auth/register", {
         method: "POST",
-        body: JSON.stringify({ ...form, isVerifiedHuman: true }),
+        body: JSON.stringify({ username, email, password, firstName, lastName }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Register failed");
@@ -228,33 +223,16 @@ export default function Register() {
           autoComplete="new-password"
         />
 
-        {/* Verification Section */}
-        <div className="mb-4">
-          {!isVerified ? (
-            <button
-              type="button"
-              onClick={() => setShowCamera(true)}
-              className="w-full py-2.5 rounded-lg font-semibold bg-gray-100 text-gray-700 border-2 border-gray-200 hover:bg-gray-200 hover:border-gray-300 transition-all flex items-center justify-center gap-2"
-            >
-              Verify User Status
-            </button>
-          ) : (
-            <div className="w-full py-2.5 rounded-lg bg-green-50 text-green-700 border border-green-200 flex items-center justify-center gap-2 font-medium">
-               ✅ Verified Human
-            </div>
-          )}
-        </div>
-
         {error && (
           <p className="text-red-600 text-xs mb-2 -mt-2">{error}</p>
         )}
 
         <button
           type="submit"
-          disabled={isLoading || !isVerified}
+          disabled={isLoading}
           className={`w-full py-2 sm:py-3 rounded-lg font-semibold transition-colors duration-200 text-sm sm:text-base flex items-center justify-center ${
-            isLoading || !isVerified
-              ? "bg-gray-400 cursor-not-allowed opacity-70"
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
               : "bg-[#007dff] hover:bg-[#0066cc] text-white cursor-pointer"
           }`}
         >
@@ -264,26 +242,6 @@ export default function Register() {
             "Register"
           )}
         </button>
-
-        {/* Face Verification Modal */}
-        {showCamera && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="w-full max-w-lg bg-gray-900 rounded-xl overflow-hidden relative">
-               <button 
-                 onClick={() => setShowCamera(false)}
-                 className="absolute top-4 right-4 text-gray-400 hover:text-white z-50 text-xl font-bold"
-               >
-                 ✕
-               </button>
-               <FaceVerification 
-                 onVerified={() => {
-                   setIsVerified(true);
-                   setShowCamera(false);
-                 }} 
-               />
-            </div>
-          </div>
-        )}
 
         <p className="text-xs sm:text-sm mt-3 text-center text-gray-600">
           Already have an account?{" "}
