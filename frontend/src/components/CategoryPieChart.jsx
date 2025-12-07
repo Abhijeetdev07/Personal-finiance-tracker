@@ -203,7 +203,7 @@ export default function CategoryPieChart({ transactions, showFilter = true, isLo
         <button
           type="button"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="border border-gray-300 rounded px-2 sm:px-3 py-1 text-xs sm:text-sm w-full sm:w-auto bg-white text-left flex justify-between items-center"
+          className="border border-gray-300 rounded px-2 sm:px-3 py-1 text-xs sm:text-sm w-full  sm:w-auto bg-white text-left flex justify-between items-center"
         >
           <span>{selectedMonthLabel}</span>
           <span className="ml-2">▼</span>

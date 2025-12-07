@@ -111,15 +111,23 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
       />
       
       {/* Sidebar */}
-      <div className={`fixed right-0 top-0 h-[90vh] w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 ${
+      <div className={`fixed right-0 top-0 h-[95vh] w-80 max-[370px]:w-full bg-white shadow-2xl z-50 transform transition-transform duration-200 ${
         isClosing ? 'translate-x-full' : 'translate-x-0'
       } flex flex-col max-h-screen overflow-hidden`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-[14px] border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Profile</h2>
-            <p className="text-sm text-gray-600">Manage your account</p>
-          </div>
+          <div className="flex items-center gap-3">
+             <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-xl font-bold">
+                {(profile.firstName?.[0] || profile.username?.[0] || "U").toUpperCase()}
+             </div>
+             <div>
+                <h2 className="text-xl font-bold text-gray-900">ABHIJEET</h2>
+                <div className="flex items-center space-x-3 text-sm">
+                    {/* <FiMail className="w-4 h-4 text-gray-400" /> */}
+                    <span className="text-gray-700 truncate">{profile.email}</span>
+                </div>
+             </div>
+        </div>
           <button
             onClick={handleClose}
             className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -143,12 +151,13 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                 </div>
               </div>
             ) : profile ? (
-              <div className="space-y-3">
+              <div className="space-y-3 ml-2">
                 {/* Avatar and Basic Info */}
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-2xl font-bold">
+                  {/* remove it */}
+                  {/* <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-2xl font-bold">
                     {(profile.firstName?.[0] || profile.username?.[0] || "U").toUpperCase()}
-                  </div>
+                  </div> */}
                   <div className="flex-1 min-w-0">
                     {isEditing ? (
                       <div className="space-y-1">
@@ -176,7 +185,7 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
                             ? `${profile.firstName || ""} ${profile.lastName || ""}`.trim()
                             : profile.username}
                         </h3>
-                        <p className="text-sm text-gray-600 truncate">@{profile.username}</p>
+                        <p className="text-sm text-gray-600 truncate mt-1">@{profile.username}</p>
                       </>
                     )}
                   </div>
@@ -184,10 +193,11 @@ export default function ProfileSidebar({ isOpen, onClose, onOpenProfile, onLogou
 
                 {/* Contact Info */}
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-3 text-sm">
+                  {/* update to top */}
+                  {/* <div className="flex items-center space-x-3 text-sm">
                     <FiMail className="w-4 h-4 text-gray-400" />
                     <span className="text-gray-700 truncate">{profile.email}</span>
-                  </div>
+                  </div> */}
                   
                   {isEditing ? (
                     <div className="space-y-1">
